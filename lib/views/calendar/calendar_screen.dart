@@ -15,8 +15,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: AppBar(
         title: const Text('Календарь жизни в неделях'),
       ),
-      body: SafeArea(
-        child: Calendar(),
+      body: InteractiveViewer(
+        child: SafeArea(
+          child: Calendar(),
+        ),
       ),
     );
   }

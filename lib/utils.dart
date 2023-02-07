@@ -1,7 +1,7 @@
 const int maxAge = 80;
 const int maxWeekNumber = 53;
-const double weekBoxSide = 6;
-const double weekBoxPadding = 0.5;
+// const double weekBoxSide = 6;
+// const double weekBoxPadding = 0.5;
 
 DateTime previousMonday(DateTime date) {
   DateTime monday = date;

@@ -27,7 +27,7 @@ class CalendarModel {
       weeksAmountBetweenMondays(DateTime.now(), _birthday);
 
   int get totalNumberOfWeeksInLife {
-    DateTime maxAgeDate = DateTime(_birthday.year + maxAge, _birthday.month, _birthday.day);
+    DateTime maxAgeDate = DateTime(_birthday.year + maxAge + 1, _birthday.month, _birthday.day);
     return weeksAmountBetweenMondays(_birthday, maxAgeDate);
   }
 
@@ -36,11 +36,11 @@ class CalendarModel {
     var lastBirthday = _birthday;
     var yearMonday = previousMonday(lastBirthday);
 
-    for (int yearIndex = 0; yearIndex < maxAge; yearIndex++) {
+    for (int yearIndex = 0; yearIndex < maxAge + 1; yearIndex++) {
       var nextBirthday = DateTime(lastBirthday.year + 1, lastBirthday.month, lastBirthday.day);
       var yearSunday = previousMonday(nextBirthday).subtract(const Duration(days: 1));
 
-      var year = Year(yearMonday, yearSunday);
+      var year = Year(yearMonday, yearSunday, yearIndex);
 
       var weekMonday = DateTime(yearMonday.year, yearMonday.month, yearMonday.day);
       var weekSunday = weekMonday.add(const Duration(days: 6));
