@@ -1,9 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:life_calendar/setup.dart';
-import 'package:life_calendar/models/calendar_model.dart';
-import 'package:life_calendar/views/calendar/calendar_screen.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:life_calendar/controllers/calendar_controller.dart';
+import 'package:life_calendar/setup.dart';
 
 class DatePickerScreen extends StatefulWidget {
   const DatePickerScreen({Key? key}) : super(key: key);
@@ -13,7 +12,9 @@ class DatePickerScreen extends StatefulWidget {
 }
 
 class _DatePickerScreenState extends State<DatePickerScreen> {
+  final CalendarController controller = getIt<CalendarController>();
   DateTime? birthday;
+  TextEditingController dateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +31,15 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
               children: [
                 const Text('Выберите дату вашего рождения'),
                 _createDateTextField(),
-                _createDateTimeTextField(),
-                _createDateInputField(),
+                // _createDateTimeTextField(),
+                // _createDateInputField(),
               ],
             ),
           ),
         ),
         floatingActionButton: ElevatedButton(
-          onPressed: () {
-            if (birthday != null) {
-              getIt<CalendarModel>().selectedBirthday = birthday!;
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CalendarScreen()));
-            }
+          onPressed: birthday == null ? null : () {
+            Navigator.pushReplacementNamed(context, '/');
           },
           child: const Text('Продолжить'),
         ),
@@ -50,8 +48,6 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
   }
 
   Widget _createDateTextField() {
-    TextEditingController dateController = TextEditingController();
-
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
       child: TextField(
@@ -76,99 +72,10 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
             String formattedDate = DateFormat('dd.MM.yyyy').format(pickedDate);
             debugPrint('formattedDate: $formattedDate');
             dateController.text = formattedDate;
-            birthday = pickedDate;
+            birthday = await controller.setBirthday(pickedDate);
+            setState(() {});
           }
         },
-      ),
-    );
-  }
-  
-  Widget _createDateTimeTextField() {
-    TextEditingController dateTimeController = TextEditingController();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        controller: dateTimeController,
-        textAlign: TextAlign.center,
-        readOnly: true,
-        focusNode: FocusNode(),
-        onTap: () async {
-          DateTime? pickedDateTime = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2050),
-            initialEntryMode: DatePickerEntryMode.calendar,
-            initialDatePickerMode: DatePickerMode.year,
-            locale: const Locale('ru'),
-          ).then((date) async {
-            TimeOfDay? time = await showTimePicker(
-              context: context,
-              initialTime: TimeOfDay.now(),
-              builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                child: child!,
-              ),
-            );
-
-            debugPrint('pickedTime: $time');
-            if (date != null && time != null) {
-              return DateTime(date.year, date.month, date.day, time.hour, time.minute);
-            } else {
-              return null;
-            }
-          });
-          debugPrint('pickedDate: $pickedDateTime');
-
-          if (pickedDateTime != null) {
-            String formattedDate = DateFormat('dd.MM.yyyy, HH:mm').format(pickedDateTime);
-            debugPrint('formattedDate: $formattedDate');
-            dateTimeController.text = formattedDate;
-          }
-        },
-        onChanged: (dateTime) {
-          DateTime? pickedDateTime = DateTime.tryParse(dateTime);
-          debugPrint('PARSED : $pickedDateTime');
-        },
-        onSubmitted: null,
-      ),
-    );
-  }
-
-  Widget _createDateInputField() {
-    TextEditingController dateTimeController = TextEditingController();
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 16),
-      child: TextFormField(
-        controller: dateTimeController,
-        maxLines: 1,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardType: TextInputType.number,
-        inputFormatters: [dateMaskFormatter],
-        // validator: (String? dateTime) {
-        //   if (dateTime == null || dateTime.isEmpty) {
-        //     return 'Введите дату и время';
-        //   } else {
-        //     DateTime? convertedDateTime = convertStringToDateTime(dateTime);
-        //     if (convertedDateTime == null) {
-        //       return 'Недопустимое значение';
-        //     }
-        //     return null;
-        //   }
-        // },
-        // onChanged: (String? newDateTime) {
-        //   if (newDateTime != null) {
-        //     initialDateTime = convertStringToDateTime(newDateTime);
-        //     if (initialDateTime != null) {
-        //       int unixTime = Duration(
-        //           milliseconds: initialDateTime!.toUtc().millisecondsSinceEpoch
-        //       ).inSeconds;
-        //       propertyProvider.setValue(unixTime);
-        //     }
-        //   }
-        // },
       ),
     );
   }

@@ -2,11 +2,13 @@ import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/calendar/year.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CalendarController {
   final CalendarModel _calendarModel = getIt<CalendarModel>();
 
   int get numberOfWeeks => _calendarModel.totalNumberOfWeeksInLife;
+  Week? selectedWeek;
 
   List<Year> get allYears => _calendarModel.calendar.years;
   
@@ -16,5 +18,14 @@ class CalendarController {
       result.addAll(year.weeks);
     }
     return result;
+  }
+
+  Future<DateTime> setBirthday(DateTime bDay) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('birthday', bDay.millisecondsSinceEpoch);
+
+    _calendarModel.selectedBirthday = bDay;
+    _calendarModel.buildCalendar(true);
+    return bDay;
   }
 }

@@ -17,7 +17,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       body: InteractiveViewer(
         child: SafeArea(
-          child: Calendar(),
+          child: CalendarWidget(),
         ),
       ),
     );

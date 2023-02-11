@@ -4,27 +4,25 @@ import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/setup.dart';
 
 double weekBoxSide = 6;
 double weekBoxPadding = 0.5;
 
-class Calendar extends StatelessWidget {
-  Calendar({Key? key}) : super(key: key);
+class CalendarWidget extends StatelessWidget {
+  CalendarWidget({Key? key}) : super(key: key);
 
-  final CalendarController controller = CalendarController();
+  final CalendarController controller = getIt<CalendarController>();
 
   @override
   Widget build(BuildContext context) {
-    // var padding = MediaQuery.of(context).padding;
     double screenWidth = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height - padding.top - padding.bottom - AppBar().preferredSize.height;
 
     debugPrint('screen width: $screenWidth');
-    // debugPrint('screen height: $height');
     calculateSizes(screenWidth);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 4.0),
+      padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -144,7 +142,8 @@ class WeekBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color weekColor = week.state == WeekState.past
-        ? pastWeekColor
+        ? week.assessment == WeekAssessment.good ? goodWeekColor :
+          week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
         : week.state == WeekState.future
             ? futureWeekColor
             : currentWeekColor;
@@ -154,18 +153,8 @@ class WeekBox extends StatelessWidget {
       height: weekBoxSide,
       child: ElevatedButton(
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Неделя ${week.start.day}.${week.start.month}.${week.start.year} - ${week.end.day}.${week.end.month}.${week.end.year}'),
-                content: Text('Состояние: ${week.start}'),
-                actions: [
-                  TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Ок')),
-                ],
-              );
-            },
-          );
+          getIt<CalendarController>().selectedWeek = week;
+          Navigator.pushNamed(context, '/weekInfo');
         },
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll(weekColor),
