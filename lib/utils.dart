@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 const int maxAge = 80;
 const int maxWeekNumber = 53;
 // const double weekBoxSide = 6;
@@ -25,4 +27,8 @@ int weeksAmountBetweenMondays(DateTime firstDate, DateTime secondDate) {
   }
 
   return diff.inDays ~/ 7;
+}
+
+String formatDate(DateTime date) {
+  return DateFormat('dd.MM.yyyy').format(date);
 }

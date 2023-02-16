@@ -25,7 +25,7 @@ class CalendarModel {
   }
 
   Future buildCalendar(bool firstTime) async {
-    if (firstTime) {
+    if (firstTime || (await _db.tableIsEmpty())) {
       await buildNewCalendar();
     } else {
       await buildFromDatabase();
@@ -95,5 +95,9 @@ class CalendarModel {
   Future buildFromDatabase() async {
     calendar.years.clear();
     calendar.years.addAll(await _db.getAll());
+  }
+
+  Future updateEvent(Week week) async {
+    await _db.updateEvents(week);
   }
 }

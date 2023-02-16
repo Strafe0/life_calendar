@@ -1,8 +1,8 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
+import 'package:life_calendar/utils.dart';
 
 class DatePickerScreen extends StatefulWidget {
   const DatePickerScreen({Key? key}) : super(key: key);
@@ -69,7 +69,7 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
           debugPrint('pickedDate: $pickedDate');
 
           if (pickedDate != null) {
-            String formattedDate = DateFormat('dd.MM.yyyy').format(pickedDate);
+            String formattedDate = formatDate(pickedDate);
             debugPrint('formattedDate: $formattedDate');
             dateController.text = formattedDate;
             birthday = await controller.setBirthday(pickedDate);

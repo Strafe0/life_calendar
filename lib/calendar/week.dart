@@ -12,10 +12,10 @@ enum WeekState {
 enum WeekAssessment {
   good,
   bad,
-  poor,
+  poor
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Week {
   Week(this.id, this.yearId, this.start, this.end, this.state, this.assessment, this.goals, this.resume);
 
@@ -29,8 +29,9 @@ class Week {
   WeekState state;
   WeekAssessment assessment;
 
-  @JsonKey(toJson: _goalsToJson, fromJson: _goalsFromJson)
-  List<String> goals = [];
+  List<Goal> goals = [];
+  @JsonKey(toJson: _eventsToJson, fromJson: _eventsFromJson)
+  List<String> events = [];
   String resume = '';
 
   factory Week.fromJson(Map<String, dynamic> json) => _$WeekFromJson(json);
@@ -39,6 +40,17 @@ class Week {
   static int _dateToJson(DateTime value) => value.millisecondsSinceEpoch;
   static DateTime _dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);
 
-  static String _goalsToJson(List<String> values) => jsonEncode(values);
-  static List<String> _goalsFromJson(String values) => jsonDecode(values).cast<String>().toList();
+  static String _eventsToJson(List<String> values) => jsonEncode(values);
+  static List<String> _eventsFromJson(String values) => jsonDecode(values).cast<String>().toList();
+}
+
+@JsonSerializable()
+class Goal {
+  String title;
+  bool isCompleted;
+
+  Goal(this.title, this.isCompleted);
+
+  factory Goal.fromJson(Map<String, dynamic> json) => _$GoalFromJson(json);
+  Map<String, dynamic> toJson() => _$GoalToJson(this);
 }

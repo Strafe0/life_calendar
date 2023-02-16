@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:life_calendar/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -22,6 +24,7 @@ class AppDatabase {
             'end INTEGER NOT NULL,'
             'assessment TEXT,'
             'goals TEXT,'
+            'events TEXT,'
             'resume TEXT)');
       }
     );
@@ -59,5 +62,19 @@ class AppDatabase {
     }
 
     return years;
+  }
+
+  Future<int> updateEvents(Week week) async {
+    return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?', [jsonEncode(week.events), week.id]);
+  }
+
+  Future<bool> tableIsEmpty() async {
+    int? count = Sqflite.firstIntValue(await _db.rawQuery('SELECT COUNT(*) FROM $tableName'));
+
+    if (count != null && count != 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }
