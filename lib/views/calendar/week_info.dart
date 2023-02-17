@@ -37,10 +37,12 @@ class _WeekInfoState extends State<WeekInfo> {
         shrinkWrap: true,
         children: [
           assessmentWidget(),
+          goalsWidget(),
           eventsWidget(),
         ],
       ),
       floatingActionButton: SpeedDial(
+        icon: Icons.add,
         children: [ //todo: do all actions in dialog
           SpeedDialChild(
             child: const Icon(Icons.calendar_today),
@@ -48,16 +50,8 @@ class _WeekInfoState extends State<WeekInfo> {
           ),
           SpeedDialChild(
             child: const Icon(Icons.check_circle),
-            onTap: () {
-              //todo: add task
-            }
+            onTap: addGoal,
           ),
-          // SpeedDialChild(
-          //   child: const Icon(Icons.palette),
-          //   onTap: () {
-          //     //todo: change color
-          //   }
-          // ),
           SpeedDialChild(
             child: const Icon(Icons.edit),
             onTap: () {
@@ -73,46 +67,22 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    String? eventTitle = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Введите название события'),
-              content: TextField(
-                controller: _textController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Введите название события',
-                  errorText: _validate ? null : 'Введите значение',
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Отмена'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _validate = _textController.text.isNotEmpty;
-                    });
-                    if (_validate) {
-                      Navigator.pop(context, _textController.text);
-                    }
-                  },
-                  child: const Text('Ок'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+    String? eventTitle = await _showChangeTitleDialog();
     if (eventTitle != null && eventTitle.isNotEmpty) {
       setState(() {
         controller.addEvent(eventTitle);
+      });
+    }
+  }
+
+  Future<void> addGoal() async {
+    _textController.clear();
+
+    _validate = true;
+    String? goalTitle = await _showChangeTitleDialog();
+    if (goalTitle != null && goalTitle.isNotEmpty) {
+      setState(() {
+        controller.addGoal(goalTitle);
       });
     }
   }
@@ -171,10 +141,6 @@ class _WeekInfoState extends State<WeekInfo> {
           ListView.builder(
             itemCount: week.events.length,
             itemBuilder: (context, index) {
-              if (week.events.isEmpty) {
-                return const Center(child: Text('Нет событий'));
-              }
-
               return ListTile(
                 title: Text(week.events[index]),
                 trailing: PopupMenuButton<int>(
@@ -212,7 +178,85 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.text = controller.selectedWeek.events[index];
     _validate = true;
 
-    String? newEventTitle = await showDialog<String>(
+    String? newEventTitle = await _showChangeTitleDialog();
+    if (newEventTitle != null && newEventTitle.isNotEmpty) {
+      setState(() {
+        controller.changeEvent(index, newEventTitle);
+      });
+    }
+  }
+
+  Widget goalsWidget() {
+    Week week = controller.selectedWeek;
+
+    return Card(
+      child: Column(
+        children: [
+          const Text('Цели'),
+          week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
+          ListView.builder(
+            itemCount: week.goals.length,
+            itemBuilder: (context, index) {
+              if (week.goals.isEmpty) {
+                return const Center(child: Text('Нет поставленных задач'));
+              }
+
+              return CheckboxListTile(
+                value: week.goals[index].isCompleted,
+                title: Text(week.goals[index].title),
+                onChanged: (bool? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      controller.changeGoalCompletion(index, newValue);
+                    });
+                  }
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                secondary: PopupMenuButton<int>(
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text('Изменить'),
+                    ),
+                    const PopupMenuItem(
+                      value: 2,
+                      child: Text('Удалить'),
+                    ),
+                  ],
+                  onSelected: (value) async {
+                    if (value == 1) {
+                      await _changeGoalTitle(index);
+                      setState(() {});
+                    } else if (value == 2) {
+                      await controller.deleteGoal(index);
+                      setState(() {});
+                    }
+                  },
+                ),
+              );
+            },
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future _changeGoalTitle(int index) async {
+    _textController.text = controller.selectedWeek.goals[index].title;
+    _validate = true;
+
+    String? newGoalTitle = await _showChangeTitleDialog();
+    if (newGoalTitle != null && newGoalTitle.isNotEmpty) {
+      setState(() {
+        controller.changeGoalTitle(index, newGoalTitle);
+      });
+    }
+  }
+
+  Future<String?> _showChangeTitleDialog() async {
+    return await showDialog<String>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -223,8 +267,8 @@ class _WeekInfoState extends State<WeekInfo> {
                 controller: _textController,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'Введите название события',
-                  errorText: _validate ? null : 'Введите значение',
+                  hintText: 'Введите название',
+                  errorText: _validate ? null : 'Поле не может быть пустым',
                 ),
               ),
               actions: [
@@ -248,69 +292,6 @@ class _WeekInfoState extends State<WeekInfo> {
           },
         );
       },
-    );
-    if (newEventTitle != null && newEventTitle.isNotEmpty) {
-      setState(() {
-        controller.changeEvent(newEventTitle, index);
-      });
-    }
-  }
-
-  Widget goalsWidget() {
-    Week week = controller.selectedWeek;
-    TextEditingController textController = TextEditingController();
-
-    return Card(
-      child: Column(
-        children: [
-          const Text('Цели'),
-          ListView.builder(
-            itemCount: week.goals.length,
-            itemBuilder: (context, index) {
-              if (week.goals.isEmpty) {
-                return const Center(child: Text('Нет поставленных задач'));
-              }
-
-              return CheckboxListTile(
-                value: false,
-                title: TextField(
-                  controller: textController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                ),
-                onChanged: null,
-                controlAffinity: ListTileControlAffinity.leading,
-                secondary: PopupMenuButton<int>(
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 1,
-                      child: Text('Изменить'),
-                    ),
-                    const PopupMenuItem(
-                      value: 2,
-                      child: Text('Удалить'),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    if (value == 1) {
-                      //todo: focus on text field
-                      
-                    } else if (value == 2) {
-                      //todo: remove goal
-                      setState(() {
-                        week.goals.removeAt(index);
-                      });
-                    }
-                  },
-                ),
-              );
-            },
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-          ),
-        ],
-      ),
     );
   }
 

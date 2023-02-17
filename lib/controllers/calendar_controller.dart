@@ -35,7 +35,7 @@ class CalendarController {
     await _calendarModel.updateEvent(selectedWeek);
   }
 
-  Future<void> changeEvent(String newTitle, int index) async {
+  Future<void> changeEvent(int index, String newTitle) async {
     selectedWeek.events[index] = newTitle;
     await _calendarModel.updateEvent(selectedWeek);
   }
@@ -43,5 +43,25 @@ class CalendarController {
   Future<void> deleteEvent(int index) async {
     selectedWeek.events.removeAt(index);
     await _calendarModel.updateEvent(selectedWeek);
+  }
+
+  Future<void> addGoal(String title) async {
+    selectedWeek.goals.add(Goal(title, false));
+    await _calendarModel.updateGoal(selectedWeek);
+  }
+
+  Future<void> changeGoalTitle(int index, String newTitle) async {
+    selectedWeek.goals[index].title = newTitle;
+    await _calendarModel.updateGoal(selectedWeek);
+  }
+
+  Future<void> changeGoalCompletion(int index, bool newValue) async {
+    selectedWeek.goals[index].isCompleted = newValue;
+    await _calendarModel.updateGoal(selectedWeek);
+  }
+
+  Future<void> deleteGoal(int index) async {
+    selectedWeek.goals.removeAt(index);
+    await _calendarModel.updateGoal(selectedWeek);
   }
 }

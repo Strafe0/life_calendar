@@ -3,18 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'week.g.dart';
 
-enum WeekState {
-  past,
-  current,
-  future,
-}
-
-enum WeekAssessment {
-  good,
-  bad,
-  poor
-}
-
 @JsonSerializable(explicitToJson: true)
 class Week {
   Week(this.id, this.yearId, this.start, this.end, this.state, this.assessment, this.goals, this.resume);
@@ -42,6 +30,18 @@ class Week {
 
   static String _eventsToJson(List<String> values) => jsonEncode(values);
   static List<String> _eventsFromJson(String values) => jsonDecode(values).cast<String>().toList();
+}
+
+enum WeekState {
+  past,
+  current,
+  future,
+}
+
+enum WeekAssessment {
+  good,
+  bad,
+  poor
 }
 
 @JsonSerializable()
