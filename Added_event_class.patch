@@ -1,0 +1,187 @@
+Index: utils.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/utils.dart b/utils.dart
+--- a/utils.dart	(revision 72eb78ea3d5480650b60197c7405c6b8d7ff5cbe)
++++ b/utils.dart	(date 1676713632704)
+@@ -31,4 +31,7 @@
+ 
+ String formatDate(DateTime date) {
+   return DateFormat('dd.MM.yyyy').format(date);
+-}
+\ No newline at end of file
++}
++
++int dateToJson(DateTime value) => value.millisecondsSinceEpoch;
++DateTime dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);
+\ No newline at end of file
+Index: calendar/week.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/calendar/week.dart b/calendar/week.dart
+--- a/calendar/week.dart	(revision 72eb78ea3d5480650b60197c7405c6b8d7ff5cbe)
++++ b/calendar/week.dart	(date 1676713632704)
+@@ -1,5 +1,5 @@
+-import 'dart:convert';
+ import 'package:json_annotation/json_annotation.dart';
++import 'package:life_calendar/utils.dart';
+ 
+ part 'week.g.dart';
+ 
+@@ -9,27 +9,24 @@
+ 
+   final int id;
+   final int yearId;
+-  @JsonKey(toJson: _dateToJson, fromJson: _dateFromJson)
++  @JsonKey(toJson: dateToJson, fromJson: dateFromJson)
+   final DateTime start;
+-  @JsonKey(toJson: _dateToJson, fromJson: _dateFromJson)
++  @JsonKey(toJson: dateToJson, fromJson: dateFromJson)
+   final DateTime end;
+ 
+   WeekState state;
+   WeekAssessment assessment;
+ 
+   List<Goal> goals = [];
+-  @JsonKey(toJson: _eventsToJson, fromJson: _eventsFromJson)
+-  List<String> events = [];
++  List<Event> events = [];
+   String resume = '';
+ 
+   factory Week.fromJson(Map<String, dynamic> json) => _$WeekFromJson(json);
+   Map<String, dynamic> toJson() => _$WeekToJson(this);
+ 
+-  static int _dateToJson(DateTime value) => value.millisecondsSinceEpoch;
+-  static DateTime _dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);
+ 
+-  static String _eventsToJson(List<String> values) => jsonEncode(values);
+-  static List<String> _eventsFromJson(String values) => jsonDecode(values).cast<String>().toList();
++  // static String _eventsToJson(List<String> values) => jsonEncode(values);
++  // static List<String> _eventsFromJson(String values) => jsonDecode(values).cast<String>().toList();
+ }
+ 
+ enum WeekState {
+@@ -53,4 +50,17 @@
+ 
+   factory Goal.fromJson(Map<String, dynamic> json) => _$GoalFromJson(json);
+   Map<String, dynamic> toJson() => _$GoalToJson(this);
++}
++
++@JsonSerializable()
++class Event {
++  String title;
++
++  @JsonKey(toJson: dateToJson, fromJson: dateFromJson)
++  DateTime date;
++
++  Event(this.title, this.date);
++
++  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
++  Map<String, dynamic> toJson() => _$EventToJson(this);
+ }
+\ No newline at end of file
+Index: calendar/week.g.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/calendar/week.g.dart b/calendar/week.g.dart
+--- a/calendar/week.g.dart	(revision 72eb78ea3d5480650b60197c7405c6b8d7ff5cbe)
++++ b/calendar/week.g.dart	(date 1676713632704)
+@@ -9,25 +9,27 @@
+ Week _$WeekFromJson(Map<String, dynamic> json) => Week(
+       json['id'] as int,
+       json['yearId'] as int,
+-      Week._dateFromJson(json['start'] as int),
+-      Week._dateFromJson(json['end'] as int),
++      dateFromJson(json['start'] as int),
++      dateFromJson(json['end'] as int),
+       $enumDecode(_$WeekStateEnumMap, json['state']),
+       $enumDecode(_$WeekAssessmentEnumMap, json['assessment']),
+       (json['goals'] as List<dynamic>)
+           .map((e) => Goal.fromJson(e as Map<String, dynamic>))
+           .toList(),
+       json['resume'] as String,
+-    )..events = Week._eventsFromJson(json['events'] as String);
++    )..events = (json['events'] as List<dynamic>)
++        .map((e) => Event.fromJson(e as Map<String, dynamic>))
++        .toList();
+ 
+ Map<String, dynamic> _$WeekToJson(Week instance) => <String, dynamic>{
+       'id': instance.id,
+       'yearId': instance.yearId,
+-      'start': Week._dateToJson(instance.start),
+-      'end': Week._dateToJson(instance.end),
++      'start': dateToJson(instance.start),
++      'end': dateToJson(instance.end),
+       'state': _$WeekStateEnumMap[instance.state]!,
+       'assessment': _$WeekAssessmentEnumMap[instance.assessment]!,
+       'goals': instance.goals.map((e) => e.toJson()).toList(),
+-      'events': Week._eventsToJson(instance.events),
++      'events': instance.events.map((e) => e.toJson()).toList(),
+       'resume': instance.resume,
+     };
+ 
+@@ -52,3 +54,13 @@
+       'title': instance.title,
+       'isCompleted': instance.isCompleted,
+     };
++
++Event _$EventFromJson(Map<String, dynamic> json) => Event(
++      json['title'] as String,
++      dateFromJson(json['date'] as int),
++    );
++
++Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
++      'title': instance.title,
++      'date': dateToJson(instance.date),
++    };
+Index: views/calendar/week_info.dart
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/views/calendar/week_info.dart b/views/calendar/week_info.dart
+--- a/views/calendar/week_info.dart	(revision 72eb78ea3d5480650b60197c7405c6b8d7ff5cbe)
++++ b/views/calendar/week_info.dart	(date 1676713632704)
+@@ -46,7 +46,7 @@
+         children: [ //todo: do all actions in dialog
+           SpeedDialChild(
+             child: const Icon(Icons.calendar_today),
+-            onTap: addEventCallback,
++            onTap: addEvent,
+           ),
+           SpeedDialChild(
+             child: const Icon(Icons.check_circle),
+@@ -63,7 +63,7 @@
+     );
+   }
+ 
+-  Future<void> addEventCallback() async {
++  Future<void> addEvent() async {
+     _textController.clear();
+ 
+     _validate = true;
+@@ -142,7 +142,8 @@
+             itemCount: week.events.length,
+             itemBuilder: (context, index) {
+               return ListTile(
+-                title: Text(week.events[index]),
++                title: Text(week.events[index].title),
++                subtitle: Text(formatDate(week.events[index].date)),
+                 trailing: PopupMenuButton<int>(
+                   onSelected: (value) async {
+                     if (value == 1) {
+@@ -175,7 +176,7 @@
+   }
+ 
+   Future changeEvent(int index) async {
+-    _textController.text = controller.selectedWeek.events[index];
++    _textController.text = controller.selectedWeek.events[index].title;
+     _validate = true;
+ 
+     String? newEventTitle = await _showChangeTitleDialog();

@@ -32,3 +32,6 @@ int weeksAmountBetweenMondays(DateTime firstDate, DateTime secondDate) {
 String formatDate(DateTime date) {
   return DateFormat('dd.MM.yyyy').format(date);
 }
+
+int dateToJson(DateTime value) => value.millisecondsSinceEpoch;
+DateTime dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);

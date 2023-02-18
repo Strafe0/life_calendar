@@ -46,7 +46,7 @@ class _WeekInfoState extends State<WeekInfo> {
         children: [ //todo: do all actions in dialog
           SpeedDialChild(
             child: const Icon(Icons.calendar_today),
-            onTap: addEventCallback,
+            onTap: addEvent,
           ),
           SpeedDialChild(
             child: const Icon(Icons.check_circle),
@@ -63,7 +63,7 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
 
-  Future<void> addEventCallback() async {
+  Future<void> addEvent() async {
     _textController.clear();
 
     _validate = true;
@@ -142,7 +142,8 @@ class _WeekInfoState extends State<WeekInfo> {
             itemCount: week.events.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(week.events[index]),
+                title: Text(week.events[index].title),
+                subtitle: Text(formatDate(week.events[index].date)),
                 trailing: PopupMenuButton<int>(
                   onSelected: (value) async {
                     if (value == 1) {
@@ -175,7 +176,7 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future changeEvent(int index) async {
-    _textController.text = controller.selectedWeek.events[index];
+    _textController.text = controller.selectedWeek.events[index].title;
     _validate = true;
 
     String? newEventTitle = await _showChangeTitleDialog();
