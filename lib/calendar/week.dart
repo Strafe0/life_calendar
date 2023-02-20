@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:life_calendar/utils.dart';
 
@@ -17,7 +18,9 @@ class Week {
   WeekState state;
   WeekAssessment assessment;
 
+  @JsonKey(toJson: goalsToJson, fromJson: goalsFromJson)
   List<Goal> goals = [];
+  @JsonKey(toJson: eventsToJson, fromJson: eventsFromJson)
   List<Event> events = [];
   String resume = '';
 
@@ -25,8 +28,23 @@ class Week {
   Map<String, dynamic> toJson() => _$WeekToJson(this);
 
 
-  // static String _eventsToJson(List<String> values) => jsonEncode(values);
-  // static List<String> _eventsFromJson(String values) => jsonDecode(values).cast<String>().toList();
+  static String eventsToJson(List<Event> values) => jsonEncode(values);
+  static List<Event> eventsFromJson(String values) {
+    List list = jsonDecode(values);
+    return List.generate(list.length, (i) => Event(
+      list[i]['title'],
+      DateTime.fromMillisecondsSinceEpoch(list[i]['date']),
+    ));
+  }
+
+  static String goalsToJson(List<Goal> values) => jsonEncode(values);
+  static List<Goal> goalsFromJson(String values) {
+    List list = jsonDecode(values);
+    return List.generate(list.length, (i) => Goal(
+      list[i]['title'],
+      list[i]['isCompleted'],
+    ));
+  }
 }
 
 enum WeekState {

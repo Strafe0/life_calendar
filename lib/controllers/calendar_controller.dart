@@ -29,14 +29,14 @@ class CalendarController {
     return bDay;
   }
 
-  Future<void> addEvent(String title) async {
+  Future<void> addEvent(Event newEvent) async {
     // var week = _calendarModel.calendar.years[selectedWeek!.yearId].weeks.firstWhere((element) => element.id == selectedWeek?.id);
-    selectedWeek.events.add(title);
+    selectedWeek.events.add(newEvent);
     await _calendarModel.updateEvent(selectedWeek);
   }
 
-  Future<void> changeEvent(int index, String newTitle) async {
-    selectedWeek.events[index] = newTitle;
+  Future<void> changeEventTitle(int index, String newTitle) async {
+    selectedWeek.events[index].title = newTitle;
     await _calendarModel.updateEvent(selectedWeek);
   }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 const int maxAge = 80;
@@ -35,3 +37,6 @@ String formatDate(DateTime date) {
 
 int dateToJson(DateTime value) => value.millisecondsSinceEpoch;
 DateTime dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);
+
+String listToJson(List<dynamic> list) => jsonEncode(list.map((e) => e.toJson()).toList());
+List jsonStringToList(String jsonString) => jsonDecode(jsonString);

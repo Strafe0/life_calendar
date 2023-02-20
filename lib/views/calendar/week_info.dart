@@ -67,10 +67,10 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    String? eventTitle = await _showChangeTitleDialog();
-    if (eventTitle != null && eventTitle.isNotEmpty) {
+    Event? newEvent = await _showEventDialog();
+    if (newEvent != null) {
       setState(() {
-        controller.addEvent(eventTitle);
+        controller.addEvent(newEvent);
       });
     }
   }
@@ -79,7 +79,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    String? goalTitle = await _showChangeTitleDialog();
+    String? goalTitle = await _showGoalTitleDialog();
     if (goalTitle != null && goalTitle.isNotEmpty) {
       setState(() {
         controller.addGoal(goalTitle);
@@ -179,10 +179,10 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.text = controller.selectedWeek.events[index].title;
     _validate = true;
 
-    String? newEventTitle = await _showChangeTitleDialog();
+    String? newEventTitle = await _showGoalTitleDialog();
     if (newEventTitle != null && newEventTitle.isNotEmpty) {
       setState(() {
-        controller.changeEvent(index, newEventTitle);
+        controller.changeEventTitle(index, newEventTitle);
       });
     }
   }
@@ -248,7 +248,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.text = controller.selectedWeek.goals[index].title;
     _validate = true;
 
-    String? newGoalTitle = await _showChangeTitleDialog();
+    String? newGoalTitle = await _showGoalTitleDialog();
     if (newGoalTitle != null && newGoalTitle.isNotEmpty) {
       setState(() {
         controller.changeGoalTitle(index, newGoalTitle);
@@ -256,7 +256,7 @@ class _WeekInfoState extends State<WeekInfo> {
     }
   }
 
-  Future<String?> _showChangeTitleDialog() async {
+  Future<String?> _showGoalTitleDialog() async {
     return await showDialog<String>(
       context: context,
       builder: (context) {
@@ -291,6 +291,78 @@ class _WeekInfoState extends State<WeekInfo> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  Future<Event?> _showEventDialog() async {
+    Week week = controller.selectedWeek;
+    DateTime eventDate = week.start;
+    final eventForm = GlobalKey<FormState>();
+
+    return await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Введите новое значение'),
+          content: StatefulBuilder(
+            builder: (context, setState) => Form(
+              key: eventForm,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _textController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Введите название',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Поле не может быть пустым';
+                      }
+                      return null;
+                    },
+                  ),
+                  InputDatePickerFormField(
+                    initialDate: week.start,
+                    firstDate: week.start,
+                    lastDate: week.end,
+                    errorFormatText: 'Неверный формат даты',
+                    errorInvalidText: 'Дата не соответствует неделе',
+                    onDateSubmitted: (date) {
+                      setState(() {
+                        eventDate = date;
+                      });
+                    },
+                    onDateSaved: (date) {
+                      setState(() {
+                        eventDate = date;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _validate = eventForm.currentState?.validate() ?? false;
+                });
+                if (_validate) {
+                  Navigator.pop(context, Event(_textController.text, eventDate));
+                }
+              },
+              child: const Text('Ок'),
+            ),
+          ],
         );
       },
     );

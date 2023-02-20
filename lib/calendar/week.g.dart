@@ -13,13 +13,9 @@ Week _$WeekFromJson(Map<String, dynamic> json) => Week(
       dateFromJson(json['end'] as int),
       $enumDecode(_$WeekStateEnumMap, json['state']),
       $enumDecode(_$WeekAssessmentEnumMap, json['assessment']),
-      (json['goals'] as List<dynamic>)
-          .map((e) => Goal.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      Week.goalsFromJson(json['goals'] as String),
       json['resume'] as String,
-    )..events = (json['events'] as List<dynamic>)
-        .map((e) => Event.fromJson(e as Map<String, dynamic>))
-        .toList();
+    )..events = Week.eventsFromJson(json['events'] as String);
 
 Map<String, dynamic> _$WeekToJson(Week instance) => <String, dynamic>{
       'id': instance.id,
@@ -28,8 +24,8 @@ Map<String, dynamic> _$WeekToJson(Week instance) => <String, dynamic>{
       'end': dateToJson(instance.end),
       'state': _$WeekStateEnumMap[instance.state]!,
       'assessment': _$WeekAssessmentEnumMap[instance.assessment]!,
-      'goals': instance.goals.map((e) => e.toJson()).toList(),
-      'events': instance.events.map((e) => e.toJson()).toList(),
+      'goals': Week.goalsToJson(instance.goals),
+      'events': Week.eventsToJson(instance.events),
       'resume': instance.resume,
     };
 

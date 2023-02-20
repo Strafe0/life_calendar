@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:life_calendar/utils.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -65,11 +63,11 @@ class AppDatabase {
   }
 
   Future<int> updateEvents(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?', [jsonEncode(week.events), week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?', [Week.eventsToJson(week.events), week.id]);
   }
 
   Future<int> updateGoals(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET goals = ? WHERE id = ?', [jsonEncode(week.goals), week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET goals = ? WHERE id = ?', [Week.goalsToJson(week.goals), week.id]);
   }
 
   Future<bool> tableIsEmpty() async {
