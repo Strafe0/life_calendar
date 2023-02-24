@@ -70,6 +70,10 @@ class AppDatabase {
     return await _db.rawUpdate('UPDATE $tableName SET goals = ? WHERE id = ?', [Week.goalsToJson(week.goals), week.id]);
   }
 
+  Future<int> updateResume(Week week) async {
+    return await _db.rawUpdate('UPDATE $tableName SET resume = ? WHERE id = ?', [week.resume, week.id]);
+  }
+
   Future<bool> tableIsEmpty() async {
     int? count = Sqflite.firstIntValue(await _db.rawQuery('SELECT COUNT(*) FROM $tableName'));
 

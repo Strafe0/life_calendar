@@ -64,4 +64,8 @@ class CalendarController {
     selectedWeek.goals.removeAt(index);
     await _calendarModel.updateGoal(selectedWeek);
   }
+
+  Future<void> addResume(String resumeText) async {
+    selectedWeek.resume = resumeText;
+  }
 }

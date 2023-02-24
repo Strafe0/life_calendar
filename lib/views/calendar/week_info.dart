@@ -32,18 +32,25 @@ class _WeekInfoState extends State<WeekInfo> {
       appBar: AppBar(
         title: Text('Неделя ${formatDate(week.start)} - ${formatDate(week.end)}'),
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        children: [
-          assessmentWidget(),
-          goalsWidget(),
-          eventsWidget(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          children: [
+            assessmentWidget(),
+            const SizedBox(height: 8.0,),
+            goalsWidget(),
+            const SizedBox(height: 8.0,),
+            eventsWidget(),
+            const SizedBox(height: 8.0,),
+            resumeWidget(),
+          ],
+        ),
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
-        children: [ //todo: do all actions in dialog
+        children: [
           SpeedDialChild(
             child: const Icon(Icons.calendar_today),
             onTap: addEvent,
@@ -54,9 +61,7 @@ class _WeekInfoState extends State<WeekInfo> {
           ),
           SpeedDialChild(
             child: const Icon(Icons.edit),
-            onTap: () {
-              //todo: add note
-            }
+            onTap: addResume,
           ),
         ],
       ),
@@ -88,28 +93,29 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Widget assessmentWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        color: Colors.blue[100],
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const Text('Дайте оценку неделе'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  radioButton(WeekAssessment.good),
-                  radioButton(WeekAssessment.bad),
-                  radioButton(WeekAssessment.poor),
-                ],
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Text('Дайте оценку неделе', style: Theme.of(context).textTheme.titleLarge,),
+        ),
+        Card(
+          color: Colors.blue[100],
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                radioButton(WeekAssessment.good),
+                radioButton(WeekAssessment.bad),
+                radioButton(WeekAssessment.poor),
+              ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
   
@@ -130,71 +136,18 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
 
-  Widget eventsWidget() {
-    Week week = controller.selectedWeek;
-
-    return Card(
-      child: Column(
-        children: [
-          const Text('События'),
-          week.events.isEmpty ? const Center(child: Text('Нет событий')) :
-          ListView.builder(
-            itemCount: week.events.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(week.events[index].title),
-                subtitle: Text(formatDate(week.events[index].date)),
-                trailing: PopupMenuButton<int>(
-                  onSelected: (value) async {
-                    if (value == 1) {
-                      await changeEvent(index);
-                      setState(() {});
-                    } else if (value == 2) {
-                      await controller.deleteEvent(index);
-                      setState(() {});
-                    }
-                  },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(
-                      value: 1,
-                      child: Text('Изменить'),
-                    ),
-                    PopupMenuItem(
-                      value: 2,
-                      child: Text('Удалить'),
-                    ),
-                  ],
-                ),
-              );
-            },
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future changeEvent(int index) async {
-    _textController.text = controller.selectedWeek.events[index].title;
-    _validate = true;
-
-    String? newEventTitle = await _showGoalTitleDialog();
-    if (newEventTitle != null && newEventTitle.isNotEmpty) {
-      setState(() {
-        controller.changeEventTitle(index, newEventTitle);
-      });
-    }
-  }
-
   Widget goalsWidget() {
     Week week = controller.selectedWeek;
 
-    return Card(
-      child: Column(
-        children: [
-          const Text('Цели'),
-          week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Text('Цели', style: Theme.of(context).textTheme.titleLarge),
+        ),
+        Card(
+          child: week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
           ListView.builder(
             itemCount: week.goals.length,
             itemBuilder: (context, index) {
@@ -239,8 +192,8 @@ class _WeekInfoState extends State<WeekInfo> {
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -294,6 +247,67 @@ class _WeekInfoState extends State<WeekInfo> {
         );
       },
     );
+  }
+
+  Widget eventsWidget() {
+    Week week = controller.selectedWeek;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Text('События', style: Theme.of(context).textTheme.titleLarge),
+        ),
+        Card(
+          child: week.events.isEmpty ? const Center(child: Text('Нет событий')) :
+          ListView.builder(
+            itemCount: week.events.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(week.events[index].title),
+                subtitle: Text(formatDate(week.events[index].date)),
+                trailing: PopupMenuButton<int>(
+                  onSelected: (value) async {
+                    if (value == 1) {
+                      await changeEvent(index);
+                      setState(() {});
+                    } else if (value == 2) {
+                      await controller.deleteEvent(index);
+                      setState(() {});
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 1,
+                      child: Text('Изменить'),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: Text('Удалить'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future changeEvent(int index) async {
+    _textController.text = controller.selectedWeek.events[index].title;
+    _validate = true;
+
+    String? newEventTitle = await _showGoalTitleDialog();
+    if (newEventTitle != null && newEventTitle.isNotEmpty) {
+      setState(() {
+        controller.changeEventTitle(index, newEventTitle);
+      });
+    }
   }
 
   Future<Event?> _showEventDialog() async {
@@ -363,6 +377,83 @@ class _WeekInfoState extends State<WeekInfo> {
               child: const Text('Ок'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget resumeWidget() {
+    String resume = controller.selectedWeek.resume;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Align(alignment: Alignment.centerLeft, child: Text('Итог', style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.start,)),
+        ),
+        Card(
+          shape: const RoundedRectangleBorder(
+            side: BorderSide(color: Colors.yellow, width: 2.0),
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Text(resume.isEmpty ? 'Не задано' : resume),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future addResume() async {
+    _textController.clear();
+
+    _validate = true;
+    String? resumeText = await _showResumeDialog();
+    if (resumeText != null && resumeText.isNotEmpty) {
+      setState(() {
+        controller.addResume(resumeText);
+      });
+    }
+  }
+
+  Future<String?> _showResumeDialog() async {
+    return await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Запишите ваши мысли о неделе'),
+              content: TextField(
+                controller: _textController,
+                autofocus: true,
+                maxLength: 500,
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: 'Введите итоги недели',
+                  errorText: _validate ? null : 'Поле не может быть пустым',
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Отмена'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _validate = _textController.text.isNotEmpty;
+                    });
+                    if (_validate) {
+                      Navigator.pop(context, _textController.text);
+                    }
+                  },
+                  child: const Text('Ок'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

@@ -104,4 +104,8 @@ class CalendarModel {
   Future updateGoal(Week week) async {
     await _db.updateGoals(week);
   }
+
+  Future updateResume(Week week) async {
+    await _db.updateResume(week);
+  }
 }
