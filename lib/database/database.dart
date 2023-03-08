@@ -62,6 +62,10 @@ class AppDatabase {
     return years;
   }
 
+  Future<int> updateAssessment(Week week) async {
+    return await _db.rawUpdate('UPDATE $tableName SET assessment = ? WHERE id = ?', [week.assessment.name, week.id]);
+  }
+
   Future<int> updateEvents(Week week) async {
     return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?', [Week.eventsToJson(week.events), week.id]);
   }

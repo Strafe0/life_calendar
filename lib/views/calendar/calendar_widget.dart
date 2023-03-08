@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
-import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/utils.dart';
 import 'package:life_calendar/setup.dart';
+import 'package:provider/provider.dart';
 
 double weekBoxSide = 6;
 double weekBoxPadding = 0.5;
@@ -21,12 +21,15 @@ class CalendarWidget extends StatelessWidget {
     debugPrint('screen width: $screenWidth');
     calculateSizes(screenWidth);
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _buildChildren(),
+    return ChangeNotifierProvider.value(
+      value: controller,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: _buildChildren(),
+        ),
       ),
     );
   }
@@ -127,7 +130,7 @@ class YearRow extends StatelessWidget {
     for (var week in weeks) {
       result.add(Padding(
         padding: EdgeInsets.symmetric(horizontal: weekBoxPadding),
-        child: WeekBox(week),
+        child: WeekBox(week.id, week.yearId),
       ));
     }
     return result;
@@ -135,36 +138,42 @@ class YearRow extends StatelessWidget {
 }
 
 
-class WeekBox extends StatelessWidget {
-  const WeekBox(this.week, {Key? key}) : super(key: key);
-  final Week week;
+class WeekBox extends StatefulWidget {
+  const WeekBox(this.id, this.yearId, {Key? key}) : super(key: key);
+  final int id;
+  final int yearId;
+  // final Week week;
 
   @override
-  Widget build(BuildContext context) {
-    final Color weekColor = week.state == WeekState.past
-        ? week.assessment == WeekAssessment.good ? goodWeekColor :
-          week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
-        : week.state == WeekState.future
-            ? futureWeekColor
-            : currentWeekColor;
+  State<WeekBox> createState() => _WeekBoxState();
+}
 
-    return SizedBox(
-      width: weekBoxSide,
-      height: weekBoxSide,
-      child: ElevatedButton(
-        onPressed: () {
-          getIt<CalendarController>().selectedWeek = week;
-          Navigator.pushNamed(context, '/weekInfo');
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll(weekColor),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(1.5),
-            side: BorderSide(color: weekColor),
-          )),
-        ),
-        child: Container(),
-      ),
+class _WeekBoxState extends State<WeekBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CalendarController>(
+      builder: (context, controller, child) {
+        final Color weekColor = controller.getWeekColor(widget.id, widget.yearId);
+
+        return SizedBox(
+          width: weekBoxSide,
+          height: weekBoxSide,
+          child: ElevatedButton(
+            onPressed: () {
+              controller.selectWeek(widget.id, widget.yearId);
+              Navigator.pushNamed(context, '/weekInfo');
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(weekColor),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1.5),
+                side: BorderSide(color: weekColor),
+              )),
+            ),
+            child: Container(),
+          ),
+        );
+      },
     );
   }
 }

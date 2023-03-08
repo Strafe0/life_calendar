@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/views/calendar/calendar_screen.dart';
 import 'package:life_calendar/views/calendar/week_info.dart';
 import 'package:life_calendar/views/date_picker_screen.dart';
@@ -41,9 +42,7 @@ class LifeCalendar extends StatelessWidget {
         Locale('en'),
         Locale('ru'),
       ],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: lightTheme,
       routes: {
         '/': (context) => const CalendarScreen(),
         '/datePicker': (context) => const DatePickerScreen(),

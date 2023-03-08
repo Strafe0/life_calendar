@@ -54,9 +54,12 @@ enum WeekState {
 }
 
 enum WeekAssessment {
-  good,
-  bad,
-  poor
+  good("Хорошо"),
+  bad("Плохо"),
+  poor("Нейтрально");
+
+  final String name;
+  const WeekAssessment(this.name);
 }
 
 @JsonSerializable()

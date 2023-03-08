@@ -97,6 +97,14 @@ class CalendarModel {
     calendar.years.addAll(await _db.getAll());
   }
 
+  Future updateAssessment(Week week) async {
+    var year = calendar.years.where((element) => element.age == week.yearId).first;
+    var selectedWeek = year.weeks.where((element) => element.id == week.id).first;
+    selectedWeek.assessment = week.assessment;
+
+    await _db.updateAssessment(week);
+  }
+
   Future updateEvent(Week week) async {
     await _db.updateEvents(week);
   }

@@ -1,10 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/calendar/year.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:life_calendar/theme.dart';
 
-class CalendarController {
+class CalendarController extends ChangeNotifier {
   final CalendarModel _calendarModel = getIt<CalendarModel>();
 
   int get numberOfWeeks => _calendarModel.totalNumberOfWeeksInLife;
@@ -27,6 +29,12 @@ class CalendarController {
     _calendarModel.selectedBirthday = bDay;
     _calendarModel.buildCalendar(true);
     return bDay;
+  }
+
+  Future<void> changeAssessment(WeekAssessment assessment) async {
+    selectedWeek.assessment = assessment;
+    await _calendarModel.updateAssessment(selectedWeek);
+    notifyListeners();
   }
 
   Future<void> addEvent(Event newEvent) async {
@@ -67,5 +75,24 @@ class CalendarController {
 
   Future<void> addResume(String resumeText) async {
     selectedWeek.resume = resumeText;
+  }
+
+  selectWeek(int id, int yearId) {
+    selectedWeek = getWeek(id, yearId);
+  }
+
+  Week getWeek(int id, int yearId) {
+    return _calendarModel.calendar.years[yearId].weeks.firstWhere((element) => element.id == id);
+  }
+
+  Color getWeekColor(int id, int yearId) {
+    Week week = getWeek(id, yearId);
+    final Color weekColor = week.state == WeekState.past
+        ? week.assessment == WeekAssessment.good ? goodWeekColor :
+          week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
+        : week.state == WeekState.future
+            ? futureWeekColor
+            : currentWeekColor;
+    return weekColor;
   }
 }

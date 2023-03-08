@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
+import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/utils.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -14,7 +15,7 @@ class WeekInfo extends StatefulWidget {
 
 class _WeekInfoState extends State<WeekInfo> {
   final CalendarController controller = getIt<CalendarController>();
-  WeekAssessment? assessment = WeekAssessment.poor;
+  WeekAssessment? assessment;
   late TextEditingController _textController;
   bool _validate = true;
   
@@ -22,6 +23,7 @@ class _WeekInfoState extends State<WeekInfo> {
   void initState() {
     super.initState();
     _textController = TextEditingController();
+    assessment = controller.selectedWeek.assessment;
   }
 
   @override
@@ -98,7 +100,7 @@ class _WeekInfoState extends State<WeekInfo> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Text('Дайте оценку неделе', style: Theme.of(context).textTheme.titleLarge,),
+          child: Text('Дайте оценку неделе', style: Theme.of(context).textTheme.titleMedium,),
         ),
         Card(
           color: Colors.blue[100],
@@ -108,9 +110,9 @@ class _WeekInfoState extends State<WeekInfo> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                radioButton(WeekAssessment.good),
-                radioButton(WeekAssessment.bad),
-                radioButton(WeekAssessment.poor),
+                radioButton(WeekAssessment.good, goodWeekColor),
+                radioButton(WeekAssessment.bad, badWeekColor),
+                radioButton(WeekAssessment.poor, poorWeekColor),
               ],
             ),
           ),
@@ -119,16 +121,20 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
   
-  Widget radioButton(WeekAssessment value) {
+  Widget radioButton(WeekAssessment value, Color color) {
     return Column(
       children: [
         Radio(
           value: value,
           groupValue: assessment,
+          fillColor: MaterialStatePropertyAll(color),
           onChanged: (WeekAssessment? newValue) {
-            setState(() {
-              assessment = newValue;
-            });
+            if (newValue != null) {
+              setState(() {
+                assessment = newValue;
+                controller.changeAssessment(newValue);
+              });
+            }
           },
         ),
         Text(value.name),
@@ -144,18 +150,23 @@ class _WeekInfoState extends State<WeekInfo> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Text('Цели', style: Theme.of(context).textTheme.titleLarge),
+          child: Text('Цели', style: Theme.of(context).textTheme.titleMedium),
         ),
-        Card(
-          child: week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
-          ListView.builder(
-            itemCount: week.goals.length,
-            itemBuilder: (context, index) {
-              if (week.goals.isEmpty) {
-                return const Center(child: Text('Нет поставленных задач'));
-              }
+        week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
+        ListView.builder(
+          itemCount: week.goals.length,
+          itemBuilder: (context, index) {
+            if (week.goals.isEmpty) {
+              return const Center(child: Text('Нет поставленных задач'));
+            }
 
-              return CheckboxListTile(
+            return Card(
+              elevation: 8.0,
+              color: Colors.purple[50],
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              child: CheckboxListTile(
                 value: week.goals[index].isCompleted,
                 title: Text(week.goals[index].title),
                 onChanged: (bool? newValue) {
@@ -187,11 +198,11 @@ class _WeekInfoState extends State<WeekInfo> {
                     }
                   },
                 ),
-              );
-            },
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-          ),
+              ),
+            );
+          },
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
         ),
       ],
     );
@@ -257,14 +268,19 @@ class _WeekInfoState extends State<WeekInfo> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Text('События', style: Theme.of(context).textTheme.titleLarge),
+          child: Text('События', style: Theme.of(context).textTheme.titleMedium),
         ),
-        Card(
-          child: week.events.isEmpty ? const Center(child: Text('Нет событий')) :
-          ListView.builder(
-            itemCount: week.events.length,
-            itemBuilder: (context, index) {
-              return ListTile(
+        week.events.isEmpty ? const Center(child: Text('Нет событий')) :
+        ListView.builder(
+          itemCount: week.events.length,
+          itemBuilder: (context, index) {
+            return Card(
+              elevation: 4.0,
+              color: Colors.orangeAccent[100],
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              child: ListTile(
                 title: Text(week.events[index].title),
                 subtitle: Text(formatDate(week.events[index].date)),
                 trailing: PopupMenuButton<int>(
@@ -288,11 +304,11 @@ class _WeekInfoState extends State<WeekInfo> {
                     ),
                   ],
                 ),
-              );
-            },
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-          ),
+              ),
+            );
+          },
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
         ),
       ],
     );
@@ -389,8 +405,9 @@ class _WeekInfoState extends State<WeekInfo> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 12.0),
-          child: Align(alignment: Alignment.centerLeft, child: Text('Итог', style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.start,)),
+          child: Align(alignment: Alignment.centerLeft, child: Text('Итог', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start,)),
         ),
+        resume.isEmpty ? const Center(child: Text('Не задано')) :
         Card(
           shape: const RoundedRectangleBorder(
             side: BorderSide(color: Colors.yellow, width: 2.0),
@@ -398,7 +415,7 @@ class _WeekInfoState extends State<WeekInfo> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Text(resume.isEmpty ? 'Не задано' : resume),
+            child: Text(resume),
           ),
         ),
       ],
