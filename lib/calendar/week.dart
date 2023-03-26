@@ -53,6 +53,7 @@ enum WeekState {
   future,
 }
 
+@JsonEnum(valueField: 'name')
 enum WeekAssessment {
   good("Хорошо"),
   bad("Плохо"),

@@ -5,6 +5,7 @@ import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/utils.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:yandex_mobileads/mobile_ads.dart';
 
 class WeekInfo extends StatefulWidget {
   const WeekInfo({Key? key}) : super(key: key);
@@ -29,26 +30,50 @@ class _WeekInfoState extends State<WeekInfo> {
   @override
   Widget build(BuildContext context) {
     Week week = controller.selectedWeek;
+    Size screenSize = MediaQuery.of(context).size;
+
+    final banner = BannerAd(
+      adUnitId: 'R-M-2265467-1',
+      // Flex-size
+      // adSize: AdSize.flexible(width: screenSize.width, height: bannerHeight),
+      // Sticky-size
+      adSize: AdSize.sticky(width: screenSize.width.toInt()),
+      adRequest: AdRequest(),
+      onAdLoaded: () {
+        /* Do something */
+      },
+      onAdFailedToLoad: (error) {
+        /* Do something */
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Неделя ${formatDate(week.start)} - ${formatDate(week.end)}'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: [
-            assessmentWidget(),
-            const SizedBox(height: 8.0,),
-            goalsWidget(),
-            const SizedBox(height: 8.0,),
-            eventsWidget(),
-            const SizedBox(height: 8.0,),
-            resumeWidget(),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              children: [
+                assessmentWidget(),
+                const SizedBox(height: 8.0,),
+                goalsWidget(),
+                const SizedBox(height: 8.0,),
+                eventsWidget(),
+                const SizedBox(height: 8.0,),
+                resumeWidget(),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: AdWidget(bannerAd: banner),
+          ),
+        ],
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
