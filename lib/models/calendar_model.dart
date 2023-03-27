@@ -12,11 +12,35 @@ class CalendarModel {
   late DateTime _mondayOfBirthdayWeek;
   Calendar calendar = Calendar();
   final _db = getIt<AppDatabase>();
+  late Week currentWeek;
 
-  void init() {
-    //TODO: get user settings from shared preferences and database
+  Future<void> init() async {
+    currentWeek = await currentWeekFromDb();
 
+    if (DateTime.now().isAfter(currentWeek.end) || DateTime.now().isBefore(currentWeek.start)) {
+      DateTime currentMonday = previousMonday(DateTime.now());
+      bool currentWeekInPast = DateTime.now().isAfter(currentWeek.end) ? true : false;
+
+      int yearId = currentMonday.year == currentWeek.end.year
+          ? currentWeek.yearId
+          : currentWeekInPast
+          ? currentWeek.yearId + 1
+          : currentWeek.yearId - 1;
+
+      int realCurrentWeekIndex = calendar.years[yearId].weeks.indexWhere((week) => datesIsTheSame(week.start, currentMonday));
+      Week realCurrentWeek = calendar.years[yearId].weeks[realCurrentWeekIndex];
+
+      realCurrentWeek.state = WeekState.current;
+      calendar.years[currentWeek.yearId].weeks.firstWhere((week) => week.id == currentWeek.id).state = currentWeekInPast ? WeekState.past : WeekState.future;
+
+      currentWeek = realCurrentWeek;
+      await updateCurrentWeek();
+    }
   }
+
+  Future<Week> currentWeekFromDb() async => await _db.getCurrentWeek();
+
+  Future<void> updateCurrentWeek() async => await _db.updateCurrentWeek(currentWeek.id);
 
   set selectedBirthday(DateTime dateTime) {
     _birthday = dateTime;
@@ -30,6 +54,7 @@ class CalendarModel {
     } else {
       await buildFromDatabase();
     }
+    init();
   }
 
   DateTime get birthday => _birthday;

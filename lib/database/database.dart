@@ -62,6 +62,23 @@ class AppDatabase {
     return years;
   }
 
+  Future<Week> getCurrentWeek() async {
+    var records = await _db.query(tableName, where: 'state = ?', whereArgs: [WeekState.current.name]);
+    return Week.fromJson(records.first);
+  }
+
+  Future<void> updateCurrentWeek(int currentWeekId) async {
+    int changeNumber = 0;
+    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE state = ?', [WeekState.past.name, WeekState.current.name]);
+    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id = ?', [WeekState.current.name, currentWeekId]);
+
+    if (changeNumber == 2) {
+      debugPrint('The current week has been successfully updated.');
+    } else {
+      debugPrint('Some error in current week update: number of changes in db - $changeNumber');
+    }
+  }
+
   Future<int> updateAssessment(Week week) async {
     return await _db.rawUpdate('UPDATE $tableName SET assessment = ? WHERE id = ?', [week.assessment.name, week.id]);
   }

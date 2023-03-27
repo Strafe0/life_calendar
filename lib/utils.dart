@@ -20,6 +20,17 @@ DateTime previousMonday(DateTime date) {
   return monday;
 }
 
+bool datesIsTheSame(DateTime first, DateTime second) {
+  if (first.year == second.year) {
+    if (first.month == second.month) {
+      if (first.day == second.day) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 int weeksAmountBetweenMondays(DateTime firstDate, DateTime secondDate) {
   Duration diff;
   if (firstDate.isBefore(secondDate)) {
