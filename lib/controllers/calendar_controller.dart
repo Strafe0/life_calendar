@@ -11,6 +11,7 @@ class CalendarController extends ChangeNotifier {
 
   int get numberOfWeeks => _calendarModel.totalNumberOfWeeksInLife;
   late Week selectedWeek;
+  Week get currentWeek => _calendarModel.currentWeek;
 
   List<Year> get allYears => _calendarModel.calendar.years;
   

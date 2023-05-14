@@ -70,6 +70,16 @@ ThemeData lightTheme = ThemeData(
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Color(0xFF003CAC),
     ),
+    iconTheme: IconThemeData(color: Color(0xFFFFFFFF)),
+  ),
+
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Color(0xFF0151DF), // primary
+    foregroundColor: Color(0xFFFFFFFF), // onPrimary
+  ),
+
+  iconTheme: const IconThemeData(
+    color: Color(0xFFFFFFFF),
   ),
 );
 
@@ -125,5 +135,18 @@ ThemeData darkTheme = ThemeData(
     bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, letterSpacing: 0.5),
     bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.5),
     bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, height: 1.33, letterSpacing: 0.4),
+  ),
+
+  appBarTheme: const AppBarTheme(
+    titleTextStyle: TextStyle(color: Color(0xFFFFFFFF), fontSize: 20, fontWeight: FontWeight.w400, height: 1.2, letterSpacing: 0.5), //titleLarge
+    backgroundColor: Color(0xFF0151DF), //primary
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarColor: Color(0xFF003CAC),
+    ),
+  ),
+
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Color(0xFF0151DF), // primary
+    foregroundColor: Color(0xFFFFFFFF), // onPrimary
   ),
 );

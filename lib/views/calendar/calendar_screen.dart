@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_calendar/views/calendar/calendar_widget.dart';
+import 'package:life_calendar/controllers/calendar_controller.dart';
+import 'package:life_calendar/setup.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -9,6 +11,8 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  final CalendarController controller = getIt<CalendarController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +24,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: SafeArea(
           child: CalendarWidget(),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Перейти к текущей неделе',
+        child: const Icon(Icons.location_searching),
+        onPressed: () {
+          var week = controller.currentWeek;
+          controller.selectWeek(week.id, week.yearId);
+          Navigator.pushNamed(context, '/weekInfo');
+        },
       ),
     );
   }
