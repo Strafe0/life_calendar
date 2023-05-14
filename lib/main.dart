@@ -32,6 +32,7 @@ class LifeCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Life Calendar',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

@@ -10,8 +10,21 @@ class CalendarScreen extends StatefulWidget {
   State<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProviderStateMixin {
   final CalendarController controller = getIt<CalendarController>();
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animationController.forward();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +34,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
         automaticallyImplyLeading: false,
       ),
       body: InteractiveViewer(
+        maxScale: 5,
         child: SafeArea(
-          child: CalendarWidget(),
+          child: Stack(
+            children: [
+              CalendarWidget(),
+              PositionedTransition(
+                rect: RelativeRectTween(
+                  begin: const RelativeRect.fromLTRB(0, 0, 0, 0),
+                  end: RelativeRect.fromLTRB(0, MediaQuery.of(context).size.height, 0, 0),
+                ).animate(_animationController),
+                child: Container(color: const Color(0xFFFFFFFF)),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

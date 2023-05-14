@@ -36,9 +36,9 @@ const _$WeekStateEnumMap = {
 };
 
 const _$WeekAssessmentEnumMap = {
-  WeekAssessment.good: 'good',
-  WeekAssessment.bad: 'bad',
-  WeekAssessment.poor: 'poor',
+  WeekAssessment.good: 'Хорошо',
+  WeekAssessment.bad: 'Плохо',
+  WeekAssessment.poor: 'Нейтрально',
 };
 
 Goal _$GoalFromJson(Map<String, dynamic> json) => Goal(
