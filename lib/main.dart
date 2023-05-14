@@ -49,6 +49,7 @@ class LifeCalendar extends StatelessWidget {
         '/weekInfo': (context) => const WeekInfo(),
       },
       initialRoute: firstTime ? '/datePicker' : '/',
+      // initialRoute: '/datePicker',
     );
   }
 }

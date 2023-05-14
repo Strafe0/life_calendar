@@ -14,6 +14,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Календарь жизни в неделях'),
+        automaticallyImplyLeading: false,
       ),
       body: InteractiveViewer(
         child: SafeArea(

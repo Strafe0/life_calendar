@@ -1,9 +1,11 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart' show debugPrint;
 import 'package:intl/intl.dart';
 
 const int maxAge = 80;
 const int maxWeekNumber = 53;
+DateTime minDate = DateTime(1970, 1, 1);
+DateTime maxDate = DateTime(2009, 1, 1);
 // const double weekBoxSide = 6;
 // const double weekBoxPadding = 0.5;
 
@@ -51,3 +53,58 @@ DateTime dateFromJson(int value) => DateTime.fromMillisecondsSinceEpoch(value);
 
 String listToJson(List<dynamic> list) => jsonEncode(list.map((e) => e.toJson()).toList());
 List jsonStringToList(String jsonString) => jsonDecode(jsonString);
+
+bool validateDateTime(DateTime dateTime) {
+  int day = dateTime.day;
+  int month = dateTime.month;
+  int year = dateTime.year;
+
+  if (year < minDate.year || year > maxDate.year || month <= 0 || month > 12) {
+    debugPrint('The year or month is out of range');
+    return false;
+  }
+
+  List<int> monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+    monthLength[1] = 29;
+  }
+
+  if (day > 0 && day <= monthLength[month - 1]) {
+    return true;
+  } else {
+    debugPrint('The invalid number of days $day in the ${month}th month');
+    return false;
+  }
+}
+
+final RegExp dateRegExp = RegExp(r'[0-3]\d\.[01]\d\.\d\d\d\d');
+
+DateTime? convertStringToDateTime(String dateTime) {
+  if (!dateRegExp.hasMatch(dateTime)) {
+    print('The date does not match the pattern.');
+    return null;
+  }
+
+  int? day = int.tryParse(dateTime.substring(0, 2));
+  int? month = int.tryParse(dateTime.substring(3, 5));
+  int? year = int.tryParse(dateTime.substring(6, 10));
+
+  if (day != null && month != null && year != null) {
+    if (year < minDate.year || year > maxDate.year || month <= 0 || month > 12) {
+      print('The year or month is out of range');
+      return null;
+    }
+
+    List<int> monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+      monthLength[1] = 29;
+    }
+
+    if (day > 0 && day <= monthLength[month - 1]) {
+      return DateTime(year, month, day);
+    } else {
+      print('The invalid number of days $day in the ${month}th month');
+    }
+  }
+  return null;
+}
