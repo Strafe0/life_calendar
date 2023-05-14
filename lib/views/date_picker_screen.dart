@@ -21,6 +21,7 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
   TextEditingController dateController = TextEditingController();
   List<ContentConfig> listContentConfig = [];
   var screenWidth = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width / WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+  var screenHeight = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.height / WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
   final _formKey = GlobalKey<FormFieldState>();
 
   @override
@@ -41,30 +42,46 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
     ));
 
     listContentConfig.add(ContentConfig(
-      description: "Каждая строка календаря соответствует прожитому году (52 или 53 недели) и начинается с недели, которая содержит ваш день рождения.",
+      marginTitle: EdgeInsets.zero,
+      description: "Каждая строка календаря соответствует прожитому году (52 или 53 недели). Каждый год начинается с недели, которая содержит ваш день рождения.",
       styleDescription: introDescriptionStyle,
-      pathImage: "assets/life_calendar_paper.png",
+      marginDescription: const EdgeInsets.only(top: 12.0, left: 24.0, right: 24.0),
+      pathImage: "assets/full_calendar_screenshot.png",
       widthImage: screenWidth * 0.75,
-      heightImage: 950 / 699 * (screenWidth * 0.75),
+      heightImage: screenHeight * 0.7,
+      // heightImage: 2052 / 1078 * (screenWidth * 0.75),
       foregroundImageFit: BoxFit.contain,
-      backgroundColor: Color(0xFF61D4FF),
+      backgroundColor: const Color(0xFF61D4FF),
     ));
 
     listContentConfig.add(ContentConfig(
-      description: "Нажав на квадрат, вы перейдете на экран выбранной недели. Чтобы перейти к текущей неделе, нажмите кнопку снизу справа.",
+      marginTitle: EdgeInsets.zero,
+      description: "Вы можете увеличивать календарь, как карту. Нажав на квадрат, вы перейдете на экран выбранной недели.",
       styleDescription: introDescriptionStyle,
-      pathImage: "assets/life_calendar_paper.png",
+      marginDescription: const EdgeInsets.only(top: 12.0, left: 24.0, right: 24.0),
+      pathImage: "assets/zoom.png",
       widthImage: screenWidth * 0.75,
-      heightImage: 950 / 699 * (screenWidth * 0.75),
+      heightImage: screenHeight * 0.7,
       foregroundImageFit: BoxFit.contain,
-      backgroundColor: Color(0xFF61D4FF),
+      backgroundColor: const Color(0xFF61D4FF),
+    ));
+
+    listContentConfig.add(ContentConfig(
+      marginTitle: EdgeInsets.zero,
+      description: "Чтобы сразу перейти к текущей неделе, нажмите на кнопку снизу справа.",
+      styleDescription: introDescriptionStyle,
+      marginDescription: const EdgeInsets.only(top: 12.0, left: 24.0, right: 24.0),
+      pathImage: "assets/full_calendar_screenshot.png",
+      widthImage: screenWidth * 0.75,
+      heightImage: screenHeight * 0.7,
+      foregroundImageFit: BoxFit.contain,
+      backgroundColor: const Color(0xFF61D4FF),
     ));
 
     listContentConfig.add(ContentConfig(
       title: "Введите дату рождения",
+      marginTitle: EdgeInsets.only(top: 32.0, bottom: screenHeight * 0.35),
       styleTitle: introTitleStyle,
-      // widgetTitle: Text("Введите дату рождения"),
-      // widgetDescription: _createDateTextField(),
       centerWidget: _createDateTextField(),
       backgroundColor: const Color(0xFF61D4FF),
     ));
@@ -119,6 +136,7 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
           }
         },
         decoration: InputDecoration(
+          border: const OutlineInputBorder(),
           suffixIcon: IconButton(
             onPressed: () async {
               DateTime? pickedDate = await showDatePicker(
