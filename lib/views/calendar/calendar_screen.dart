@@ -32,6 +32,9 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
       appBar: AppBar(
         title: const Text('Календарь жизни в неделях'),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(onPressed: () => Navigator.pushNamed(context, '/thanks'), icon: Icon(Icons.handshake_outlined, color: Theme.of(context).iconTheme.color)),
+        ],
       ),
       body: InteractiveViewer(
         maxScale: 5,
