@@ -47,7 +47,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                   begin: const RelativeRect.fromLTRB(0, 0, 0, 0),
                   end: RelativeRect.fromLTRB(0, MediaQuery.of(context).size.height, 0, 0),
                 ).animate(_animationController),
-                child: Container(color: const Color(0xFFFFFFFF)),
+                child: Container(color: Theme.of(context).colorScheme.background),
               ),
             ],
           ),

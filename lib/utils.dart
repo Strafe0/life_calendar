@@ -81,7 +81,7 @@ final RegExp dateRegExp = RegExp(r'[0-3]\d\.[01]\d\.\d\d\d\d');
 
 DateTime? convertStringToDateTime(String dateTime) {
   if (!dateRegExp.hasMatch(dateTime)) {
-    print('The date does not match the pattern.');
+    debugPrint('The date does not match the pattern.');
     return null;
   }
 

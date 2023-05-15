@@ -153,7 +153,7 @@ class _WeekBoxState extends State<WeekBox> {
   Widget build(BuildContext context) {
     return Consumer<CalendarController>(
       builder: (context, controller, child) {
-        final Color weekColor = controller.getWeekColor(widget.id, widget.yearId);
+        final Color weekColor = controller.getWeekColor(widget.id, widget.yearId, Theme.of(context).brightness);
 
         return SizedBox(
           width: weekBoxSide,
@@ -169,6 +169,7 @@ class _WeekBoxState extends State<WeekBox> {
                 borderRadius: BorderRadius.circular(1.5),
                 side: BorderSide(color: weekColor),
               )),
+              elevation: const MaterialStatePropertyAll(0),
             ),
             child: Container(),
           ),

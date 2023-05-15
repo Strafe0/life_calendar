@@ -76,6 +76,12 @@ class CalendarController extends ChangeNotifier {
 
   Future<void> addResume(String resumeText) async {
     selectedWeek.resume = resumeText;
+    await _calendarModel.updateResume(selectedWeek);
+  }
+
+  Future<void> deleteResume() async {
+    selectedWeek.resume = '';
+    await _calendarModel.updateResume(selectedWeek);
   }
 
   selectWeek(int id, int yearId) {
@@ -86,14 +92,26 @@ class CalendarController extends ChangeNotifier {
     return _calendarModel.calendar.years[yearId].weeks.firstWhere((element) => element.id == id);
   }
 
-  Color getWeekColor(int id, int yearId) {
+  Color getWeekColor(int id, int yearId, Brightness brightness) {
     Week week = getWeek(id, yearId);
-    final Color weekColor = week.state == WeekState.past
-        ? week.assessment == WeekAssessment.good ? goodWeekColor :
-          week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
-        : week.state == WeekState.future
-            ? futureWeekColor
-            : currentWeekColor;
+    // final Color weekColor = week.state == WeekState.past
+    //     ? week.assessment == WeekAssessment.good ? goodWeekColor :
+    //       week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
+    //     : week.state == WeekState.future
+    //         ? futureWeekColor
+    //         : currentWeekColor;
+
+    var theme = brightness == Brightness.light ? lightTheme : darkTheme;
+    final Color weekColor = switch (week.state) {
+      WeekState.past => switch (week.assessment) {
+        WeekAssessment.good => goodWeekColor,
+        WeekAssessment.bad => badWeekColor,
+        WeekAssessment.poor => theme.colorScheme.secondary,
+      },
+      WeekState.current => currentWeekColor,
+      WeekState.future => theme.colorScheme.secondaryContainer,
+    };
+
     return weekColor;
   }
 }

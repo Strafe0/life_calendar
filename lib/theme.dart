@@ -81,6 +81,25 @@ ThemeData lightTheme = ThemeData(
   iconTheme: const IconThemeData(
     color: Color(0xFFFFFFFF),
   ),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: const MaterialStatePropertyAll(Color(0xFF0151DF)),
+      foregroundColor: const MaterialStatePropertyAll(Color(0xFFFFFFFF)),
+      textStyle: const MaterialStatePropertyAll(TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.43, letterSpacing: 0.1)),
+      elevation: MaterialStateProperty.resolveWith((states) {
+        const Set<MaterialState> interactiveStates = <MaterialState>{
+          MaterialState.pressed,
+          MaterialState.hovered,
+          MaterialState.focused,
+        };
+        if (states.any(interactiveStates.contains)) {
+          return 0;
+        }
+        return 8;
+      }),
+    ),
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -138,15 +157,44 @@ ThemeData darkTheme = ThemeData(
   ),
 
   appBarTheme: const AppBarTheme(
-    titleTextStyle: TextStyle(color: Color(0xFFFFFFFF), fontSize: 20, fontWeight: FontWeight.w400, height: 1.2, letterSpacing: 0.5), //titleLarge
-    backgroundColor: Color(0xFF0151DF), //primary
+    titleTextStyle: TextStyle(color: Color(0xFFC7C6CA), fontSize: 20, fontWeight: FontWeight.w400, height: 1.2, letterSpacing: 0.5), //titleLarge
+    backgroundColor: Color(0xFF303034), //primary
     systemOverlayStyle: SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF003CAC),
+      statusBarColor: Color(0xFF1B1B1F),
     ),
+    iconTheme: IconThemeData(color: Color(0xFFC7C6CA)),
   ),
 
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Color(0xFF0151DF), // primary
-    foregroundColor: Color(0xFFFFFFFF), // onPrimary
+    backgroundColor: Color(0xFFB5C4FF), // primary
+    foregroundColor: Color(0xFF00297A), // onPrimary
+  ),
+
+  iconTheme: const IconThemeData(
+    color: Color(0xFFC7C6CA),
+  ),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: const MaterialStatePropertyAll(Color(0xFFB5C4FF)),
+      foregroundColor: const MaterialStatePropertyAll(Color(0xFF00297A)),
+      textStyle: const MaterialStatePropertyAll(TextStyle(fontSize: 14, fontWeight: FontWeight.w500, height: 1.43, letterSpacing: 0.1)),
+      elevation: MaterialStateProperty.resolveWith((states) {
+        const Set<MaterialState> interactiveStates = <MaterialState>{
+          MaterialState.pressed,
+          MaterialState.hovered,
+          MaterialState.focused,
+        };
+        if (states.any(interactiveStates.contains)) {
+          return 0;
+        }
+        return 8;
+      }),
+    ),
+  ),
+
+  cardTheme: const CardTheme(
+    color: Color(0xFF303034),
+    elevation: 2.0,
   ),
 );

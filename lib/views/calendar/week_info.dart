@@ -38,7 +38,7 @@ class _WeekInfoState extends State<WeekInfo> {
       // adSize: AdSize.flexible(width: screenSize.width, height: bannerHeight),
       // Sticky-size
       adSize: AdSize.sticky(width: screenSize.width.toInt()),
-      adRequest: AdRequest(),
+      adRequest: const AdRequest(),
       onAdLoaded: () {
         /* Do something */
       },
@@ -54,17 +54,19 @@ class _WeekInfoState extends State<WeekInfo> {
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 70),
             child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               children: [
+                const SizedBox(height: 20.0,),
                 assessmentWidget(),
-                const SizedBox(height: 8.0,),
+                const SizedBox(height: 20.0,),
                 goalsWidget(),
-                const SizedBox(height: 8.0,),
+                const SizedBox(height: 20.0,),
                 eventsWidget(),
-                const SizedBox(height: 8.0,),
+                const SizedBox(height: 20.0,),
                 resumeWidget(),
               ],
             ),
@@ -79,16 +81,16 @@ class _WeekInfoState extends State<WeekInfo> {
         icon: Icons.add,
         children: [
           SpeedDialChild(
+            child: const Icon(Icons.edit),
+            onTap: _showResumeDialog,
+          ),
+          SpeedDialChild(
             child: const Icon(Icons.calendar_today),
             onTap: addEvent,
           ),
           SpeedDialChild(
             child: const Icon(Icons.check_circle),
             onTap: addGoal,
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.edit),
-            onTap: addResume,
           ),
         ],
       ),
@@ -124,12 +126,10 @@ class _WeekInfoState extends State<WeekInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 12.0),
+          padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
           child: Text('Дайте оценку неделе', style: Theme.of(context).textTheme.titleMedium,),
         ),
         Card(
-          color: Colors.blue[100],
-          elevation: 8,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -137,7 +137,7 @@ class _WeekInfoState extends State<WeekInfo> {
               children: [
                 radioButton(WeekAssessment.good, goodWeekColor),
                 radioButton(WeekAssessment.bad, badWeekColor),
-                radioButton(WeekAssessment.poor, poorWeekColor),
+                radioButton(WeekAssessment.poor, Theme.of(context).colorScheme.secondary),
               ],
             ),
           ),
@@ -162,7 +162,7 @@ class _WeekInfoState extends State<WeekInfo> {
             }
           },
         ),
-        Text(value.name),
+        Text(value.name, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }
@@ -174,26 +174,26 @@ class _WeekInfoState extends State<WeekInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 12.0),
+          padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
           child: Text('Цели', style: Theme.of(context).textTheme.titleMedium),
         ),
         week.goals.isEmpty ? const Center(child: Text('Нет задач')) :
         ListView.builder(
           itemCount: week.goals.length,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             if (week.goals.isEmpty) {
               return const Center(child: Text('Нет поставленных задач'));
             }
 
             return Card(
-              elevation: 8.0,
-              color: Colors.purple[50],
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: CheckboxListTile(
                 value: week.goals[index].isCompleted,
                 title: Text(week.goals[index].title),
+                contentPadding: const EdgeInsets.only(left: 8),
                 onChanged: (bool? newValue) {
                   if (newValue != null) {
                     setState(() {
@@ -292,22 +292,22 @@ class _WeekInfoState extends State<WeekInfo> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 12.0),
+          padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
           child: Text('События', style: Theme.of(context).textTheme.titleMedium),
         ),
         week.events.isEmpty ? const Center(child: Text('Нет событий')) :
         ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: week.events.length,
           itemBuilder: (context, index) {
             return Card(
-              elevation: 4.0,
-              color: Colors.orangeAccent[100],
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: ListTile(
                 title: Text(week.events[index].title),
                 subtitle: Text(formatDate(week.events[index].date)),
+                contentPadding: const EdgeInsets.only(left: 16),
                 trailing: PopupMenuButton<int>(
                   onSelected: (value) async {
                     if (value == 1) {
@@ -380,6 +380,7 @@ class _WeekInfoState extends State<WeekInfo> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 16),
                   InputDatePickerFormField(
                     initialDate: week.start,
                     firstDate: week.start,
@@ -429,38 +430,71 @@ class _WeekInfoState extends State<WeekInfo> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 12.0),
+          padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
           child: Align(alignment: Alignment.centerLeft, child: Text('Итог', style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start,)),
         ),
         resume.isEmpty ? const Center(child: Text('Не задано')) :
         Card(
           shape: const RoundedRectangleBorder(
-            side: BorderSide(color: Colors.yellow, width: 2.0),
+            // side: BorderSide(color: Colors.yellow, width: 2.0),
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Text(resume),
+            padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0, right: 0),
+            child: Row(
+              children: [
+                Expanded(child: Text(resume)),
+                PopupMenuButton<int>(
+                  onSelected: (value) async {
+                    if (value == 1) {
+                      await _showResumeDialog();
+                      setState(() {});
+                    } else if (value == 2) {
+                      await controller.deleteResume();
+                      setState(() {});
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 1,
+                      child: Text('Изменить'),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: Text('Удалить'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Future addResume() async {
-    _textController.clear();
+  // Future addResume() async {
+  //   _textController.clear();
+  //
+  //   _validate = true;
+  //   String? resumeText = await _showResumeDialog();
+  //   if (resumeText != null && resumeText.isNotEmpty) {
+  //     setState(() {
+  //       controller.addResume(resumeText);
+  //     });
+  //   }
+  // }
+  //
+  // Future changeResume() async {
+  //   _textController.text = controller.selectedWeek.resume;
+  //
+  //   String? resumeText = await _showResumeDialog();
+  // }
 
-    _validate = true;
-    String? resumeText = await _showResumeDialog();
-    if (resumeText != null && resumeText.isNotEmpty) {
-      setState(() {
-        controller.addResume(resumeText);
-      });
-    }
-  }
+  Future _showResumeDialog() async {
+    _textController.text = controller.selectedWeek.resume;
 
-  Future<String?> _showResumeDialog() async {
-    return await showDialog<String>(
+    String? resumeText = await showDialog<String>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -499,6 +533,12 @@ class _WeekInfoState extends State<WeekInfo> {
         );
       },
     );
+
+    if (resumeText != null && resumeText.isNotEmpty) {
+      setState(() {
+        controller.addResume(resumeText);
+      });
+    }
   }
 
   @override
