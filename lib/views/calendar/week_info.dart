@@ -29,6 +29,8 @@ class _WeekInfoState extends State<WeekInfo> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('build WeekInfo');
+
     Week week = controller.selectedWeek;
     Size screenSize = MediaQuery.of(context).size;
 
@@ -48,6 +50,7 @@ class _WeekInfoState extends State<WeekInfo> {
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Неделя ${formatDate(week.start)} - ${formatDate(week.end)}'),
       ),
@@ -115,9 +118,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _validate = true;
     String? goalTitle = await _showGoalTitleDialog();
     if (goalTitle != null && goalTitle.isNotEmpty) {
-      setState(() {
-        controller.addGoal(goalTitle);
-      });
+      controller.addGoal(goalTitle).then((value) => setState(() {}));
     }
   }
 
@@ -255,7 +256,7 @@ class _WeekInfoState extends State<WeekInfo> {
               title: const Text('Введите новое значение'),
               content: TextField(
                 controller: _textController,
-                autofocus: true,
+                // autofocus: true,
                 decoration: InputDecoration(
                   hintText: 'Введите название',
                   errorText: _validate ? null : 'Поле не может быть пустым',
@@ -388,14 +389,10 @@ class _WeekInfoState extends State<WeekInfo> {
                     errorFormatText: 'Неверный формат даты',
                     errorInvalidText: 'Дата не соответствует неделе',
                     onDateSubmitted: (date) {
-                      setState(() {
-                        eventDate = date;
-                      });
+                      eventDate = date;
                     },
                     onDateSaved: (date) {
-                      setState(() {
-                        eventDate = date;
-                      });
+                      eventDate = date;
                     },
                   ),
                 ],
@@ -409,9 +406,8 @@ class _WeekInfoState extends State<WeekInfo> {
             ),
             TextButton(
               onPressed: () {
-                setState(() {
-                  _validate = eventForm.currentState?.validate() ?? false;
-                });
+                eventForm.currentState!.save();
+                _validate = eventForm.currentState!.validate();
                 if (_validate) {
                   Navigator.pop(context, Event(_textController.text, eventDate));
                 }
