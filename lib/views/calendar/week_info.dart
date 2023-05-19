@@ -86,14 +86,20 @@ class _WeekInfoState extends State<WeekInfo> {
           SpeedDialChild(
             child: const Icon(Icons.edit),
             onTap: _showResumeDialog,
+            backgroundColor: Theme.of(context).cardTheme.color,
+            foregroundColor: Theme.of(context).colorScheme.primary,
           ),
           SpeedDialChild(
             child: const Icon(Icons.calendar_today),
             onTap: addEvent,
+            backgroundColor: Theme.of(context).cardTheme.color,
+            foregroundColor: Theme.of(context).colorScheme.primary,
           ),
           SpeedDialChild(
             child: const Icon(Icons.check_circle),
             onTap: addGoal,
+            backgroundColor: Theme.of(context).cardTheme.color,
+            foregroundColor: Theme.of(context).colorScheme.primary,
           ),
         ],
       ),
@@ -104,7 +110,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    Event? newEvent = await _showEventDialog();
+    Event? newEvent = await _showEventDialog(controller.selectedWeek.start);
     if (newEvent != null) {
       setState(() {
         controller.addEvent(newEvent);
@@ -301,18 +307,20 @@ class _WeekInfoState extends State<WeekInfo> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: week.events.length,
           itemBuilder: (context, index) {
+            Event event = week.events[index];
+
             return Card(
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: ListTile(
-                title: Text(week.events[index].title),
-                subtitle: Text(formatDate(week.events[index].date)),
+                title: Text(event.title),
+                subtitle: Text(formatDate(event.date)),
                 contentPadding: const EdgeInsets.only(left: 16),
                 trailing: PopupMenuButton<int>(
                   onSelected: (value) async {
                     if (value == 1) {
-                      await changeEvent(index);
+                      await changeEvent(index, event);
                       setState(() {});
                     } else if (value == 2) {
                       await controller.deleteEvent(index);
@@ -340,21 +348,21 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
 
-  Future changeEvent(int index) async {
-    _textController.text = controller.selectedWeek.events[index].title;
+  Future changeEvent(int index, Event event) async {
+    _textController.text = event.title;
     _validate = true;
 
-    String? newEventTitle = await _showGoalTitleDialog();
-    if (newEventTitle != null && newEventTitle.isNotEmpty) {
+    Event? newEvent = await _showEventDialog(event.date);
+    if (newEvent != null) {
       setState(() {
-        controller.changeEventTitle(index, newEventTitle);
+        controller.changeEvent(index, newEvent);
       });
     }
   }
 
-  Future<Event?> _showEventDialog() async {
+  Future<Event?> _showEventDialog(DateTime initialDate) async {
     Week week = controller.selectedWeek;
-    DateTime eventDate = week.start;
+    DateTime eventDate = initialDate;
     final eventForm = GlobalKey<FormState>();
 
     return await showDialog(
@@ -383,7 +391,7 @@ class _WeekInfoState extends State<WeekInfo> {
                   ),
                   const SizedBox(height: 16),
                   InputDatePickerFormField(
-                    initialDate: week.start,
+                    initialDate: initialDate,
                     firstDate: week.start,
                     lastDate: week.end,
                     errorFormatText: 'Неверный формат даты',
