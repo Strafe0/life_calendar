@@ -7,8 +7,11 @@ const Color badWeekColor = Color(0xFFFC0F00);
 const Color futureWeekColor = Color(0xFFb0bec5);
 const Color currentWeekColor = Color(0xFF2196f3);
 
-const TextStyle introDescriptionStyle = TextStyle(color: Color(0xFF00174D), fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.5); // bodyMediumD
+const TextStyle introDescriptionStyle = TextStyle(color: Color(0xFF00174D), fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.5); // bodyMedium
 const TextStyle introTitleStyle = TextStyle(color: Color(0xFF00174D), fontSize: 28, fontWeight: FontWeight.w400, height: 1.29);
+const TextStyle introNextStyle = TextStyle(color: Color(0xFF0151DF), fontSize: 16, fontWeight: FontWeight.w500, letterSpacing: 0.5);
+const TextStyle introSkipStyle = TextStyle(color: Color(0xFF0151DF), fontSize: 11, fontWeight: FontWeight.w500, height: 1.45, letterSpacing: 0.5);
+const TextStyle introDoneStyle = TextStyle(color: Color(0xFF0151DF), fontSize: 16, fontWeight: FontWeight.w500, letterSpacing: 0.5);
 
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
