@@ -12,23 +12,16 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProviderStateMixin {
   final CalendarController controller = getIt<CalendarController>();
-  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _animationController.forward();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Календарь жизни в неделях'),
         automaticallyImplyLeading: false,
@@ -39,18 +32,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
       body: InteractiveViewer(
         maxScale: 5,
         child: SafeArea(
-          child: Stack(
-            children: [
-              CalendarWidget(),
-              PositionedTransition(
-                rect: RelativeRectTween(
-                  begin: const RelativeRect.fromLTRB(0, 0, 0, 0),
-                  end: RelativeRect.fromLTRB(0, MediaQuery.of(context).size.height, 0, 0),
-                ).animate(_animationController),
-                child: Container(color: Theme.of(context).colorScheme.background),
-              ),
-            ],
-          ),
+          child: CalendarWidget(),
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,105 +1,125 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/utils.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:provider/provider.dart';
 
-double weekBoxSide = 6;
-double weekBoxPadding = 0.5;
 
-class CalendarWidget extends StatelessWidget {
-  CalendarWidget({Key? key}) : super(key: key);
+class CalendarWidget extends StatefulWidget {
+  const CalendarWidget({Key? key}) : super(key: key);
 
+  @override
+  State<CalendarWidget> createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  double screenWidth = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width / WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
   final CalendarController controller = getIt<CalendarController>();
+  List<Widget> children = [
+    const Center(child: Text('Загрузка')),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    calculateSizes(screenWidth);
+    Map<String, dynamic> arguments = {
+      "allYears": controller.allYears,
+      "screenWidth": screenWidth.round(),
+    };
+    compute(_buildChildren, arguments).then((resultChildren) {
+      children = resultChildren;
+      controller.calendarIsReady();
+      debugPrint('build children finished');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    debugPrint('screen width: $screenWidth');
-    calculateSizes(screenWidth);
+    debugPrint('build CalendarWidget');
 
     return ChangeNotifierProvider.value(
       value: controller,
       child: Padding(
         padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: _buildChildren(),
+        child: Consumer<CalendarController>(
+          builder: (context, controller, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: children,
+            );
+          },
         ),
       ),
     );
   }
 
-  List<Widget> _buildChildren() {
-    List<Widget> result = [];
-    // result.add(const Align(alignment: Alignment.centerLeft, child: Text('Недели ->')));
-    List<Widget> weekIndexRow = [];
-
-    for (int i = 0; i < maxWeekNumber+1; i++) {
-      bool isDivisibleBy5 = i % 5 == 0 && i != 0 ? true : false;
-      weekIndexRow.add(Opacity(
-        opacity: isDivisibleBy5 || i == 1 ? 1.0 : 0.0,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: weekBoxPadding),
-          child: SizedBox(
-            height: weekBoxSide,
-            width: i == 0 ? weekBoxSide * 2 : weekBoxSide,
-            child: OverflowBox(
-              alignment: Alignment.center,
-              maxWidth: double.infinity,
-              child: Text(
-                i.toString(),
-                style: TextStyle(fontSize: isDivisibleBy5 || i == 1 ? 8 : 4),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.visible,
-                softWrap: false,
-                maxLines: 1,
-              ),
-            ),
-          ),
-        ),
-      ));
-    }
-    result.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: weekIndexRow,));
-
-    for (Year year in controller.allYears) {
-      result.add(YearRow(year, year.weeks));
-    }
-    return result;
-  }
-
   void calculateSizes(double screenWidth) {
     int width = screenWidth.round();
-    // weekBoxPadding = (width - 16) / 636;
     weekBoxPadding = (width - 28) / 636;
-    // weekBoxPadding = double.parse(((width - 16) / 636).toStringAsFixed(1));
     weekBoxSide = weekBoxPadding * 10;
-
-    debugPrint('weekBoxPadding: $weekBoxPadding');
-    debugPrint('weekBoxSide: $weekBoxSide');
   }
 }
 
+List<Widget> _buildChildren(Map<String, dynamic> args) {
+  List<Widget> result = [];
+  List<Widget> weekIndexRow = [];
+
+  List<Year> allYears = args["allYears"];
+  int width = args["screenWidth"];
+  double padding = (width - 28) / 636;
+  double side = padding * 10;
+
+  for (int i = 0; i < maxWeekNumber+1; i++) {
+    bool isDivisibleBy5 = i % 5 == 0 && i != 0 ? true : false;
+    weekIndexRow.add(Opacity(
+      opacity: isDivisibleBy5 || i == 1 ? 1.0 : 0.0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: padding),
+        child: SizedBox(
+          height: side,
+          width: i == 0 ? side * 2 : side,
+          child: OverflowBox(
+            alignment: Alignment.center,
+            maxWidth: double.infinity,
+            child: Text(
+              i.toString(),
+              style: TextStyle(fontSize: isDivisibleBy5 || i == 1 ? 8 : 4),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.visible,
+              softWrap: false,
+              maxLines: 1,
+            ),
+          ),
+        ),
+      ),
+    ));
+  }
+  result.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: weekIndexRow,));
+
+  for (Year year in allYears) {
+    result.add(YearRow(year));
+  }
+  return result;
+}
+
 class YearRow extends StatelessWidget {
-  const YearRow(this.year, this.weeks, {Key? key}) : super(key: key);
+  const YearRow(this.year, {Key? key}) : super(key: key);
 
   final Year year;
-  final List<Week> weeks;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      // mainAxisSize: MainAxisSize.min,
-      children: _buildChildren(),
+      children: _buildYearChildren(year),
     );
   }
 
-  List<Widget> _buildChildren() {
+  List<Widget> _buildYearChildren(Year year) {
     List<Widget> result = [];
 
     bool divisibleBy5 = year.age % 5 == 0 ? true : false;
@@ -127,16 +147,15 @@ class YearRow extends StatelessWidget {
       ),
     ));
 
-    for (var week in weeks) {
+    for (var week in year.weeks) {
       result.add(Padding(
         padding: EdgeInsets.symmetric(horizontal: weekBoxPadding),
-        child: WeekBox(week.id, week.yearId),
+        child: WeekBox(week.id, week.yearId, key: ValueKey('${week.yearId}:${week.id}'),),
       ));
     }
     return result;
   }
 }
-
 
 class WeekBox extends StatefulWidget {
   const WeekBox(this.id, this.yearId, {Key? key}) : super(key: key);
@@ -151,30 +170,27 @@ class WeekBox extends StatefulWidget {
 class _WeekBoxState extends State<WeekBox> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<CalendarController>(
-      builder: (context, controller, child) {
-        final Color weekColor = controller.getWeekColor(widget.id, widget.yearId, Theme.of(context).brightness);
+    final CalendarController controller = getIt<CalendarController>();
+    final Color weekColor = controller.getWeekColor(widget.id, widget.yearId, Theme.of(context).brightness);
 
-        return SizedBox(
-          width: weekBoxSide,
-          height: weekBoxSide,
-          child: ElevatedButton(
-            onPressed: () {
-              controller.selectWeek(widget.id, widget.yearId);
-              Navigator.pushNamed(context, '/weekInfo');
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(weekColor),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(1.5),
-                side: BorderSide(color: weekColor),
-              )),
-              elevation: const MaterialStatePropertyAll(0),
-            ),
-            child: Container(),
-          ),
-        );
-      },
+    return SizedBox(
+      width: weekBoxSide,
+      height: weekBoxSide,
+      child: ElevatedButton(
+        onPressed: () {
+          controller.selectWeek(widget.id, widget.yearId);
+          Navigator.pushNamed(context, '/weekInfo').then((_) => setState(() {}));
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(weekColor),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1.5),
+            side: BorderSide(color: weekColor),
+          )),
+          elevation: const MaterialStatePropertyAll(0),
+        ),
+        child: Container(),
+      ),
     );
   }
 }

@@ -35,6 +35,7 @@ class _WeekInfoState extends State<WeekInfo> {
     Size screenSize = MediaQuery.of(context).size;
 
     final banner = BannerAd(
+      // adUnitId: 'demo-banner-yandex',
       adUnitId: 'R-M-2265467-1',
       // Flex-size
       // adSize: AdSize.flexible(width: screenSize.width, height: bannerHeight),
@@ -262,7 +263,7 @@ class _WeekInfoState extends State<WeekInfo> {
               title: const Text('Введите новое значение'),
               content: TextField(
                 controller: _textController,
-                // autofocus: true,
+                autofocus: true,
                 decoration: InputDecoration(
                   hintText: 'Введите название',
                   errorText: _validate ? null : 'Поле не может быть пустым',

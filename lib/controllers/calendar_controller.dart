@@ -23,6 +23,8 @@ class CalendarController extends ChangeNotifier {
     return result;
   }
 
+  void calendarIsReady() => notifyListeners();
+
   Future<DateTime> setBirthday(DateTime bDay) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('birthday', bDay.millisecondsSinceEpoch);
@@ -35,7 +37,6 @@ class CalendarController extends ChangeNotifier {
   Future<void> changeAssessment(WeekAssessment assessment) async {
     selectedWeek.assessment = assessment;
     await _calendarModel.updateAssessment(selectedWeek);
-    notifyListeners();
   }
 
   Future<void> addEvent(Event newEvent) async {
@@ -46,6 +47,11 @@ class CalendarController extends ChangeNotifier {
 
   Future<void> changeEventTitle(int index, String newTitle) async {
     selectedWeek.events[index].title = newTitle;
+    await _calendarModel.updateEvent(selectedWeek);
+  }
+
+  Future<void> changeEvent(int index, Event newEvent) async {
+    selectedWeek.events[index] = newEvent;
     await _calendarModel.updateEvent(selectedWeek);
   }
 
@@ -94,12 +100,6 @@ class CalendarController extends ChangeNotifier {
 
   Color getWeekColor(int id, int yearId, Brightness brightness) {
     Week week = getWeek(id, yearId);
-    // final Color weekColor = week.state == WeekState.past
-    //     ? week.assessment == WeekAssessment.good ? goodWeekColor :
-    //       week.assessment == WeekAssessment.bad ? badWeekColor : poorWeekColor
-    //     : week.state == WeekState.future
-    //         ? futureWeekColor
-    //         : currentWeekColor;
 
     var theme = brightness == Brightness.light ? lightTheme : darkTheme;
     final Color weekColor = switch (week.state) {

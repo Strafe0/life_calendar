@@ -1,13 +1,24 @@
 import 'dart:convert';
-import 'package:flutter/material.dart' show debugPrint;
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 const int maxAge = 80;
 const int maxWeekNumber = 53;
+
 DateTime minDate = DateTime(1970, 1, 1);
 DateTime maxDate = DateTime(2009, 1, 1);
-// const double weekBoxSide = 6;
-// const double weekBoxPadding = 0.5;
+
+double weekBoxSide = 6;
+double weekBoxPadding = 0.5;
+
+final dateMaskFormatter = MaskTextInputFormatter(
+  mask: '##.##.####',
+  filter: {
+    "#": RegExp(r'[0-9]'),
+  },
+  type: MaskAutoCompletionType.lazy,
+);
 
 DateTime previousMonday(DateTime date) {
   DateTime monday = date;

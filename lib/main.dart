@@ -8,6 +8,7 @@ import 'package:life_calendar/views/date_picker_screen.dart';
 import 'package:life_calendar/views/thanks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:life_calendar/models/calendar_model.dart';
+import 'package:yandex_mobileads/mobile_ads.dart';
 
 bool firstTime = true;
 
@@ -24,6 +25,7 @@ Future main() async {
     getIt<CalendarModel>().selectedBirthday = DateTime.fromMillisecondsSinceEpoch(birthday);
     await getIt<CalendarModel>().buildCalendar(firstTime);
   }
+  MobileAds.initialize().whenComplete(() => debugPrint('MobileAds initialized'));
   runApp(const LifeCalendar());
 }
 

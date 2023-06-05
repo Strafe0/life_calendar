@@ -1,8 +1,6 @@
-import 'dart:ui';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:life_calendar/theme.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:flutter/services.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/utils.dart';
@@ -208,18 +206,3 @@ class _DatePickerScreenState extends State<DatePickerScreen> {
     );
   }
 }
-
-final dateMaskFormatter = MaskTextInputFormatter(
-  // mask: 'd#.m#.y# h#:M#',
-  mask: '##.##.####',
-  filter: {
-    "#": RegExp(r'[0-9]'),
-    // "d": RegExp(r'[0-3]'),
-    // "m": RegExp(r'[01]'),
-    // "y": RegExp(r'[0-5]'),
-    // "_": RegExp(r'\s'),
-    // "2": RegExp(r'2'),
-    // "0": RegExp(r'0'),
-  },
-  type: MaskAutoCompletionType.lazy,
-);
