@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/views/calendar/calendar_screen.dart';
 import 'package:life_calendar/views/calendar/week_info.dart';
-import 'package:life_calendar/views/date_picker_screen.dart';
+import 'package:life_calendar/views/onboarding.dart';
 import 'package:life_calendar/views/thanks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:life_calendar/models/calendar_model.dart';
@@ -50,7 +50,7 @@ class LifeCalendar extends StatelessWidget {
       darkTheme: darkTheme,
       routes: {
         '/': (context) => const CalendarScreen(),
-        '/datePicker': (context) => const DatePickerScreen(),
+        '/datePicker': (context) => const OnBoardingScreen(),
         '/weekInfo': (context) => const WeekInfo(),
         '/thanks': (context) => const ThanksScreen(),
       },

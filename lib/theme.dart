@@ -103,6 +103,10 @@ ThemeData lightTheme = ThemeData(
       }),
     ),
   ),
+
+  inputDecorationTheme: const InputDecorationTheme(
+    border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1B1B1F))),
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -199,5 +203,9 @@ ThemeData darkTheme = ThemeData(
   cardTheme: const CardTheme(
     color: Color(0xFF303034),
     elevation: 2.0,
+  ),
+
+  inputDecorationTheme: const InputDecorationTheme(
+    border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE4E2E6))),
   ),
 );
