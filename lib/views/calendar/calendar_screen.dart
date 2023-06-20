@@ -4,6 +4,7 @@ import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:life_calendar/calendar/week.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProviderStateMixin {
   final CalendarController controller = getIt<CalendarController>();
+  final _searchDateFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -53,10 +55,64 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Календарь жизни в неделях'),
+          title: const Text('Календарь жизни'),
           automaticallyImplyLeading: false,
           actions: [
-            IconButton(onPressed: () => Navigator.pushNamed(context, '/thanks'), icon: Icon(Icons.handshake_outlined, color: Theme.of(context).iconTheme.color)),
+            IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/thanks'),
+              icon: Icon(Icons.handshake_outlined, color: Theme.of(context).iconTheme.color),
+            ),
+            IconButton(
+              onPressed: () async {
+                DateTime? searchDate;
+                await showDialog<DateTime>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text(
+                        'Поиск недели',
+                        // style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      content: Form(
+                        key: _searchDateFormKey,
+                        child: InputDatePickerFormField(
+                          firstDate: controller.allYears.first.start,
+                          lastDate: controller.allYears.last.end,
+                          fieldHintText: 'ДД.ММ.ГГГГ',
+                          onDateSaved: (DateTime? date) async {
+                            searchDate = date;
+                          },
+                          onDateSubmitted: (DateTime? date) {
+                            searchDate = date;
+                          },
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Отмена'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _searchDateFormKey.currentState!.save();
+                            if (searchDate != null) {
+                              Week foundWeek = controller.findWeekByDate(searchDate!);
+                              controller.selectWeek(foundWeek.id, foundWeek.yearId);
+                              Navigator.pushNamed(context, '/weekInfo').then((value) {
+                                Navigator.pop(context);
+                                setState(() {});
+                              });
+                            }
+                          },
+                          child: const Text('Найти'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.search),
+            ),
           ],
         ),
         body: InteractiveViewer(

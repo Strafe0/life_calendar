@@ -118,4 +118,22 @@ class CalendarController extends ChangeNotifier {
 
     return weekColor;
   }
+
+  Week findWeekByDate(DateTime date) {
+    DateTime birthday = DateTime(date.year, _calendarModel.birthday.month, _calendarModel.birthday.day);
+    int yearId = date.year - _calendarModel.birthday.year;
+    if (date.isBefore(birthday)) {
+      yearId--;
+    }
+
+    Year year = _calendarModel.calendar.years[yearId];
+
+    for (int i = 0; i < year.weeks.length; i++) {
+      if (date.isBefore(year.weeks[i].end)) {
+        return year.weeks[i];
+      }
+    }
+
+    return year.weeks.first;
+  }
 }
