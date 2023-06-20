@@ -54,6 +54,8 @@ class _WeekInfoState extends State<WeekInfo> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Неделя ${formatDate(week.start)} - ${formatDate(week.end)}'),
+        titleSpacing: 0,
+        leadingWidth: 48,
       ),
       body: Stack(
         children: [
@@ -83,24 +85,34 @@ class _WeekInfoState extends State<WeekInfo> {
       ),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
+        spaceBetweenChildren: 16,
         children: [
           SpeedDialChild(
+            label: 'Заметка',
+            labelBackgroundColor: Colors.transparent,
             child: const Icon(Icons.edit),
             onTap: _showResumeDialog,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
+            shape: const CircleBorder(),
           ),
           SpeedDialChild(
+            label: 'Событие',
+            labelBackgroundColor: Colors.transparent,
             child: const Icon(Icons.calendar_today),
             onTap: addEvent,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
+            shape: const CircleBorder(),
           ),
           SpeedDialChild(
-            child: const Icon(Icons.check_circle),
+            label: 'Задача',
+            labelBackgroundColor: Colors.transparent,
+            child: const Icon(Icons.check),
             onTap: addGoal,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
+            shape: const CircleBorder(),
           ),
         ],
       ),

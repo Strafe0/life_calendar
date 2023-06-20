@@ -185,7 +185,7 @@ class _WeekBoxState extends State<WeekBox> {
           backgroundColor: MaterialStatePropertyAll(weekColor),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(1.5),
-            side: BorderSide(color: weekColor),
+            // side: BorderSide(color: widget.id == 1313 ? Colors.white : Colors.transparent),
           )),
           elevation: const MaterialStatePropertyAll(0),
         ),

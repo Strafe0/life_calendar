@@ -35,7 +35,7 @@ class _ThanksScreenState extends State<ThanksScreen> {
               const SizedBox(height: 8.0),
               ElevatedButton(onPressed: _writeButton, child: const Text('Написать')),
               const SizedBox(height: 24),
-              Text('Также вы можете покормить разработчика.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
+              Text('Также вы можете угостить разработчика.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
               const SizedBox(height: 8.0),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
