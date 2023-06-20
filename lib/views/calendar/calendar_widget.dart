@@ -78,7 +78,7 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
     weekIndexRow.add(Opacity(
       opacity: isDivisibleBy5 || i == 1 ? 1.0 : 0.0,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: padding),
+        padding: EdgeInsets.only(left: padding, right: padding, bottom: padding * 5),
         child: SizedBox(
           height: side,
           width: i == 0 ? side * 2 : side,
