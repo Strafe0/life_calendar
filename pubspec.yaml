@@ -35,9 +35,19 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.3.3
   json_serializable: ^6.6.1
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
     - assets/onboarding/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path_android: "assets/ic_launcher_full.png"
+  image_path_ios: "assets/ic_launcher_full.png"
+  adaptive_icon_background: "#0151DF"
+  adaptive_icon_foreground: "assets/ic_launcher.png"
+  min_sdk_android: 21
