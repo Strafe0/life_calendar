@@ -109,7 +109,11 @@ class CalendarController extends ChangeNotifier {
         WeekAssessment.poor => theme.colorScheme.secondary,
       },
       WeekState.current => currentWeekColor,
-      WeekState.future => theme.colorScheme.secondaryContainer,
+      WeekState.future => switch (week.assessment) {
+        WeekAssessment.good => goodWeekColor,
+        WeekAssessment.bad => badWeekColor,
+        WeekAssessment.poor => theme.colorScheme.secondaryContainer,
+      }
     };
 
     return weekColor;
