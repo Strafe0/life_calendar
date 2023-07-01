@@ -1,5 +1,5 @@
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/utils/utility_functions.dart';
 
 class Year {
   Year(this.start, this.end, this.age);

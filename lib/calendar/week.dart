@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/utils/utility_functions.dart';
 
 part 'week.g.dart';
 

@@ -1,24 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
-const int maxAge = 80;
-const int maxWeekNumber = 53;
-
-DateTime minDate = DateTime(1970, 1, 1);
-DateTime maxDate = DateTime(2009, 1, 1);
-
-double weekBoxSide = 6;
-double weekBoxPadding = 0.5;
-
-final dateMaskFormatter = MaskTextInputFormatter(
-  mask: '##.##.####',
-  filter: {
-    "#": RegExp(r'[0-9]'),
-  },
-  type: MaskAutoCompletionType.lazy,
-);
+import 'package:life_calendar/utils/utility_variables.dart';
 
 DateTime previousMonday(DateTime date) {
   DateTime monday = date;
@@ -88,9 +71,7 @@ bool validateDateTime(DateTime dateTime) {
   }
 }
 
-final RegExp dateRegExp = RegExp(r'[0-3]\d\.[01]\d\.\d\d\d\d');
-
-DateTime? convertStringToDateTime(String dateTime) {
+DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTime? lastDate}) {
   if (!dateRegExp.hasMatch(dateTime)) {
     debugPrint('The date does not match the pattern.');
     return null;
@@ -112,10 +93,26 @@ DateTime? convertStringToDateTime(String dateTime) {
     }
 
     if (day > 0 && day <= monthLength[month - 1]) {
-      return DateTime(year, month, day);
+      DateTime result = DateTime(year, month, day);
+      if (firstDate != null && lastDate != null) {
+        if (result.isAfter(firstDate) && result.isBefore(lastDate)) {
+          return result;
+        }
+      } else {
+        return result;
+      }
     } else {
       print('The invalid number of days $day in the ${month}th month');
     }
   }
   return null;
+}
+
+Future<DateTime?> selectDateTimeInCalendar(BuildContext context, {DateTime? initialDate, DateTime? firstDate, DateTime? lastDate}) async {
+  return await showDatePicker(
+    context: context,
+    initialDate: initialDate ?? minDate,
+    firstDate: firstDate ?? minDate,
+    lastDate: lastDate ?? maxDate,
+  );
 }

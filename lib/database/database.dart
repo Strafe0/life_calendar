@@ -1,4 +1,4 @@
-import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:life_calendar/calendar/week.dart';

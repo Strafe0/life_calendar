@@ -14,7 +14,9 @@ class CalendarController extends ChangeNotifier {
   Week get currentWeek => _calendarModel.currentWeek;
 
   List<Year> get allYears => _calendarModel.calendar.years;
-  
+
+  ValueNotifier<int> changedWeekId = ValueNotifier(0);
+
   List<Week> get allWeeks {
     List<Week> result = [];
     for (var year in _calendarModel.calendar.years) {
@@ -95,7 +97,8 @@ class CalendarController extends ChangeNotifier {
   }
 
   Week getWeek(int id, int yearId) {
-    return _calendarModel.calendar.years[yearId].weeks.firstWhere((element) => element.id == id);
+    int firstWeekId = _calendarModel.calendar.years[yearId].weeks.first.id;
+    return _calendarModel.calendar.years[yearId].weeks[id - firstWeekId];
   }
 
   Color getWeekColor(int id, int yearId, Brightness brightness) {

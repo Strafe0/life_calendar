@@ -3,8 +3,9 @@ import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/theme.dart';
-import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
 
 class WeekInfo extends StatefulWidget {

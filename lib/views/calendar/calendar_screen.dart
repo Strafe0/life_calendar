@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:life_calendar/utils/transitions_builder.dart';
+import 'package:life_calendar/utils/utility_functions.dart';
+import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/views/calendar/calendar_widget.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
@@ -100,8 +103,12 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                               controller.selectWeek(foundWeek.id, foundWeek.yearId);
                               Navigator.pushNamed(context, '/weekInfo').then((value) {
                                 Navigator.pop(context);
-                                setState(() {});
-                              });
+
+                                await Navigator.push(context, PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) => WeekInfo(),
+                                  transitionsBuilder: ScreenTransition.fadeTransition,
+                                )).then((value) => controller.changedWeekId.value = foundWeek.id);
+                              }
                             }
                           },
                           child: const Text('Найти'),
@@ -127,7 +134,11 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
           onPressed: () {
             var week = controller.currentWeek;
             controller.selectWeek(week.id, week.yearId);
-            Navigator.pushNamed(context, '/weekInfo');
+
+            Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => WeekInfo(),
+              transitionsBuilder: ScreenTransition.fadeTransition,
+            ));
           },
         ),
       ),

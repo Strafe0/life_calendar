@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
-import 'package:life_calendar/utils.dart';
+import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:provider/provider.dart';
 
