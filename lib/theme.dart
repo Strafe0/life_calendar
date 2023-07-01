@@ -107,6 +107,17 @@ ThemeData lightTheme = ThemeData(
   inputDecorationTheme: const InputDecorationTheme(
     border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1B1B1F))),
   ),
+
+  cardTheme: const CardTheme(
+    color: Color(0xFFF2F0F4),
+    surfaceTintColor: Colors.transparent,
+    elevation: 1.0,
+  ),
+
+  dialogTheme: const DialogTheme(
+    backgroundColor: Color(0xFFF2F0F4),
+    surfaceTintColor: Colors.transparent,
+  ),
 );
 
 ThemeData darkTheme = ThemeData(
@@ -200,12 +211,18 @@ ThemeData darkTheme = ThemeData(
     ),
   ),
 
+  inputDecorationTheme: const InputDecorationTheme(
+    border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE4E2E6))),
+  ),
+
   cardTheme: const CardTheme(
     color: Color(0xFF303034),
+    surfaceTintColor: Colors.transparent,
     elevation: 2.0,
   ),
 
-  inputDecorationTheme: const InputDecorationTheme(
-    border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE4E2E6))),
+  dialogTheme: const DialogTheme(
+    backgroundColor: Color(0xFF303034),
+    surfaceTintColor: Colors.transparent,
   ),
 );

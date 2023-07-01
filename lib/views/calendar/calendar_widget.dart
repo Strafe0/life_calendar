@@ -160,9 +160,11 @@ class YearRow extends StatelessWidget {
     ));
 
     for (var week in year.weeks) {
+      final ValueKey<int> weekBoxKey = ValueKey<int>(week.id);
+
       result.add(Padding(
         padding: EdgeInsets.symmetric(horizontal: weekBoxPadding),
-        child: WeekBox(week.id, week.yearId, key: ValueKey('${week.yearId}:${week.id}'),),
+        child: WeekBox(week.id, week.yearId, key: weekBoxKey),
       ));
     }
     return result;
@@ -180,9 +182,20 @@ class WeekBox extends StatefulWidget {
 }
 
 class _WeekBoxState extends State<WeekBox> {
+  final CalendarController controller = getIt.get<CalendarController>();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.changedWeekId.addListener(() {
+      if (controller.changedWeekId.value == widget.id) {
+        setState(() {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final CalendarController controller = getIt<CalendarController>();
     final Color weekColor = controller.getWeekColor(widget.id, widget.yearId, Theme.of(context).brightness);
 
     return SizedBox(
@@ -191,13 +204,13 @@ class _WeekBoxState extends State<WeekBox> {
       child: ElevatedButton(
         onPressed: () {
           controller.selectWeek(widget.id, widget.yearId);
-          Navigator.pushNamed(context, '/weekInfo').then((_) => setState(() {}));
+          Navigator.pushNamed(context, '/weekInfo')
+              .then((_) => setState(() {}));
         },
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll(weekColor),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(1.5),
-            // side: BorderSide(color: widget.id == 1313 ? Colors.white : Colors.transparent),
           )),
           elevation: const MaterialStatePropertyAll(0),
         ),

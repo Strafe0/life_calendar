@@ -9,6 +9,8 @@ import 'package:life_calendar/theme.dart';
 class CalendarController extends ChangeNotifier {
   final CalendarModel _calendarModel = getIt<CalendarModel>();
 
+  DateTime get birthday => _calendarModel.birthday;
+  DateTime get lastDay => _calendarModel.calendar.years.last.weeks.last.end;
   int get numberOfWeeks => _calendarModel.totalNumberOfWeeksInLife;
   late Week selectedWeek;
   Week get currentWeek => _calendarModel.currentWeek;

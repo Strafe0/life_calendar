@@ -8,6 +8,7 @@ import 'package:life_calendar/setup.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:life_calendar/calendar/week.dart';
+import 'package:life_calendar/views/calendar/week_info.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -18,15 +19,12 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProviderStateMixin {
   final CalendarController controller = getIt<CalendarController>();
-  final _searchDateFormKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  final _searchDateFormKey = GlobalKey<FormFieldState>();
+  final TextEditingController _dateTimeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('build CalendarScreen');
     return WillPopScope(
       onWillPop: () async {
         return await showDialog<bool>(
@@ -76,19 +74,45 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                         'Поиск недели',
                         // style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      content: Form(
+                      content: TextFormField(
                         key: _searchDateFormKey,
-                        child: InputDatePickerFormField(
-                          firstDate: controller.allYears.first.start,
-                          lastDate: controller.allYears.last.end,
-                          fieldHintText: 'ДД.ММ.ГГГГ',
-                          onDateSaved: (DateTime? date) async {
-                            searchDate = date;
-                          },
-                          onDateSubmitted: (DateTime? date) {
-                            searchDate = date;
-                          },
+                        controller: _dateTimeController,
+                        keyboardType: TextInputType.datetime,
+                        inputFormatters: [dateMaskFormatter],
+                        decoration: InputDecoration(
+                          hintText: 'ДД.ММ.ГГГГ',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.calendar_month),
+                            onPressed: () async {
+                              DateTime? pickedDateTime = await selectDateTimeInCalendar(context, initialDate: DateTime.now());
+                              if (pickedDateTime != null) {
+                                _dateTimeController.text = formatDate(pickedDateTime);
+                                searchDate = pickedDateTime;
+                              }
+                            },
+                          ),
                         ),
+                        validator: (String? dateTime) {
+                          if (dateTime != null && dateTime.isNotEmpty) {
+                            DateTime? convertedDateTime = convertStringToDateTime(dateTime, firstDate: controller.birthday, lastDate: controller.lastDay);
+                            if (convertedDateTime == null) {
+                              return 'Недопустимое значение';
+                            }
+                            return null;
+                          } else {
+                            return 'Введите дату и время';
+                          }
+                        },
+                        onSaved: (String? date) async {
+                          if (date != null) {
+                            searchDate = convertStringToDateTime(date);
+                          }
+                        },
+                        onFieldSubmitted: (String? date) {
+                          if (_searchDateFormKey.currentState!.validate()) {
+                            searchDate = convertStringToDateTime(date!);
+                          }
+                        },
                       ),
                       actions: [
                         TextButton(
@@ -96,12 +120,12 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                           child: const Text('Отмена'),
                         ),
                         TextButton(
-                          onPressed: () {
-                            _searchDateFormKey.currentState!.save();
-                            if (searchDate != null) {
-                              Week foundWeek = controller.findWeekByDate(searchDate!);
-                              controller.selectWeek(foundWeek.id, foundWeek.yearId);
-                              Navigator.pushNamed(context, '/weekInfo').then((value) {
+                          onPressed: () async {
+                            if (_searchDateFormKey.currentState!.validate()) {
+                              _searchDateFormKey.currentState!.save();
+                              if (searchDate != null) {
+                                Week foundWeek = controller.findWeekByDate(searchDate!);
+                                controller.selectWeek(foundWeek.id, foundWeek.yearId);
                                 Navigator.pop(context);
 
                                 await Navigator.push(context, PageRouteBuilder(
@@ -130,7 +154,6 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
         ),
         floatingActionButton: FloatingActionButton(
           tooltip: 'Перейти к текущей неделе',
-          child: const Icon(Icons.location_searching),
           onPressed: () {
             var week = controller.currentWeek;
             controller.selectWeek(week.id, week.yearId);
@@ -140,6 +163,8 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
               transitionsBuilder: ScreenTransition.fadeTransition,
             ));
           },
+          shape: const CircleBorder(),
+          child: const Icon(Icons.location_searching),
         ),
       ),
     );

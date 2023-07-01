@@ -242,8 +242,9 @@ class _DateInputScreenState extends State<DateInputScreen> {
   }
 
   final CalendarController controller = getIt<CalendarController>();
+  final TextEditingController dateTimeController = TextEditingController();
   DateTime? birthday;
-  final _dateFormKey = GlobalKey<FormState>();
+  final _dateFormKey = GlobalKey<FormFieldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -254,21 +255,55 @@ class _DateInputScreenState extends State<DateInputScreen> {
         const Spacer(),
         Image.asset('assets/onboarding/small_calendar.png', width: 0.3 * width),
         const SizedBox(height: 80),
-        Form(
+        TextFormField(
           key: _dateFormKey,
-          child: InputDatePickerFormField(
-            firstDate: DateTime(1970),
-            lastDate: DateTime(2022),
-            fieldHintText: 'ДД.ММ.ГГГГ',
-            fieldLabelText: 'Введите дату рождения',
-            onDateSaved: (DateTime? date) async {
-              birthday = date;
-              await controller.setBirthday(birthday!);
-            },
-            onDateSubmitted: (DateTime? date) async {
-              birthday = date;
-            },
+          controller: dateTimeController,
+          keyboardType: TextInputType.datetime,
+          inputFormatters: [dateMaskFormatter],
+          decoration: InputDecoration(
+            hintText: 'ДД.ММ.ГГГГ',
+            labelText: 'Введите дату рождения',
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.calendar_month),
+              onPressed: () async {
+                DateTime? pickedDateTime = await selectDateTimeInCalendar(
+                    context,
+                    firstDate: minDate,
+                    lastDate: maxBirthDate,
+                );
+
+                if (pickedDateTime != null) {
+                  dateTimeController.text = formatDate(pickedDateTime);
+                  birthday = pickedDateTime;
+                }
+              },
+            ),
           ),
+          validator: (String? dateTime) {
+            if (dateTime != null && dateTime.isNotEmpty) {
+              DateTime? convertedDateTime = convertStringToDateTime(dateTime, firstDate: minDate, lastDate: maxBirthDate);
+              if (convertedDateTime == null) {
+                return 'Недопустимое значение';
+              }
+              return null;
+            } else {
+              return 'Введите дату и время';
+            }
+          },
+          onSaved: (String? dateTime) async {
+            if (dateTime != null) {
+              DateTime? convertedDateTime = convertStringToDateTime(dateTime);
+              if (convertedDateTime != null) {
+                birthday = convertedDateTime;
+                await controller.setBirthday(birthday!);
+              }
+            }
+          },
+          onFieldSubmitted: (String? dateTime) {
+            if (_dateFormKey.currentState!.validate()) {
+              birthday = convertStringToDateTime(dateTime!);
+            }
+          },
         ),
         const Spacer(),
         SizedBox(
@@ -276,9 +311,11 @@ class _DateInputScreenState extends State<DateInputScreen> {
           width: 0.5 * width,
           child: ElevatedButton(
             onPressed: () {
-              _dateFormKey.currentState!.save();
-              if (birthday != null) {
-                Navigator.pushReplacementNamed(context, '/');
+              if (_dateFormKey.currentState!.validate()) {
+                _dateFormKey.currentState!.save();
+                if (birthday != null) {
+                  Navigator.pushReplacementNamed(context, '/');
+                }
               }
             },
             child: const Text('ГОТОВО'),

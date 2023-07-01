@@ -18,13 +18,13 @@ class WeekInfo extends StatefulWidget {
 class _WeekInfoState extends State<WeekInfo> {
   final CalendarController controller = getIt<CalendarController>();
   WeekAssessment? assessment;
-  late TextEditingController _textController;
+  final TextEditingController _textController = TextEditingController();
   bool _validate = true;
+  final TextEditingController _dateController = TextEditingController();
   
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
     assessment = controller.selectedWeek.assessment;
   }
 
@@ -89,8 +89,10 @@ class _WeekInfoState extends State<WeekInfo> {
         spaceBetweenChildren: 16,
         children: [
           SpeedDialChild(
-            label: 'Заметка',
-            labelBackgroundColor: Colors.transparent,
+            labelWidget: const Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Text('Итог'),
+            ),
             child: const Icon(Icons.edit),
             onTap: _showResumeDialog,
             backgroundColor: Theme.of(context).cardTheme.color,
@@ -98,8 +100,10 @@ class _WeekInfoState extends State<WeekInfo> {
             shape: const CircleBorder(),
           ),
           SpeedDialChild(
-            label: 'Событие',
-            labelBackgroundColor: Colors.transparent,
+            labelWidget: const Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Text('Событие'),
+            ),
             child: const Icon(Icons.calendar_today),
             onTap: addEvent,
             backgroundColor: Theme.of(context).cardTheme.color,
@@ -107,8 +111,10 @@ class _WeekInfoState extends State<WeekInfo> {
             shape: const CircleBorder(),
           ),
           SpeedDialChild(
-            label: 'Задача',
-            labelBackgroundColor: Colors.transparent,
+            labelWidget: const Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Text('Цель'),
+            ),
             child: const Icon(Icons.check),
             onTap: addGoal,
             backgroundColor: Theme.of(context).cardTheme.color,
@@ -124,7 +130,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    Event? newEvent = await _showEventDialog(controller.selectedWeek.start);
+    Event? newEvent = await _showEventDialog(controller.selectedWeek.start, isCreation: true);
     if (newEvent != null) {
       setState(() {
         controller.addEvent(newEvent);
@@ -136,7 +142,7 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.clear();
 
     _validate = true;
-    String? goalTitle = await _showGoalTitleDialog();
+    String? goalTitle = await _showGoalTitleDialog(isCreation: true);
     if (goalTitle != null && goalTitle.isNotEmpty) {
       controller.addGoal(goalTitle).then((value) => setState(() {}));
     }
@@ -213,7 +219,7 @@ class _WeekInfoState extends State<WeekInfo> {
               ),
               child: CheckboxListTile(
                 value: week.goals[index].isCompleted,
-                title: Text(week.goals[index].title),
+                title: Text(week.goals[index].title, style: Theme.of(context).textTheme.bodyMedium,),
                 contentPadding: const EdgeInsets.only(left: 8),
                 onChanged: (bool? newValue) {
                   if (newValue != null) {
@@ -224,6 +230,10 @@ class _WeekInfoState extends State<WeekInfo> {
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 secondary: PopupMenuButton<int>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   itemBuilder: (context) => [
                     const PopupMenuItem(
                       value: 1,
@@ -258,22 +268,22 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.text = controller.selectedWeek.goals[index].title;
     _validate = true;
 
-    String? newGoalTitle = await _showGoalTitleDialog();
-    if (newGoalTitle != null && newGoalTitle.isNotEmpty) {
+    String? updatedGoalTitle = await _showGoalTitleDialog(isCreation: false);
+    if (updatedGoalTitle != null && updatedGoalTitle.isNotEmpty) {
       setState(() {
-        controller.changeGoalTitle(index, newGoalTitle);
+        controller.changeGoalTitle(index, updatedGoalTitle);
       });
     }
   }
 
-  Future<String?> _showGoalTitleDialog() async {
+  Future<String?> _showGoalTitleDialog({required bool isCreation}) async {
     return await showDialog<String>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Введите новое значение'),
+              title: Text(isCreation ? 'Создание цели' : 'Изменение цели'),
               content: TextField(
                 controller: _textController,
                 autofocus: true,
@@ -328,10 +338,14 @@ class _WeekInfoState extends State<WeekInfo> {
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               child: ListTile(
-                title: Text(event.title),
-                subtitle: Text(formatDate(event.date)),
+                title: Text(event.title, style: Theme.of(context).textTheme.bodyMedium,),
+                subtitle: Text(formatDate(event.date), style: Theme.of(context).textTheme.bodySmall,),
                 contentPadding: const EdgeInsets.only(left: 16),
                 trailing: PopupMenuButton<int>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   onSelected: (value) async {
                     if (value == 1) {
                       await changeEvent(index, event);
@@ -366,24 +380,25 @@ class _WeekInfoState extends State<WeekInfo> {
     _textController.text = event.title;
     _validate = true;
 
-    Event? newEvent = await _showEventDialog(event.date);
-    if (newEvent != null) {
+    Event? updatedEvent = await _showEventDialog(event.date, isCreation: false);
+    if (updatedEvent != null) {
       setState(() {
-        controller.changeEvent(index, newEvent);
+        controller.changeEvent(index, updatedEvent);
       });
     }
   }
 
-  Future<Event?> _showEventDialog(DateTime initialDate) async {
+  Future<Event?> _showEventDialog(DateTime initialDate, {required bool isCreation}) async {
     Week week = controller.selectedWeek;
     DateTime eventDate = initialDate;
+    _dateController.text = formatDate(initialDate);
     final eventForm = GlobalKey<FormState>();
 
     return await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Введите новое значение'),
+          title: Text(isCreation ? 'Создание события' : 'Изменение события'),
           content: StatefulBuilder(
             builder: (context, setState) => Form(
               key: eventForm,
@@ -404,17 +419,49 @@ class _WeekInfoState extends State<WeekInfo> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  InputDatePickerFormField(
-                    initialDate: initialDate,
-                    firstDate: week.start,
-                    lastDate: week.end,
-                    errorFormatText: 'Неверный формат даты',
-                    errorInvalidText: 'Дата не соответствует неделе',
-                    onDateSubmitted: (date) {
-                      eventDate = date;
+                  TextFormField(
+                    controller: _dateController,
+                    keyboardType: TextInputType.datetime,
+                    inputFormatters: [dateMaskFormatter],
+                    decoration: InputDecoration(
+                      hintText: 'ДД.ММ.ГГГГ',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_month),
+                        onPressed: () async {
+                          DateTime? pickedDateTime = await selectDateTimeInCalendar(context, initialDate: initialDate);
+                          if (pickedDateTime != null) {
+                            _dateController.text = formatDate(pickedDateTime);
+                            eventDate = pickedDateTime;
+                          }
+                        },
+                      ),
+                    ),
+                    validator: (String? dateTime) {
+                      if (dateTime != null && dateTime.isNotEmpty) {
+                        DateTime? convertedDateTime = convertStringToDateTime(dateTime, firstDate: week.start, lastDate: week.end);
+                        if (convertedDateTime == null) {
+                          return 'Дата не соответствует неделе';
+                        }
+                        return null;
+                      } else {
+                        return 'Введите дату и время';
+                      }
                     },
-                    onDateSaved: (date) {
-                      eventDate = date;
+                    onFieldSubmitted: (String? date) {
+                      if (date != null) {
+                        DateTime? converted = convertStringToDateTime(date, firstDate: week.start, lastDate: week.end);
+                        if (converted != null) {
+                          eventDate = converted;
+                        }
+                      }
+                    },
+                    onSaved: (String? date) {
+                      if (date != null) {
+                        DateTime? converted = convertStringToDateTime(date, firstDate: week.start, lastDate: week.end);
+                        if (converted != null) {
+                          eventDate = converted;
+                        }
+                      }
                     },
                   ),
                 ],
@@ -428,9 +475,9 @@ class _WeekInfoState extends State<WeekInfo> {
             ),
             TextButton(
               onPressed: () {
-                eventForm.currentState!.save();
                 _validate = eventForm.currentState!.validate();
                 if (_validate) {
+                  eventForm.currentState!.save();
                   Navigator.pop(context, Event(_textController.text, eventDate));
                 }
               },
@@ -461,8 +508,12 @@ class _WeekInfoState extends State<WeekInfo> {
             padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0, right: 0),
             child: Row(
               children: [
-                Expanded(child: Text(resume)),
+                Expanded(child: Text(resume, style: Theme.of(context).textTheme.bodyMedium,)),
                 PopupMenuButton<int>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   onSelected: (value) async {
                     if (value == 1) {
                       await _showResumeDialog();
