@@ -95,7 +95,7 @@ DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTim
     if (day > 0 && day <= monthLength[month - 1]) {
       DateTime result = DateTime(year, month, day);
       if (firstDate != null && lastDate != null) {
-        if (result.isAfter(firstDate) && result.isBefore(lastDate)) {
+        if ((result.isAfter(firstDate) || result.isAtSameMomentAs(firstDate)) && (result.isBefore(lastDate) || result.isAtSameMomentAs(lastDate))) {
           return result;
         }
       } else {
