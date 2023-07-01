@@ -25,15 +25,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   void initState() {
     super.initState();
     calculateSizes(screenWidth);
-    Map<String, dynamic> arguments = {
-      "allYears": controller.allYears,
-      "screenWidth": screenWidth.round(),
+
+    var window = WidgetsBinding.instance.platformDispatcher;
+    window.onPlatformBrightnessChanged = () {
+      children = [const Center(child: Text('Смена темы'),)];
+      startCompute();
+      WidgetsBinding.instance.handlePlatformBrightnessChanged();
     };
-    compute(_buildChildren, arguments).then((resultChildren) {
-      children = resultChildren;
-      controller.calendarIsReady();
-      debugPrint('build children finished');
-    });
+
+    startCompute();
   }
 
   @override
@@ -61,6 +61,18 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     int width = screenWidth.round();
     weekBoxPadding = (width - 28) / 636;
     weekBoxSide = weekBoxPadding * 10;
+  }
+
+  void startCompute() {
+    Map<String, dynamic> arguments = {
+      "allYears": controller.allYears,
+      "screenWidth": screenWidth.round(),
+    };
+    compute(_buildChildren, arguments).then((resultChildren) {
+      children = resultChildren;
+      controller.calendarIsReady();
+      debugPrint('build children finished');
+    });
   }
 }
 
