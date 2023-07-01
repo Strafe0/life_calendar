@@ -46,6 +46,7 @@ class CalendarController extends ChangeNotifier {
   Future<void> addEvent(Event newEvent) async {
     // var week = _calendarModel.calendar.years[selectedWeek!.yearId].weeks.firstWhere((element) => element.id == selectedWeek?.id);
     selectedWeek.events.add(newEvent);
+    selectedWeek.events.sort((first, second) => first.date.compareTo(second.date));
     await _calendarModel.updateEvent(selectedWeek);
   }
 
