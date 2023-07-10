@@ -4,6 +4,7 @@ class User {
   String? _name;
   String? _mail;
   final DateTime _birthday;
+  bool plusVersion = false;
 
   DateTime get birthday => _birthday;
 

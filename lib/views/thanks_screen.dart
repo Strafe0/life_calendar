@@ -23,6 +23,7 @@ class _ThanksScreenState extends State<ThanksScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Если вам понравилось приложение,\n напишите положительный отзыв!', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
@@ -34,18 +35,18 @@ class _ThanksScreenState extends State<ThanksScreen> {
               Text('Для предложений и сообщениях об ошибках\n пишите на почту.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
               const SizedBox(height: 8.0),
               ElevatedButton(onPressed: _writeButton, child: const Text('Написать')),
-              const SizedBox(height: 24),
-              Text('Также вы можете угостить разработчика.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
-              const SizedBox(height: 8.0),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.currency_ruble, color: Colors.green,),
-                  Icon(Icons.coffee, color: Colors.brown,),
-                ],
-              ),
-              const SizedBox(height: 8.0),
-              ElevatedButton(onPressed: _donateButton, child: const Text('Поблагодарить')),
+              // const SizedBox(height: 24),
+              // Text('Также вы можете угостить разработчика.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge,),
+              // const SizedBox(height: 8.0),
+              // const Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Icon(Icons.currency_ruble, color: Colors.green,),
+              //     Icon(Icons.coffee, color: Colors.brown,),
+              //   ],
+              // ),
+              // const SizedBox(height: 8.0),
+              // ElevatedButton(onPressed: _donateButton, child: const Text('Поблагодарить')),
             ],
           ),
         ),

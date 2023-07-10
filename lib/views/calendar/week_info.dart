@@ -7,6 +7,8 @@ import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class WeekInfo extends StatefulWidget {
   const WeekInfo({Key? key}) : super(key: key);
@@ -127,6 +129,17 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future<void> addEvent() async {
+    if (controller.selectedWeek.events.length >= 3) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "Достигнут бесплатный предел событий на неделю",
+          icon: Icon(Icons.error_outline, size: 0),
+        ),
+      );
+      return;
+    }
+
     _textController.clear();
 
     _validate = true;
@@ -139,6 +152,17 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future<void> addGoal() async {
+    if (controller.selectedWeek.goals.length >= 3) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "Достигнут бесплатный предел целей на неделю",
+          icon: Icon(Icons.error_outline, size: 0),
+        ),
+      );
+      return;
+    }
+
     _textController.clear();
 
     _validate = true;

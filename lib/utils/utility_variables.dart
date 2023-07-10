@@ -1,5 +1,7 @@
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+const int freeLimit = 3;
+
 const int maxAge = 80;
 const int maxWeekNumber = 53;
 
