@@ -16,6 +16,7 @@ class CalendarModel {
   late Week currentWeek;
 
   Future<void> init() async {
+    await _db.updateDatabase();
     currentWeek = await currentWeekFromDb();
 
     if (DateTime.now().isAfter(currentWeek.end) || DateTime.now().isBefore(currentWeek.start)) {

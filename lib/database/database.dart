@@ -67,6 +67,16 @@ class AppDatabase {
     return Week.fromJson(records.first);
   }
 
+  Future<void> updateDatabase() async {
+    int changeNumber = 0;
+    int currentWeekId = (await getCurrentWeek()).id;
+
+    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id < ?', [WeekState.past.name, currentWeekId]);
+    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id > ?', [WeekState.future.name, currentWeekId]);
+
+    debugPrint('Changed $changeNumber weeks');
+  }
+
   Future<void> updateCurrentWeek(int currentWeekId) async {
     int changeNumber = 0;
     changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE state = ?', [WeekState.past.name, WeekState.current.name]);
