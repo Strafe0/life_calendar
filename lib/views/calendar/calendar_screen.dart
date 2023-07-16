@@ -9,6 +9,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/views/calendar/week_info.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -57,12 +60,9 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Календарь жизни'),
-          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          automaticallyImplyLeading: true,
           actions: [
-            IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/thanks'),
-              icon: Icon(Icons.handshake_outlined, color: Theme.of(context).iconTheme.color),
-            ),
             IconButton(
               onPressed: () async {
                 DateTime? searchDate;
@@ -146,6 +146,40 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
             ),
           ],
         ),
+        drawer: SafeArea(
+          child: Drawer(
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(16.0), bottomRight: Radius.circular(16.0))),
+            child: ListView(
+              children: [
+                DrawerHeader(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Дата рождения", style: Theme.of(context).textTheme.titleLarge,),
+                      Text("${controller.birthday.day}.${controller.birthday.month}.${controller.birthday.year}", style: Theme.of(context).textTheme.titleLarge,),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.feedback_outlined),
+                  title: const Text("Связь с разработчиком"),
+                  onTap: () => Navigator.pushNamed(context, '/thanks'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.shield_outlined),
+                  title: const Text("Политика конфиденциальности"),
+                  onTap: () async {
+                    final Uri url = Uri.parse(privacyPolicyUrl);
+                    if (!await launchUrl(url)) {
+                      _showTopErrorSnackBar();
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
         body: InteractiveViewer(
           maxScale: 5,
           child: SafeArea(
@@ -166,6 +200,16 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
           shape: const CircleBorder(),
           child: const Icon(Icons.location_searching),
         ),
+      ),
+    );
+  }
+
+  void _showTopErrorSnackBar() {
+    showTopSnackBar(
+      Overlay.of(context),
+      const CustomSnackBar.error(
+        message: "Ошибка перехода к политике конфиденциальности",
+        icon: Icon(Icons.error_outline, size: 0),
       ),
     );
   }

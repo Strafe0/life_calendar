@@ -16,6 +16,7 @@ class CalendarWidget extends StatefulWidget {
 
 class _CalendarWidgetState extends State<CalendarWidget> {
   double screenWidth = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width / WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
+  double screenHeight = WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.height / WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
   final CalendarController controller = getIt<CalendarController>();
   List<Widget> children = [
     const Center(child: Text('Загрузка')),
@@ -24,7 +25,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   @override
   void initState() {
     super.initState();
-    calculateSizes(screenWidth);
+    calculateSizes(screenWidth, screenHeight);
 
     var window = WidgetsBinding.instance.platformDispatcher;
     window.onPlatformBrightnessChanged = () {
@@ -57,9 +58,14 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-  void calculateSizes(double screenWidth) {
+  void calculateSizes(double screenWidth, double screenHeight) {
     int width = screenWidth.round();
-    weekBoxPadding = (width - 28) / 636;
+    double wWeekBoxPadding = (width - 28) / 636;
+
+    int height = screenHeight.round();
+    double hWeekBoxPadding = (height - 28) / 960;
+
+    weekBoxPadding = wWeekBoxPadding < hWeekBoxPadding ? wWeekBoxPadding : hWeekBoxPadding;
     weekBoxSide = weekBoxPadding * 10;
   }
 
@@ -67,6 +73,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     Map<String, dynamic> arguments = {
       "allYears": controller.allYears,
       "screenWidth": screenWidth.round(),
+      "screenHeight": screenHeight.round(),
     };
     compute(_buildChildren, arguments).then((resultChildren) {
       children = resultChildren;
@@ -81,8 +88,14 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
   List<Widget> weekIndexRow = [];
 
   List<Year> allYears = args["allYears"];
+
   int width = args["screenWidth"];
-  double padding = (width - 28) / 636;
+  double wWeekBoxPadding = (width - 28) / 636;
+
+  int height = args["screenHeight"];
+  double hWeekBoxPadding = (height - 28) / 960;
+
+  double padding = wWeekBoxPadding < hWeekBoxPadding ? wWeekBoxPadding : hWeekBoxPadding;
   double side = padding * 10;
 
   for (int i = 0; i < maxWeekNumber+1; i++) {
@@ -90,7 +103,7 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
     weekIndexRow.add(Opacity(
       opacity: isDivisibleBy5 || i == 1 ? 1.0 : 0.0,
       child: Padding(
-        padding: EdgeInsets.only(left: padding, right: padding, bottom: padding * 5),
+        padding: EdgeInsets.only(left: padding, right: padding, bottom: padding),
         child: SizedBox(
           height: side,
           width: i == 0 ? side * 2 : side,

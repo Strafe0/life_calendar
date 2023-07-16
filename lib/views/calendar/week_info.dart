@@ -133,7 +133,7 @@ class _WeekInfoState extends State<WeekInfo> {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.error(
-          message: "Достигнут бесплатный предел событий на неделю",
+          message: "Достигнут предел событий на неделю",
           icon: Icon(Icons.error_outline, size: 0),
         ),
       );
@@ -156,7 +156,7 @@ class _WeekInfoState extends State<WeekInfo> {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.error(
-          message: "Достигнут бесплатный предел целей на неделю",
+          message: "Достигнут предел целей на неделю",
           icon: Icon(Icons.error_outline, size: 0),
         ),
       );

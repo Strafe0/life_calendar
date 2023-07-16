@@ -21,3 +21,5 @@ final dateMaskFormatter = MaskTextInputFormatter(
 );
 
 final RegExp dateRegExp = RegExp(r'[0-3]\d\.[01]\d\.\d\d\d\d');
+
+const String privacyPolicyUrl = 'https://doc-hosting.flycricket.io/kalendar-zhizni-v-nedeliakh-privacy-policy/03ff23a0-6fb9-42dc-b004-22eb53ed43fb/privacy';
