@@ -566,24 +566,6 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
 
-  // Future addResume() async {
-  //   _textController.clear();
-  //
-  //   _validate = true;
-  //   String? resumeText = await _showResumeDialog();
-  //   if (resumeText != null && resumeText.isNotEmpty) {
-  //     setState(() {
-  //       controller.addResume(resumeText);
-  //     });
-  //   }
-  // }
-  //
-  // Future changeResume() async {
-  //   _textController.text = controller.selectedWeek.resume;
-  //
-  //   String? resumeText = await _showResumeDialog();
-  // }
-
   Future _showResumeDialog() async {
     _textController.text = controller.selectedWeek.resume;
 

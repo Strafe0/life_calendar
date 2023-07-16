@@ -70,10 +70,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text(
-                        'Поиск недели',
-                        // style: Theme.of(context).textTheme.headlineSmall,
-                      ),
+                      title: const Text('Поиск недели'),
                       content: TextFormField(
                         key: _searchDateFormKey,
                         controller: _dateTimeController,
