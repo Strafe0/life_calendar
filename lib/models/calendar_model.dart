@@ -66,7 +66,7 @@ class CalendarModel {
       weeksAmountBetweenMondays(DateTime.now(), _birthday);
 
   int get totalNumberOfWeeksInLife {
-    DateTime maxAgeDate = DateTime(_birthday.year + maxAge + 1, _birthday.month, _birthday.day);
+    DateTime maxAgeDate = DateTime(_birthday.year + userMaxAge + 1, _birthday.month, _birthday.day);
     return weeksAmountBetweenMondays(_birthday, maxAgeDate);
   }
 
@@ -75,7 +75,7 @@ class CalendarModel {
     var lastBirthday = _birthday;
     var yearMonday = previousMonday(lastBirthday);
 
-    for (int yearIndex = 0; yearIndex < maxAge + 1; yearIndex++) {
+    for (int yearIndex = 0; yearIndex < userMaxAge + 1; yearIndex++) {
       var nextBirthday = DateTime(lastBirthday.year + 1, lastBirthday.month, lastBirthday.day);
       var firstMondayNextYear = previousMonday(nextBirthday);
       var yearSunday = DateTime(firstMondayNextYear.year, firstMondayNextYear.month, firstMondayNextYear.day - 1, 23, 59, 59);
@@ -112,6 +112,10 @@ class CalendarModel {
 
     if (resultNumberOfWeeks == totalNumberOfWeeksInLife) {
       debugPrint('Number of weeks is the same');
+    }
+
+    if (!(await _db.tableIsEmpty())) {
+      await _db.clearTable();
     }
 
     await _db.insertAllYears(calendar.years);

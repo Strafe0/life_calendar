@@ -245,6 +245,7 @@ class _DateInputScreenState extends State<DateInputScreen> {
   final TextEditingController dateTimeController = TextEditingController();
   DateTime? birthday;
   final _dateFormKey = GlobalKey<FormFieldState>();
+  final _thresholdFormKey = GlobalKey<FormFieldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -295,13 +296,66 @@ class _DateInputScreenState extends State<DateInputScreen> {
               DateTime? convertedDateTime = convertStringToDateTime(dateTime);
               if (convertedDateTime != null) {
                 birthday = convertedDateTime;
-                await controller.setBirthday(birthday!);
               }
             }
           },
           onFieldSubmitted: (String? dateTime) {
             if (_dateFormKey.currentState!.validate()) {
               birthday = convertStringToDateTime(dateTime!);
+            }
+          },
+          // onTap: () {
+          //   _thresholdFormKey.currentState!.save();
+          // },
+          onTapOutside: (PointerDownEvent pointerDownEvent) {
+            _dateFormKey.currentState!.save();
+          },
+        ),
+        const SizedBox(height: 24),
+        TextFormField(
+          key: _thresholdFormKey,
+          keyboardType: TextInputType.number,
+          initialValue: "80",
+          decoration: const InputDecoration(
+            helperText: 'Ожидаемое количество прожитых лет (до 90)',
+          ),
+          validator: (String? threshold) {
+            if (threshold == null || threshold.isEmpty) {
+              return "Введите значение";
+            }
+            int? thresholdValue = int.tryParse(threshold);
+            if (thresholdValue == null) {
+              return "Введите целое положительное число";
+            } else {
+              if (thresholdValue > 90) {
+                return "Максимальный задаваемый возвраст - 90";
+              }
+              if (birthday == null) {
+                return "Введите день рождения";
+              } else {
+                int age = calculateCurrentAge(birthday!);
+                if (thresholdValue <= age) {
+                  return "Количество прожитых лет слишком мало";
+                } else {
+                  return null;
+                }
+              }
+            }
+          },
+          onSaved: (String? threshold) {
+            if (_thresholdFormKey.currentState!.validate()) {
+              userMaxAge = int.parse(threshold!);
+            }
+          },
+          onTap: () {
+            _dateFormKey.currentState!.save();
+          },
+          onTapOutside: (PointerDownEvent pointerDownEvent) {
+            _thresholdFormKey.currentState!.save();
+          },
+          onFieldSubmitted: (String? threshold) {
+            if (_thresholdFormKey.currentState!.validate()) {
+              userMaxAge = int.parse(threshold!);
             }
           },
         ),
@@ -312,9 +366,14 @@ class _DateInputScreenState extends State<DateInputScreen> {
           child: ElevatedButton(
             onPressed: () {
               if (_dateFormKey.currentState!.validate()) {
-                _dateFormKey.currentState!.save();
-                if (birthday != null) {
-                  Navigator.pushReplacementNamed(context, '/');
+                if (_thresholdFormKey.currentState!.validate()) {
+                  _dateFormKey.currentState!.save();
+                  _thresholdFormKey.currentState!.save();
+
+                  if (birthday != null) {
+                    controller.setBirthday(birthday!).then((value) => Navigator.pushReplacementNamed(context, '/'));
+                    Navigator.pushReplacementNamed(context, '/');
+                  }
                 }
               }
             },

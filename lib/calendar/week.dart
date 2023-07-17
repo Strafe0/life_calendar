@@ -74,6 +74,16 @@ class Goal {
   Map<String, dynamic> toJson() => _$GoalToJson(this);
 }
 
+enum Recurrence {
+  none("Нет"),
+  weekly("Каждую неделю"),
+  monthly("Каждый месяц"),
+  annually("Каждый год");
+
+  final String periodName;
+  const Recurrence(this.periodName);
+}
+
 @JsonSerializable()
 class Event {
   String title;
@@ -81,7 +91,9 @@ class Event {
   @JsonKey(toJson: dateToJson, fromJson: dateFromJson)
   DateTime date;
 
-  Event(this.title, this.date);
+  Recurrence recurrence;
+
+  Event(this.title, this.date, [this.recurrence = Recurrence.none]);
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
   Map<String, dynamic> toJson() => _$EventToJson(this);

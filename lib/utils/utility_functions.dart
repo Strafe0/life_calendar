@@ -83,7 +83,7 @@ DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTim
 
   if (day != null && month != null && year != null) {
     if (year < minDate.year || year > maxDate.year || month <= 0 || month > 12) {
-      print('The year or month is out of range');
+      debugPrint('The year or month is out of range');
       return null;
     }
 
@@ -102,7 +102,7 @@ DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTim
         return result;
       }
     } else {
-      print('The invalid number of days $day in the ${month}th month');
+      debugPrint('The invalid number of days $day in the ${month}th month');
     }
   }
   return null;
@@ -115,4 +115,13 @@ Future<DateTime?> selectDateTimeInCalendar(BuildContext context, {DateTime? init
     firstDate: firstDate ?? minDate,
     lastDate: lastDate ?? maxDate,
   );
+}
+
+int calculateCurrentAge(DateTime birthday) {
+  DateTime birthdayThisYear = DateTime(DateTime.now().year, birthday.month, birthday.day);
+  int age = DateTime.now().year - birthday.year;
+  if (DateTime.now().isBefore(birthdayThisYear)) {
+    age--;
+  }
+  return age;
 }

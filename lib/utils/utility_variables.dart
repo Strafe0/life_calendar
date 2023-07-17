@@ -5,6 +5,8 @@ const int freeLimit = 3;
 const int maxAge = 80;
 const int maxWeekNumber = 53;
 
+int userMaxAge = maxAge;
+
 DateTime minDate = DateTime(1970, 1, 1);
 DateTime maxBirthDate = DateTime.now();
 DateTime maxDate = DateTime(2090, 1, 1);

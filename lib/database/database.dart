@@ -52,7 +52,7 @@ class AppDatabase {
 
   Future<List<Year>> getAll() async {
     List<Year> years = [];
-    for (int yearIndex = 0; yearIndex < maxAge + 1; yearIndex++) {
+    for (int yearIndex = 0; yearIndex < userMaxAge + 1; yearIndex++) {
       var records = await _db.query(tableName, where: 'yearId = ?', whereArgs: [yearIndex]);
 
       List<Week> weeks = List.generate(records.length, (i) => Week.fromJson(records[i]));
@@ -113,5 +113,9 @@ class AppDatabase {
     } else {
       return true;
     }
+  }
+
+  Future clearTable() async {
+    await _db.execute('DELETE FROM $tableName');
   }
 }
