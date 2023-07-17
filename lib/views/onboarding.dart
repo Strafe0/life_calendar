@@ -21,6 +21,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   Widget build(BuildContext context) {
     bool isLightMode = MediaQuery.of(context).platformBrightness == Brightness.light;
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: isLightMode ? const Color(0xFF356CF9) : const Color(0xFF00174D),
+    ));
+
     return WillPopScope(
       onWillPop: () async {
         return await showDialog<bool>(
@@ -57,9 +61,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(isLightMode ? 0xFF61D4FF : 0xFF00174D),
-                  Color(isLightMode ? 0xFF61D4FF : 0xFF00174D),
-                  Color(isLightMode ? 0xFFDEF4FF : 0xFF1C1B1F),
+                  Color(isLightMode ? 0xFF356CF9 : 0xFF00174D),
+                  Color(isLightMode ? 0xFF83ABFC : 0xFF00174D),
+                  Color(isLightMode ? 0xFFFFFFFF : 0xFF1C1B1F),
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),

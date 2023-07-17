@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/views/calendar/week_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -154,7 +155,17 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Дата рождения", style: Theme.of(context).textTheme.titleLarge,),
-                      Text("${controller.birthday.day}.${controller.birthday.month}.${controller.birthday.year}", style: Theme.of(context).textTheme.titleLarge,),
+                      FutureBuilder(
+                        future: _getBirthday(),
+                        builder: (BuildContext context, AsyncSnapshot<DateTime?> snapshot) {
+                          if (snapshot.hasData) {
+                            DateTime birthday = snapshot.data!;
+                            return Text("${birthday.day}.${birthday.month}.${birthday.year}", style: Theme.of(context).textTheme.titleLarge);
+                          } else {
+                            return const Text("Не найдено");
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -209,5 +220,15 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
         icon: Icon(Icons.error_outline, size: 0),
       ),
     );
+  }
+
+  Future<DateTime?> _getBirthday() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? birthdayMilliseconds = prefs.getInt('birthday');
+
+    if (birthdayMilliseconds != null) {
+      return DateTime.fromMillisecondsSinceEpoch(birthdayMilliseconds);
+    }
+    return null;
   }
 }
