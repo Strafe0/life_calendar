@@ -259,13 +259,13 @@ class _WeekInfoState extends State<WeekInfo> {
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 1,
-                      child: Text('Изменить'),
+                      child: Text('Изменить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 2,
-                      child: Text('Удалить'),
+                      child: Text('Удалить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
                   ],
                   onSelected: (value) async {
@@ -315,6 +315,7 @@ class _WeekInfoState extends State<WeekInfo> {
                   hintText: 'Введите название',
                   errorText: _validate ? null : 'Поле не может быть пустым',
                 ),
+                textCapitalization: TextCapitalization.sentences,
               ),
               actions: [
                 TextButton(
@@ -379,14 +380,14 @@ class _WeekInfoState extends State<WeekInfo> {
                       setState(() {});
                     }
                   },
-                  itemBuilder: (context) => const [
+                  itemBuilder: (context) => [
                     PopupMenuItem(
                       value: 1,
-                      child: Text('Изменить'),
+                      child: Text('Изменить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
                     PopupMenuItem(
                       value: 2,
-                      child: Text('Удалить'),
+                      child: Text('Удалить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
                   ],
                 ),
@@ -435,6 +436,7 @@ class _WeekInfoState extends State<WeekInfo> {
                     decoration: const InputDecoration(
                       hintText: 'Введите название',
                     ),
+                    textCapitalization: TextCapitalization.sentences,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Поле не может быть пустым';
@@ -547,14 +549,14 @@ class _WeekInfoState extends State<WeekInfo> {
                       setState(() {});
                     }
                   },
-                  itemBuilder: (context) => const [
+                  itemBuilder: (context) => [
                     PopupMenuItem(
                       value: 1,
-                      child: Text('Изменить'),
+                      child: Text('Изменить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
                     PopupMenuItem(
                       value: 2,
-                      child: Text('Удалить'),
+                      child: Text('Удалить', style: Theme.of(context).textTheme.bodyMedium,),
                     ),
                   ],
                 ),
@@ -585,6 +587,7 @@ class _WeekInfoState extends State<WeekInfo> {
                   hintText: 'Введите итоги недели',
                   errorText: _validate ? null : 'Поле не может быть пустым',
                 ),
+                textCapitalization: TextCapitalization.sentences,
               ),
               actions: [
                 TextButton(

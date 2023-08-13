@@ -106,6 +106,7 @@ ThemeData lightTheme = ThemeData(
 
   inputDecorationTheme: const InputDecorationTheme(
     border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF1B1B1F))),
+    hintStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, letterSpacing: 0.5),
   ),
 
   cardTheme: const CardTheme(
@@ -117,6 +118,12 @@ ThemeData lightTheme = ThemeData(
   dialogTheme: const DialogTheme(
     backgroundColor: Color(0xFFF2F0F4),
     surfaceTintColor: Colors.transparent,
+  ),
+
+  popupMenuTheme: const PopupMenuThemeData(
+    color: Color(0xFFF2F0F4),
+    surfaceTintColor: Colors.transparent,
+    textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.5),
   ),
 );
 
@@ -213,6 +220,7 @@ ThemeData darkTheme = ThemeData(
 
   inputDecorationTheme: const InputDecorationTheme(
     border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE4E2E6))),
+    hintStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, letterSpacing: 0.5),
   ),
 
   cardTheme: const CardTheme(
@@ -224,5 +232,11 @@ ThemeData darkTheme = ThemeData(
   dialogTheme: const DialogTheme(
     backgroundColor: Color(0xFF303034),
     surfaceTintColor: Colors.transparent,
+  ),
+
+  popupMenuTheme: const PopupMenuThemeData(
+    color: Color(0xFF303034),
+    surfaceTintColor: Colors.transparent,
+    textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.43, letterSpacing: 0.5),
   ),
 );
