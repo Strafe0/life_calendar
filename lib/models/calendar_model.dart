@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:life_calendar/calendar/calendar.dart';
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:life_calendar/setup.dart';
@@ -11,38 +9,43 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CalendarModel {
   late DateTime _birthday;
   late DateTime _mondayOfBirthdayWeek;
-  Calendar calendar = Calendar();
   final _db = getIt<AppDatabase>();
   late Week currentWeek;
+  final List<Week> _weeks = [];
 
-  Future<void> init() async {
-    await _db.updateDatabase();
+  Future<void> updateCurrentWeek() async {
+    await _db.updateWeekStates();
     currentWeek = await currentWeekFromDb();
 
     if (DateTime.now().isAfter(currentWeek.end) || DateTime.now().isBefore(currentWeek.start)) {
-      DateTime currentMonday = previousMonday(DateTime.now());
-      bool currentWeekInPast = DateTime.now().isAfter(currentWeek.end) ? true : false;
+      DateTime realCurrentMonday = previousMonday(DateTime.now());
+      bool isCurrentWeekInPast = DateTime.now().isAfter(currentWeek.end) ? true : false;
 
-      int yearId = currentMonday.year == currentWeek.end.year
-          ? currentWeek.yearId
-          : currentWeekInPast
-          ? currentWeek.yearId + 1
-          : currentWeek.yearId - 1;
+      int realCurrentWeekIndex = _weeks.indexWhere((week) => datesIsTheSame(week.start, realCurrentMonday));
+      Week realCurrentWeek = _weeks[realCurrentWeekIndex];
 
-      int realCurrentWeekIndex = calendar.years[yearId].weeks.indexWhere((week) => datesIsTheSame(week.start, currentMonday));
-      Week realCurrentWeek = calendar.years[yearId].weeks[realCurrentWeekIndex];
+      for (int i = currentWeek.id; i != realCurrentWeek.id; isCurrentWeekInPast ? i++ : i--) {
+        _weeks[i].state = isCurrentWeekInPast ? WeekState.past : WeekState.future;
+      }
+
+      for (int i = 0; i < realCurrentWeekIndex; i++) {
+        _weeks[i].state = WeekState.past;
+      }
+      for (int i = realCurrentWeekIndex; i < _weeks.length; i++) {
+        _weeks[i].state = WeekState.future;
+      }
 
       realCurrentWeek.state = WeekState.current;
-      calendar.years[currentWeek.yearId].weeks.firstWhere((week) => week.id == currentWeek.id).state = currentWeekInPast ? WeekState.past : WeekState.future;
+      // _weeks[currentWeek.id].state = isCurrentWeekInPast ? WeekState.past : WeekState.future;
 
       currentWeek = realCurrentWeek;
-      await updateCurrentWeek();
+      await updateCurrentWeekInDb();
     }
   }
 
   Future<Week> currentWeekFromDb() async => await _db.getCurrentWeek();
 
-  Future<void> updateCurrentWeek() async => await _db.updateCurrentWeek(currentWeek.id);
+  Future<void> updateCurrentWeekInDb() async => await _db.updateCurrentWeek(currentWeek.id);
 
   set selectedBirthday(DateTime dateTime) {
     _birthday = dateTime;
@@ -56,11 +59,14 @@ class CalendarModel {
     } else {
       await buildFromDatabase();
     }
-    init();
+    updateCurrentWeek();
   }
 
   DateTime get birthday => _birthday;
   DateTime get firstMonday => _mondayOfBirthdayWeek;
+  DateTime get lastDay => _weeks.last.end;
+  int get numberOfWeeks => _weeks.length;
+  int get numberOfYears => _weeks.last.yearId + 1;
 
   int get currentWeekIndex =>
       weeksAmountBetweenMondays(DateTime.now(), _birthday);
@@ -77,18 +83,14 @@ class CalendarModel {
 
     for (int yearIndex = 0; yearIndex < userMaxAge + 1; yearIndex++) {
       var nextBirthday = DateTime(lastBirthday.year + 1, lastBirthday.month, lastBirthday.day);
-      var firstMondayNextYear = previousMonday(nextBirthday);
-      var yearSunday = DateTime(firstMondayNextYear.year, firstMondayNextYear.month, firstMondayNextYear.day - 1, 23, 59, 59);
       // var yearSunday = previousMonday(nextBirthday).subtract(const Duration(days: 1));
-
-      var year = Year(yearMonday, yearSunday, yearIndex);
 
       var weekMonday = DateTime(yearMonday.year, yearMonday.month, yearMonday.day);
       var weekSunday = DateTime(weekMonday.year, weekMonday.month, weekMonday.day + 6, 23, 59, 59);
       // var weekSunday = weekMonday.add(const Duration(days: 6));
 
       while (nextBirthday.isAfter(weekSunday)) {
-        year.weeks.add(Week(
+        _weeks.add(Week(
           resultNumberOfWeeks,
           yearIndex,
           weekMonday,
@@ -105,7 +107,6 @@ class CalendarModel {
         weekSunday = DateTime(weekSunday.year, weekSunday.month, weekSunday.day + 7, 23, 59, 59);
       }
 
-      calendar.years.add(year);
       lastBirthday = nextBirthday;
       yearMonday = previousMonday(lastBirthday);
     }
@@ -118,22 +119,35 @@ class CalendarModel {
       await _db.clearTable();
     }
 
-    await _db.insertAllYears(calendar.years);
+    await _db.insertAllWeeks(_weeks);
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('firstTime', false);
   }
 
   Future buildFromDatabase() async {
-    calendar.years.clear();
-    calendar.years.addAll(await _db.getAll());
+    _weeks.clear();
+    _weeks.addAll(await _db.getAllWeeks());
   }
 
-  Future updateAssessment(Week week) async {
-    var year = calendar.years.where((element) => element.age == week.yearId).first;
-    var selectedWeek = year.weeks.where((element) => element.id == week.id).first;
-    selectedWeek.assessment = week.assessment;
+  Week getWeek(int id) => _weeks[id];
 
-    await _db.updateAssessment(week);
+  List<Week> getWeeksInYear(int yearId) {
+    List<Week> result = [];
+    int lowerBound = yearId * 52;
+    int upperBound = (yearId + 1) * 53;
+    if (upperBound > _weeks.length) {
+      upperBound = _weeks.length;
+    }
+    for (int id = lowerBound; id < upperBound; id++) {
+      if (_weeks[id].yearId == yearId) {
+        result.add(_weeks[id]);
+      }
+    }
+    return result;
+  }
+
+  void updateAssessment(Week week) {
+    _db.updateAssessment(week);
   }
 
   Future updateEvent(Week week) async {

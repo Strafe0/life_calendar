@@ -1,8 +1,6 @@
-import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/calendar/year.dart';
 import 'package:flutter/material.dart' show debugPrint;
 
 class AppDatabase {
@@ -32,13 +30,11 @@ class AppDatabase {
     return await _db.insert(tableName, week.toJson(), conflictAlgorithm: ConflictAlgorithm.replace) != 0;
   }
 
-  Future<bool> insertAllYears(List<Year> years) async {
+  Future<bool> insertAllWeeks(List<Week> weeks) async {
     return await _db.transaction((txn) async {
       var batch = txn.batch();
-      for (var year in years) {
-        for (var week in year.weeks) {
-          batch.insert(tableName, week.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
-        }
+      for (var week in weeks) {
+        batch.insert(tableName, week.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
       }
       var result = await batch.commit(continueOnError: false, noResult: false);
       if (result.isNotEmpty) {
@@ -50,16 +46,10 @@ class AppDatabase {
     });
   }
 
-  Future<List<Year>> getAll() async {
-    List<Year> years = [];
-    for (int yearIndex = 0; yearIndex < userMaxAge + 1; yearIndex++) {
-      var records = await _db.query(tableName, where: 'yearId = ?', whereArgs: [yearIndex]);
-
-      List<Week> weeks = List.generate(records.length, (i) => Week.fromJson(records[i]));
-      years.add(Year(weeks.first.start, weeks.last.end, yearIndex)..weeks = weeks);
-    }
-
-    return years;
+  Future<List<Week>> getAllWeeks() async {
+    var records = await _db.query(tableName);
+    List<Week> weeks = List.generate(records.length, (i) => Week.fromJson(records[i]));
+    return weeks;
   }
 
   Future<Week> getCurrentWeek() async {
@@ -67,7 +57,7 @@ class AppDatabase {
     return Week.fromJson(records.first);
   }
 
-  Future<void> updateDatabase() async {
+  Future<void> updateWeekStates() async {
     int changeNumber = 0;
     int currentWeekId = (await getCurrentWeek()).id;
 
@@ -78,15 +68,8 @@ class AppDatabase {
   }
 
   Future<void> updateCurrentWeek(int currentWeekId) async {
-    int changeNumber = 0;
-    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE state = ?', [WeekState.past.name, WeekState.current.name]);
-    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id = ?', [WeekState.current.name, currentWeekId]);
-
-    if (changeNumber == 2) {
-      debugPrint('The current week has been successfully updated.');
-    } else {
-      debugPrint('Some error in current week update: number of changes in db - $changeNumber');
-    }
+    await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id = ?', [WeekState.current.name, currentWeekId]);
+    await updateWeekStates();
   }
 
   Future<int> updateAssessment(Week week) async {

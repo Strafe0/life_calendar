@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/calendar/year.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:life_calendar/theme.dart';
 
@@ -10,22 +9,14 @@ class CalendarController extends ChangeNotifier {
   final CalendarModel _calendarModel = getIt<CalendarModel>();
 
   DateTime get birthday => _calendarModel.birthday;
-  DateTime get lastDay => _calendarModel.calendar.years.last.weeks.last.end;
-  int get numberOfWeeks => _calendarModel.totalNumberOfWeeksInLife;
+  DateTime get lastDay => _calendarModel.lastDay;
+  int get numberOfWeeks => _calendarModel.numberOfWeeks;
   late Week selectedWeek;
   Week get currentWeek => _calendarModel.currentWeek;
+  int get numberOfYears => _calendarModel.numberOfYears;
 
-  List<Year> get allYears => _calendarModel.calendar.years;
 
   ValueNotifier<int> changedWeekId = ValueNotifier(0);
-
-  List<Week> get allWeeks {
-    List<Week> result = [];
-    for (var year in _calendarModel.calendar.years) {
-      result.addAll(year.weeks);
-    }
-    return result;
-  }
 
   void calendarIsReady() => notifyListeners();
 
@@ -38,13 +29,12 @@ class CalendarController extends ChangeNotifier {
     return bDay;
   }
 
-  Future<void> changeAssessment(WeekAssessment assessment) async {
+  void changeAssessment(WeekAssessment assessment) {
     selectedWeek.assessment = assessment;
-    await _calendarModel.updateAssessment(selectedWeek);
+    _calendarModel.updateAssessment(selectedWeek);
   }
 
   Future<void> addEvent(Event newEvent) async {
-    // var week = _calendarModel.calendar.years[selectedWeek!.yearId].weeks.firstWhere((element) => element.id == selectedWeek?.id);
     selectedWeek.events.add(newEvent);
     selectedWeek.events.sort((first, second) => first.date.compareTo(second.date));
     await _calendarModel.updateEvent(selectedWeek);
@@ -95,17 +85,15 @@ class CalendarController extends ChangeNotifier {
     await _calendarModel.updateResume(selectedWeek);
   }
 
-  selectWeek(int id, int yearId) {
-    selectedWeek = getWeek(id, yearId);
+  selectWeek(int id) {
+    selectedWeek = getWeek(id);
   }
 
-  Week getWeek(int id, int yearId) {
-    int firstWeekId = _calendarModel.calendar.years[yearId].weeks.first.id;
-    return _calendarModel.calendar.years[yearId].weeks[id - firstWeekId];
-  }
+  Week getWeek(int id) => _calendarModel.getWeek(id);
+  List<Week> getWeeksInYear(int yearId) => _calendarModel.getWeeksInYear(yearId);
 
-  Color getWeekColor(int id, int yearId, Brightness brightness) {
-    Week week = getWeek(id, yearId);
+  Color getWeekColor(int id, Brightness brightness) {
+    Week week = getWeek(id);
 
     var theme = brightness == Brightness.light ? lightTheme : darkTheme;
     final Color weekColor = switch (week.state) {
@@ -125,21 +113,20 @@ class CalendarController extends ChangeNotifier {
     return weekColor;
   }
 
-  Week findWeekByDate(DateTime date) {
+  Week? findWeekByDate(DateTime date) {
     DateTime birthday = DateTime(date.year, _calendarModel.birthday.month, _calendarModel.birthday.day);
     int yearId = date.year - _calendarModel.birthday.year;
     if (date.isBefore(birthday)) {
       yearId--;
     }
 
-    Year year = _calendarModel.calendar.years[yearId];
-
-    for (int i = 0; i < year.weeks.length; i++) {
-      if (date.isBefore(year.weeks[i].end)) {
-        return year.weeks[i];
+    for (int id = yearId * 52; id < _calendarModel.numberOfWeeks; id++) {
+      Week week = _calendarModel.getWeek(id);
+      if (date.isBefore(week.end)) {
+        return week;
       }
     }
 
-    return year.weeks.first;
+    return null;
   }
 }

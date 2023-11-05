@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:life_calendar/calendar/year.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/setup.dart';
@@ -71,7 +70,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   void startCompute() {
     Map<String, dynamic> arguments = {
-      "allYears": controller.allYears,
+      "numberOfYears": controller.numberOfYears,
       "screenWidth": screenWidth.round(),
       "screenHeight": screenHeight.round(),
     };
@@ -87,7 +86,7 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
   List<Widget> result = [];
   List<Widget> weekIndexRow = [];
 
-  List<Year> allYears = args["allYears"];
+  int numberOfYears = args["numberOfYears"];
 
   int width = args["screenWidth"];
   double wWeekBoxPadding = (width - 28) / 636;
@@ -125,31 +124,31 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
   }
   result.add(Row(mainAxisAlignment: MainAxisAlignment.start, children: weekIndexRow,));
 
-  for (Year year in allYears) {
-    result.add(YearRow(year));
+  for (int yearId = 0; yearId < numberOfYears; yearId++) {
+    result.add(YearRow(yearId));
   }
   return result;
 }
 
 class YearRow extends StatelessWidget {
-  const YearRow(this.year, {Key? key}) : super(key: key);
+  const YearRow(this.yearId, {Key? key}) : super(key: key);
 
-  final Year year;
+  final int yearId;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      children: _buildYearChildren(year),
+      children: _buildYearChildren(yearId),
     );
   }
 
-  List<Widget> _buildYearChildren(Year year) {
+  List<Widget> _buildYearChildren(int yearId) {
     List<Widget> result = [];
 
-    bool divisibleBy5 = year.age % 5 == 0 ? true : false;
+    bool divisibleBy5 = yearId % 5 == 0 ? true : false;
     result.add(Opacity(
-      opacity: divisibleBy5 || year.age == 0 ? 1.0 : 0.0,
+      opacity: divisibleBy5 || yearId == 0 ? 1.0 : 0.0,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: weekBoxPadding),
         child: SizedBox(
@@ -160,8 +159,8 @@ class YearRow extends StatelessWidget {
             maxWidth: double.infinity,
             maxHeight: double.infinity,
             child: Text(
-              year.age.toString(),
-              style: TextStyle(fontSize: divisibleBy5 || year.age == 0 ? 8 : 4),
+              yearId.toString(),
+              style: TextStyle(fontSize: divisibleBy5 || yearId == 0 ? 8 : 4),
               textAlign: TextAlign.center,
               overflow: TextOverflow.visible,
               softWrap: false,
@@ -172,7 +171,7 @@ class YearRow extends StatelessWidget {
       ),
     ));
 
-    for (var week in year.weeks) {
+    for (var week in getIt<CalendarController>().getWeeksInYear(yearId)) {
       final ValueKey<int> weekBoxKey = ValueKey<int>(week.id);
 
       result.add(Padding(
@@ -209,14 +208,14 @@ class _WeekBoxState extends State<WeekBox> {
 
   @override
   Widget build(BuildContext context) {
-    final Color weekColor = controller.getWeekColor(widget.id, widget.yearId, Theme.of(context).brightness);
+    final Color weekColor = controller.getWeekColor(widget.id, Theme.of(context).brightness);
 
     return SizedBox(
       width: weekBoxSide,
       height: weekBoxSide,
       child: ElevatedButton(
         onPressed: () {
-          controller.selectWeek(widget.id, widget.yearId);
+          controller.selectWeek(widget.id);
           Navigator.pushNamed(context, '/weekInfo')
               .then((_) => setState(() {}));
         },

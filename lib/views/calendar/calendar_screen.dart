@@ -122,14 +122,18 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                             if (_searchDateFormKey.currentState!.validate()) {
                               _searchDateFormKey.currentState!.save();
                               if (searchDate != null) {
-                                Week foundWeek = controller.findWeekByDate(searchDate!);
-                                controller.selectWeek(foundWeek.id, foundWeek.yearId);
-                                Navigator.pop(context);
+                                Week? foundWeek = controller.findWeekByDate(searchDate!);
+                                if (foundWeek != null) {
+                                  controller.selectWeek(foundWeek.id);
+                                  Navigator.pop(context);
 
-                                await Navigator.push(context, PageRouteBuilder(
-                                  pageBuilder: (context, animation, secondaryAnimation) => WeekInfo(),
-                                  transitionsBuilder: ScreenTransition.fadeTransition,
-                                )).then((value) => controller.changedWeekId.value = foundWeek.id);
+                                  await Navigator.push(context, PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) => WeekInfo(),
+                                    transitionsBuilder: ScreenTransition.fadeTransition,
+                                  )).then((value) => controller.changedWeekId.value = foundWeek.id);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неделя не найдена')));
+                                }
                               }
                             }
                           },
@@ -198,7 +202,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
           tooltip: 'Перейти к текущей неделе',
           onPressed: () {
             var week = controller.currentWeek;
-            controller.selectWeek(week.id, week.yearId);
+            controller.selectWeek(week.id);
 
             Navigator.of(context).push(PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) => WeekInfo(),
