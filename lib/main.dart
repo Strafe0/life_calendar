@@ -9,11 +9,14 @@ import 'package:life_calendar/views/thanks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 bool firstTime = true;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setup();
 
   final prefs = await SharedPreferences.getInstance();

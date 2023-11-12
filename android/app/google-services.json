@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "69522046073",
+    "project_id": "life-calendar-2ad86",
+    "storage_bucket": "life-calendar-2ad86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69522046073:android:06c90d6ba1f2eca5aaa8a8",
+        "android_client_info": {
+          "package_name": "com.vgol.life_calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69522046073-ubma9oskb54hf05vh9ck9phqn6iild9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmxl_B3sK7dbQHtqM-_o_vexOVY6Wkelc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69522046073-ubma9oskb54hf05vh9ck9phqn6iild9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
