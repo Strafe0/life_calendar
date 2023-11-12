@@ -55,7 +55,7 @@ class AuthRepository {
 
   Future<void> logInWithEmailAndPassword({required String email, required String password}) async {
     try {
-      _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {

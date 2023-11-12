@@ -16,6 +16,8 @@ class LoginForm extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(state.errorMessage ?? 'Ошибка авторизации')));
+        } else if (state.status == FormzSubmissionStatus.success) {
+          Navigator.pop(context);
         }
       },
       child: Align(
