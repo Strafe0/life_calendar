@@ -9,7 +9,11 @@ part 'auth_state.dart';
 part 'auth_event.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({required AuthRepository authRepository}) : _authRepository = authRepository, super(authRepository.currentUser.isNotEmpty ? AuthState.authenticated(authRepository.currentUser) : const AuthState.unauthenticated()) {
+  AuthBloc({required AuthRepository authRepository})
+      : _authRepository = authRepository,
+        super(authRepository.currentUser.isNotEmpty
+            ? AuthState.authenticated(authRepository.currentUser)
+            : const AuthState.unauthenticated()) {
     on<_AuthUserChanged>(_onUserChanged);
     on<AuthLogoutRequested>(_onLogoutRequested);
     _userSubscription = _authRepository.user.listen((user) => add(_AuthUserChanged(user)));

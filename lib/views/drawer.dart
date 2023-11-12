@@ -1,6 +1,8 @@
 import 'package:authentication/auth_repository.dart';
+import 'package:authentication/bloc/auth_bloc.dart';
 import 'package:authentication/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/utils/widgets/app_version_text_widget.dart';
 import 'package:life_calendar/views/auth/login_screen.dart';
@@ -27,10 +29,19 @@ class AppDrawer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (user.isNotEmpty && user.name != null)
-                  Text(user.name!),
-                if (user.isNotEmpty && user.email != null)
-                  Text(user.email!),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (state.status == AuthStatus.authenticated && state.user.name != null)
+                          Text(user.name!),
+                        if (state.status == AuthStatus.authenticated && state.user.email != null)
+                          Text(user.email!),
+                      ],
+                    );
+                  },
+                ),
                 Text("Дата рождения", style: Theme.of(context).textTheme.titleLarge,),
                 FutureBuilder(
                   future: _getBirthday(),
@@ -65,16 +76,20 @@ class AppDrawer extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: ListTile(
-                leading: Icon(user.isEmpty ? Icons.login : Icons.logout),
-                title: Text(user.isEmpty ? "Войти" : "Выйти"),
-                trailing: const AppVersionTextWidget(),
-                onTap: () {
-                  if (user.isEmpty) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-                  } else {
-                    getIt.get<AuthRepository>().logout();
-                  }
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  return ListTile(
+                    leading: Icon(state.status == AuthStatus.unauthenticated ? Icons.login : Icons.logout),
+                    title: Text(state.status == AuthStatus.unauthenticated ? "Войти" : "Выйти"),
+                    trailing: const AppVersionTextWidget(),
+                    onTap: () {
+                      if (state.status == AuthStatus.unauthenticated) {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      } else {
+                        getIt.get<AuthRepository>().logout();
+                      }
+                    },
+                  );
                 },
               ),
             ),

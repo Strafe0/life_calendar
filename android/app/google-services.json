@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "69522046073-ubma9oskb54hf05vh9ck9phqn6iild9b.apps.googleusercontent.com",
+          "client_id": "69522046073-n9ng5sanjlgg0u1tgv2fo65o29ked59v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vgol.life_calendar",
+            "certificate_hash": "12574d0b214bac36cadeff2317948ccc34962e7f"
+          }
+        },
+        {
+          "client_id": "69522046073-ij364hfimgagoqsiqr9sqqbus6670erb.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +35,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "69522046073-ubma9oskb54hf05vh9ck9phqn6iild9b.apps.googleusercontent.com",
+              "client_id": "69522046073-ij364hfimgagoqsiqr9sqqbus6670erb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "69522046073-hlbr5pmreahuhdk5o33kmtvcdl8hp839.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vgol.lifeCalendar"
+              }
             }
           ]
         }
