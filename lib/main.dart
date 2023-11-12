@@ -9,6 +9,7 @@ import 'package:life_calendar/views/thanks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
+import 'package:appmetrica_plugin/appmetrica_plugin.dart';
 
 bool firstTime = true;
 
@@ -26,6 +27,10 @@ Future main() async {
     await getIt<CalendarModel>().buildCalendar(firstTime);
   }
   MobileAds.initialize().whenComplete(() => debugPrint('MobileAds initialized'));
+  const String appMetricaKey = String.fromEnvironment("appmetrica_key");
+  if (appMetricaKey.isNotEmpty) {
+    AppMetrica.activate(const AppMetricaConfig(appMetricaKey)).then((value) => AppMetrica.reportEvent('AppMetrica activated!'));
+  }
   runApp(const LifeCalendar());
 }
 
