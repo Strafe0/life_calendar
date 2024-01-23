@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Test Calendar",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "lifeCalendarTest"]
+        },
+        {
+            "name": "Calendar",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "args": ["--flavor", "lifeCalendar"]
+        },
+    ]
+}
