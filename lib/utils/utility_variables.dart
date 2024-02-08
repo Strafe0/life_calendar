@@ -12,7 +12,12 @@ DateTime maxBirthDate = DateTime.now();
 DateTime maxDate = DateTime(2090, 1, 1);
 
 double weekBoxSide = 6;
-double weekBoxPadding = 0.5;
+double weekBoxPaddingX = 0.5;
+double weekBoxPaddingY = 0.5;
+double horPadding = weekBoxSide;
+double vrtPadding = weekBoxSide;
+double horLabelHeight = weekBoxSide;
+double vrtLabelWidth = weekBoxSide;
 
 final dateMaskFormatter = MaskTextInputFormatter(
   mask: '##.##.####',
