@@ -11,7 +11,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class WeekInfo extends StatefulWidget {
-  const WeekInfo({Key? key}) : super(key: key);
+  const WeekInfo({super.key});
 
   @override
   State<WeekInfo> createState() => _WeekInfoState();
@@ -30,27 +30,22 @@ class _WeekInfoState extends State<WeekInfo> {
     assessment = controller.selectedWeek.assessment;
   }
 
+  BannerAdSize get adSize {
+    final screenWidth = MediaQuery.of(context).size.width.round();
+    return BannerAdSize.sticky(width: screenWidth);
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('build WeekInfo');
 
     Week week = controller.selectedWeek;
-    Size screenSize = MediaQuery.of(context).size;
 
     final banner = BannerAd(
       // adUnitId: 'demo-banner-yandex',
       adUnitId: 'R-M-2265467-1',
-      // Flex-size
-      // adSize: AdSize.flexible(width: screenSize.width, height: bannerHeight),
-      // Sticky-size
-      adSize: AdSize.sticky(width: screenSize.width.toInt()),
+      adSize: adSize,
       adRequest: const AdRequest(),
-      onAdLoaded: () {
-        /* Do something */
-      },
-      onAdFailedToLoad: (error) {
-        /* Do something */
-      },
     );
 
     return Scaffold(

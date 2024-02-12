@@ -1,4 +1,4 @@
-import 'package:path/path.dart';
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:flutter/material.dart' show debugPrint;
@@ -9,7 +9,7 @@ class AppDatabase {
   final int _dbVersion = 1;
 
   Future init() async {
-    _db = await openDatabase(join(await getDatabasesPath(), tableName),
+    _db = await openDatabase("${await getDatabasesPath()}${Platform.pathSeparator}$tableName",
       version: _dbVersion,
       onCreate: (db, version) {
         return db.execute('CREATE TABLE IF NOT EXISTS $tableName ('
