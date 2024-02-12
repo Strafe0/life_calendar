@@ -34,12 +34,12 @@ class CalendarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     weekRectHolder.clear();
-    double y0 = vrtPadding + horLabelHeight + weekBoxSide / 2;
+    double y0 = vrtPadding + labelVrtPadding + weekBoxSide / 2;
 
     drawWeekLabels(canvas, theme.colorScheme.onBackground);
 
     for (int yearId = 0; yearId < controller.numberOfYears; yearId++) {
-      double x0 = horPadding + vrtLabelWidth + weekBoxSide / 2;
+      double x0 = horPadding + labelHorPadding + weekBoxSide / 2;
       double y = y0 + yearId * (weekBoxSide + weekBoxPaddingY);
 
       if (yearId % 5 == 0) {
@@ -77,7 +77,7 @@ class CalendarPainter extends CustomPainter {
   void drawWeekLabels(Canvas canvas, Color textColor) {
     for (int i = 0; i < 11; i++) {
       final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
-        fontSize: horLabelHeight,
+        fontSize: labelVrtPadding,
         textAlign: TextAlign.center,
         maxLines: 1,
         height: 1.0,
@@ -89,7 +89,7 @@ class CalendarPainter extends CustomPainter {
       final ui.Paragraph paragraph = builder.build();
       paragraph.layout(ui.ParagraphConstraints(width: weekBoxSide*2));
 
-      double leftPadding = horPadding + vrtLabelWidth;
+      double leftPadding = horPadding + labelHorPadding;
       double k = i == 0 ? 0 : 1;
       canvas.drawParagraph(
         paragraph,
@@ -97,7 +97,7 @@ class CalendarPainter extends CustomPainter {
           leftPadding +
               (i * 5 - k) * (weekBoxSide + weekBoxPaddingX) -
               weekBoxSide / 2,
-          vrtPadding - weekBoxPaddingX * 4,
+          vrtPadding - weekBoxPaddingX * 2,
         ),
       );
     }
@@ -105,7 +105,7 @@ class CalendarPainter extends CustomPainter {
 
   void drawYearLabel(int yearNumber, Canvas canvas, Color textColor) {
     final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
-      fontSize: horLabelHeight,
+      fontSize: weekBoxSide * 1.5,
       textAlign: TextAlign.end,
       maxLines: 1,
       height: 1.0,
@@ -114,13 +114,14 @@ class CalendarPainter extends CustomPainter {
     builder.addText(yearNumber.toString());
     // builder.addPlaceholder(vrtLabelWidth, weekBoxSide, PlaceholderAlignment.middle);
     final ui.Paragraph paragraph = builder.build();
-    paragraph.layout(ui.ParagraphConstraints(width: vrtLabelWidth));
-    double topPadding = vrtPadding + horLabelHeight - weekBoxPaddingX;
+    paragraph.layout(ui.ParagraphConstraints(width: labelHorPadding));
+    double topPadding = vrtPadding + labelVrtPadding;
 
     canvas.drawParagraph(
       paragraph,
       Offset(
-        horPadding - weekBoxPaddingX * 4,
+        horPadding - 2 * weekBoxPaddingX,
+        // horPadding - weekBoxSide * 2 - weekBoxPaddingX,
         topPadding + yearNumber * (weekBoxSide + weekBoxPaddingY),
       ),
     );

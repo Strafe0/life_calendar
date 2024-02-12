@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
+import 'package:life_calendar/utils/device_type.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/views/calendar/calendar_canvas.dart';
@@ -24,21 +23,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   final WeekRectHolder weekRectHolder = WeekRectHolder();
 
   @override
-  void initState() {
-    super.initState();
-    calculateSizes2(screenWidth, screenHeight);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    debugPrint('build CalendarWidget');
-    debugPrint("AppBar height = ${Theme.of(context).appBarTheme.toolbarHeight}");
-    debugPrint("AppBar height = ${AppBar().toolbarHeight}");
-    debugPrint("toolbar height = $kToolbarHeight");
-    debugPrint("NavBar height = $kBottomNavigationBarHeight");
-    debugPrint("padding top = ${MediaQuery.of(context).padding.top}");
-    debugPrint("padding top2 = ${WidgetsBinding.instance.platformDispatcher.views.first.padding.top}");
-
     return ChangeNotifierProvider.value(
       value: controller,
       child: GestureDetector(
@@ -53,12 +38,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         },
         child: LayoutBuilder(
           builder: (context, constraints) {
-            debugPrint("width = $screenWidth, height = $screenHeight");
-            debugPrint("constraints max width = ${constraints.maxWidth}");
-            debugPrint("constraints min width = ${constraints.minWidth}");
-            debugPrint("constraints max height = ${constraints.maxHeight}");
-            debugPrint("constraints min height = ${constraints.minHeight}");
-            calculateSizes2(constraints.maxWidth, constraints.maxHeight);
+            if (deviceType == DeviceType.phone) {
+              calculateSizesForPhones(constraints.maxWidth, constraints.maxHeight);
+            } else {
+              calculateSizesForTablets(constraints.maxWidth, constraints.maxHeight);
+            }
+
             return CalendarCanvas(weekRectHolder: weekRectHolder,);
           }
         ),
@@ -66,62 +51,37 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-  /// 53 - number of weeks in row (maximal)
-  /// 8 - left and right padding
-  /// 
-  /// `x` = 10 * `y`
-  /// x + 53 * 2y + 8 * 2 = w
-  void calculateSizes(double screenWidth, double screenHeight) {
-    int width = screenWidth.round();
-    double wWeekBoxPadding = (width - 28) / 636;
+  void calculateSizesForPhones(double w, double h) {
+    int N = 53, M = controller.numberOfYears;
+    int k1 = 10, k2 = 15, k3 = 20;
+    int m2 = 5, m3 = 4;
 
-    int height = screenHeight.round();
-    double hWeekBoxPadding = (height - 28) / 960;
+    double cHor = w / ((k1 + 1) * N + 2 * k2 + k3 - 1);
 
-    weekBoxPaddingX = wWeekBoxPadding < hWeekBoxPadding ? wWeekBoxPadding : hWeekBoxPadding;
-    weekBoxSide = weekBoxPaddingX * 10;
+    weekBoxSide = k1 * cHor;
+    weekBoxPaddingX = cHor;
+    horPadding = k2 * cHor;
+    labelHorPadding = k3 * cHor;
 
-    int n = controller.numberOfYears;
-    weekBoxPaddingY = (height * 0.9 - 28 - n * weekBoxSide) / (2 * n);
+    weekBoxPaddingY = (h - M * weekBoxSide) / (M + 2 * m2 + m3 - 1);
+    vrtPadding = m2 * weekBoxPaddingY;
+    labelVrtPadding = m3 * weekBoxPaddingY;
   }
 
-  void calculateSizes2(double screenWidth, double screenHeight) {
-    int width = screenWidth.round();
-    // int height = (screenHeight - kToolbarHeight).round();
-    int height = screenHeight.round();
-    // double devicePixelRatio = WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
-    // double paddingTop = WidgetsBinding.instance.platformDispatcher.views.first.padding.top;
-    // int height = (screenHeight - kToolbarHeight / devicePixelRatio - paddingTop / devicePixelRatio).round();
+  void calculateSizesForTablets(double w, double h) {
+    int N = 53, M = controller.numberOfYears;
+    int k2 = 5, k3 = 6;
+    int m1 = 10, m2 = 20, m3 = 15;
 
-    int N = 53;
-    int M = controller.numberOfYears;
+    double cVrt = h / ((m1 + 1) * M + 2 * m2 + m3 - 1);
 
-    double k = 10;
-    double m = 3;
-    double cW = width / ((k + 1) * N + 4 * k - 1);
-    double a = k * cW;
+    weekBoxSide = m1 * cVrt;
+    weekBoxPaddingY = cVrt;
+    vrtPadding = m2 * cVrt;
+    labelVrtPadding = m3 * cVrt;
 
-    double cH = height / ((k + 1) * M + 4 * k - 1);
-    double b = k * cH;
-
-    if (a < b) {
-      weekBoxSide = a;
-      weekBoxPaddingX = cW;
-      horPadding = a;
-      vrtLabelWidth = 2 * a;
-
-      weekBoxPaddingY = (height - M * a) / (M + 3 * m - 1);
-      vrtPadding = m * weekBoxPaddingY;
-      horLabelHeight = m * weekBoxPaddingY;
-    } else {
-      weekBoxSide = b;
-      weekBoxPaddingY = cH;
-      vrtPadding = b;
-      horLabelHeight = 2 * b;
-
-      weekBoxPaddingX = (width - N * b) / (N + 4 * k - 1);
-      horPadding = m * weekBoxPaddingX;
-      vrtLabelWidth = m * weekBoxPaddingX;
-    }
+    weekBoxPaddingX = (w - N * weekBoxSide) / (N + 2 * k2 + k3 - 1);
+    horPadding = k2 * weekBoxPaddingX;
+    labelHorPadding = k3 * weekBoxPaddingX;
   }
 }

@@ -16,8 +16,8 @@ double weekBoxPaddingX = 0.5;
 double weekBoxPaddingY = 0.5;
 double horPadding = weekBoxSide;
 double vrtPadding = weekBoxSide;
-double horLabelHeight = weekBoxSide;
-double vrtLabelWidth = weekBoxSide;
+double labelHorPadding = weekBoxSide;
+double labelVrtPadding = weekBoxSide;
 
 final dateMaskFormatter = MaskTextInputFormatter(
   mask: '##.##.####',
