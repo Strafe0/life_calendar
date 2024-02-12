@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 
 class CalendarWidget extends StatefulWidget {
-  const CalendarWidget({Key? key}) : super(key: key);
+  const CalendarWidget({super.key});
 
   @override
   State<CalendarWidget> createState() => _CalendarWidgetState();
@@ -131,7 +131,7 @@ List<Widget> _buildChildren(Map<String, dynamic> args) {
 }
 
 class YearRow extends StatelessWidget {
-  const YearRow(this.yearId, {Key? key}) : super(key: key);
+  const YearRow(this.yearId, {super.key});
 
   final int yearId;
 
@@ -184,7 +184,7 @@ class YearRow extends StatelessWidget {
 }
 
 class WeekBox extends StatefulWidget {
-  const WeekBox(this.id, this.yearId, {Key? key}) : super(key: key);
+  const WeekBox(this.id, this.yearId, {super.key});
   final int id;
   final int yearId;
   // final Week week;

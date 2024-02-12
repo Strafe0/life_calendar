@@ -12,7 +12,7 @@ import 'package:life_calendar/views/calendar/week_info.dart';
 import 'package:life_calendar/views/drawer.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
+  const CalendarScreen({super.key});
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
@@ -26,9 +26,14 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     debugPrint('build CalendarScreen');
-    return WillPopScope(
-      onWillPop: () async {
-        return await showDialog<bool>(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+
+        await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Выход'),

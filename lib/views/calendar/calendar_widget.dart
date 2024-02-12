@@ -9,7 +9,7 @@ import 'package:life_calendar/views/calendar/week_rect_holder.dart';
 
 
 class CalendarWidget extends StatefulWidget {
-  const CalendarWidget({Key? key}) : super(key: key);
+  const CalendarWidget({super.key});
 
   @override
   State<CalendarWidget> createState() => _CalendarWidgetState();

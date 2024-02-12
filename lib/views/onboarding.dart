@@ -7,7 +7,7 @@ import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/utils/utility_functions.dart';
 
 class OnBoardingScreen extends StatefulWidget {
-  const OnBoardingScreen({Key? key}) : super(key: key);
+  const OnBoardingScreen({super.key});
 
   @override
   State<OnBoardingScreen> createState() => _OnBoardingScreenState();
@@ -25,9 +25,14 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       statusBarColor: isLightMode ? const Color(0xFF356CF9) : const Color(0xFF00174D),
     ));
 
-    return WillPopScope(
-      onWillPop: () async {
-        return await showDialog<bool>(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+
+        await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Выход'),
@@ -184,7 +189,7 @@ const List<Widget> _pages = [
 ];
 
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({Key? key, required this.image, required this.title, required this.description}) : super(key: key);
+  const OnBoardingPage({super.key, required this.image, required this.title, required this.description});
 
   final String image;
   final String title;
@@ -195,22 +200,27 @@ class OnBoardingPage extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     
-    return Column(
-      children: [
-        const Spacer(),
-        Image.asset(image, width: 0.8 * width, height: 0.5 * height),
-        const Spacer(),
-        Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
-        const SizedBox(height: 16),
-        Text(description, style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center,),
-        const Spacer(),
-      ],
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(
+          children: [
+            const Spacer(),
+            Image.asset(image, width: 0.8 * width, height: 0.5 * height),
+            const Spacer(),
+            Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
+            const SizedBox(height: 16),
+            Text(description, style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center,),
+            const Spacer(),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class DotIndicator extends StatelessWidget {
-  const DotIndicator({Key? key, required this.isActive}) : super(key: key);
+  const DotIndicator({super.key, required this.isActive});
 
   final bool isActive;
 
@@ -233,7 +243,7 @@ class DotIndicator extends StatelessWidget {
 }
 
 class DateInputScreen extends StatefulWidget {
-  const DateInputScreen({Key? key}) : super(key: key);
+  const DateInputScreen({super.key});
 
   @override
   State<DateInputScreen> createState() => _DateInputScreenState();

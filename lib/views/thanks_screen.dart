@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ThanksScreen extends StatefulWidget {
-  const ThanksScreen({Key? key}) : super(key: key);
+  const ThanksScreen({super.key});
 
   @override
   State<ThanksScreen> createState() => _ThanksScreenState();
