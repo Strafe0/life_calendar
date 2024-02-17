@@ -1,14 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/theme.dart';
+import 'package:life_calendar/utils/snackbar.dart';
 import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:image_picker/image_picker.dart';
 
 class WeekInfo extends StatefulWidget {
   const WeekInfo({super.key});
@@ -23,11 +26,32 @@ class _WeekInfoState extends State<WeekInfo> {
   final TextEditingController _textController = TextEditingController();
   bool _validate = true;
   final TextEditingController _dateController = TextEditingController();
-  
+  late BannerAd _banner;
+  bool _bannerInitialized = false;
+  double addHeight = 0.0;
+
   @override
   void initState() {
     super.initState();
     assessment = controller.selectedWeek.assessment;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _banner = BannerAd(
+        // adUnitId: 'demo-banner-yandex',
+          adUnitId: 'R-M-2265467-1',
+          adSize: adSize,
+          adRequest: const AdRequest(),
+          onAdLoaded: () {
+            if (!mounted) {
+              _banner.destroy();
+              return;
+            }
+          }
+      );
+      setState(() {
+        _bannerInitialized = true;
+        addHeight = _banner.adSize.height.toDouble();
+      });
+    });
   }
 
   BannerAdSize get adSize {
@@ -40,13 +64,6 @@ class _WeekInfoState extends State<WeekInfo> {
     debugPrint('build WeekInfo');
 
     Week week = controller.selectedWeek;
-
-    final banner = BannerAd(
-      // adUnitId: 'demo-banner-yandex',
-      adUnitId: 'R-M-2265467-1',
-      adSize: adSize,
-      adRequest: const AdRequest(),
-    );
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -71,13 +88,16 @@ class _WeekInfoState extends State<WeekInfo> {
                 const SizedBox(height: 20.0,),
                 eventsWidget(),
                 const SizedBox(height: 20.0,),
+                photoWidget(),
+                const SizedBox(height: 20.0,),
                 resumeWidget(),
+                const SizedBox(height: 100.0,),
               ],
             ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: AdWidget(bannerAd: banner),
+            child: _bannerInitialized ? AdWidget(bannerAd: _banner) : null,
           ),
         ],
       ),
@@ -114,6 +134,17 @@ class _WeekInfoState extends State<WeekInfo> {
             ),
             child: const Icon(Icons.check),
             onTap: addGoal,
+            backgroundColor: Theme.of(context).cardTheme.color,
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            shape: const CircleBorder(),
+          ),
+          SpeedDialChild(
+            labelWidget: const Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: Text('Фото'),
+            ),
+            child: const Icon(Icons.photo),
+            onTap: addPhoto,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
@@ -164,6 +195,18 @@ class _WeekInfoState extends State<WeekInfo> {
     String? goalTitle = await _showGoalTitleDialog(isCreation: true);
     if (goalTitle != null && goalTitle.isNotEmpty) {
       controller.addGoal(goalTitle).then((value) => setState(() {}));
+    }
+  }
+
+  Future<void> addPhoto() async {
+    ImagePicker picker = ImagePicker();
+
+    XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      controller.addPhoto(file).then((value) => setState(() {}));
+    } else {
+      if (!context.mounted) return;
+      showSnackBar(context, "Ошибка добавления фото");
     }
   }
 
@@ -507,6 +550,62 @@ class _WeekInfoState extends State<WeekInfo> {
           ],
         );
       },
+    );
+  }
+
+  Widget photoWidget() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    int n = 3;
+    double externalPadding = 12, internalPadding = 10;
+    double width = (screenWidth - 2 * externalPadding - 2 * internalPadding) / n;
+    int photoNumber = controller.selectedWeek.photos.length;
+    int rowNumber = (photoNumber / 3).ceil();
+    double gridHeight = width * rowNumber + internalPadding * (rowNumber + 1);
+
+    double textHeight = Theme.of(context).textTheme.titleMedium?.height ?? 20;
+    const double textPaddingBottom = 14;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: externalPadding),
+      child: SizedBox(
+        height: gridHeight + textHeight + textPaddingBottom,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Фото',
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.start,
+              ),
+            ),
+            const SizedBox(height: textPaddingBottom,),
+            Expanded(
+              child: GridView.count(
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: n,
+                crossAxisSpacing: internalPadding,
+                mainAxisSpacing: internalPadding,
+                children: List.generate(
+                  controller.selectedWeek.photos.length,
+                  (index) => Material(
+                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                    // color: Colors.transparent,
+                    elevation: 2.0,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                      child: Image.file(
+                        File(controller.selectedWeek.photos[index]),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

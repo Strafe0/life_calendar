@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:life_calendar/utils/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ThanksScreen extends StatefulWidget {
@@ -92,7 +93,8 @@ class _ThanksScreenState extends State<ThanksScreen> {
 
   Future<void> _writeButton() async {
     if (!await launchUrl(_url)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Упс... Возникла неизвестная проблема')));
+      if (!context.mounted) return;
+      showSnackBar(context, 'Упс... Возникла неизвестная проблема');
     }
   }
 }

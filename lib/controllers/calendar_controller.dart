@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
@@ -78,6 +79,12 @@ class CalendarController extends ChangeNotifier {
   Future<void> addResume(String resumeText) async {
     selectedWeek.resume = resumeText;
     await _calendarModel.updateResume(selectedWeek);
+  }
+
+  Future<void> addPhoto(XFile photo) async {
+    selectedWeek.photos.add(photo.path);
+    await _calendarModel.updatePhoto(selectedWeek);
+    selectedWeek = await _calendarModel.getWeekById(selectedWeek.id);
   }
 
   Future<void> deleteResume() async {

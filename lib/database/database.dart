@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:life_calendar/calendar/week.dart';
@@ -6,24 +7,43 @@ import 'package:flutter/material.dart' show debugPrint;
 class AppDatabase {
   static const String tableName = 'TheCalendarDatabase';
   late Database _db;
-  final int _dbVersion = 1;
+  final int _dbVersion = 2;
 
   Future init() async {
     _db = await openDatabase("${await getDatabasesPath()}${Platform.pathSeparator}$tableName",
       version: _dbVersion,
-      onCreate: (db, version) {
-        return db.execute('CREATE TABLE IF NOT EXISTS $tableName ('
-            'id INTEGER PRIMARY KEY,'
-            'yearId INTEGER NOT NULL,'
-            'state TEXT NOT NULL,'
-            'start INTEGER NOT NULL,'
-            'end INTEGER NOT NULL,'
-            'assessment TEXT,'
-            'goals TEXT,'
-            'events TEXT,'
-            'resume TEXT)');
-      }
+      onCreate: (db, version) async {
+        var batch = db.batch();
+        _createTableV2(batch);
+        await batch.commit();
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        var batch = db.batch();
+        if (oldVersion == 1) {
+          _updateTableV1toV2(batch);
+        }
+        await batch.commit();
+      },
     );
+  }
+
+  void _createTableV2(Batch batch) {
+    batch.execute('DROP TABLE IF EXISTS $tableName');
+    batch.execute('CREATE TABLE IF NOT EXISTS $tableName ('
+        'id INTEGER PRIMARY KEY,'
+        'yearId INTEGER NOT NULL,'
+        'state TEXT NOT NULL,'
+        'start INTEGER NOT NULL,'
+        'end INTEGER NOT NULL,'
+        'assessment TEXT,'
+        'goals TEXT,'
+        'events TEXT,'
+        'resume TEXT,'
+        'photos TEXT)');
+  }
+
+  void _updateTableV1toV2(Batch batch) {
+    batch.execute('ALTER TABLE $tableName ADD photos TEXT');
   }
 
   Future<bool> insertWeek(Week week) async {
@@ -50,6 +70,11 @@ class AppDatabase {
     var records = await _db.query(tableName);
     List<Week> weeks = List.generate(records.length, (i) => Week.fromJson(records[i]));
     return weeks;
+  }
+
+  Future<Week> getWeekById(int id) async {
+    var records = await _db.query(tableName, where: 'id = ?', whereArgs: [id]);
+    return Week.fromJson(records.first);
   }
 
   Future<Week> getCurrentWeek() async {
@@ -86,6 +111,12 @@ class AppDatabase {
 
   Future<int> updateResume(Week week) async {
     return await _db.rawUpdate('UPDATE $tableName SET resume = ? WHERE id = ?', [week.resume, week.id]);
+  }
+
+  Future<int> updatePhoto(Week week) async {
+    // return await _db.update(tableName, week.toJson(), where: 'id = ?', whereArgs: [week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET photos = ? WHERE id = ?',
+        [jsonEncode(week.photos), week.id]);
   }
 
   Future<bool> tableIsEmpty() async {
