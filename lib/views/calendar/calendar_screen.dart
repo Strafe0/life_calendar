@@ -9,7 +9,7 @@ import 'package:life_calendar/setup.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/views/calendar/week_info.dart';
+import 'package:life_calendar/views/week/week_info.dart';
 import 'package:life_calendar/views/drawer.dart';
 
 class CalendarScreen extends StatefulWidget {
