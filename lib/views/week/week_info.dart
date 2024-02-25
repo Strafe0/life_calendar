@@ -28,7 +28,7 @@ class _WeekInfoState extends State<WeekInfo> {
   final CalendarController controller = getIt<CalendarController>();
   late BannerAd _banner;
   bool _bannerInitialized = false;
-  double addHeight = 0.0;
+  double adHeight = 0.0;
 
   @override
   void initState() {
@@ -44,11 +44,15 @@ class _WeekInfoState extends State<WeekInfo> {
             _banner.destroy();
             return;
           }
+          _banner.adSize.getCalculatedHeight().then((value) {
+            setState(() {
+              adHeight = value.toDouble();
+            });
+          });
         },
       );
       setState(() {
         _bannerInitialized = true;
-        addHeight = _banner.adSize.height.toDouble();
       });
     });
   }
@@ -75,7 +79,7 @@ class _WeekInfoState extends State<WeekInfo> {
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 70),
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
@@ -115,7 +119,7 @@ class _WeekInfoState extends State<WeekInfo> {
                     addResume: addResume,
                     deleteResume: controller.deleteResume,
                   ),
-                  const SizedBox(height: 100.0,),
+                  SizedBox(height: adHeight + 20,),
                 ],
               ),
             ),
