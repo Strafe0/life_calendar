@@ -102,7 +102,13 @@ class _WeekInfoState extends State<WeekInfo> {
                     changeEvent: controller.changeEvent,
                   ),
                   const SizedBox(height: 20.0,),
-                  WeekPhotos(selectedWeek: week),
+                  WeekPhotos(
+                    selectedWeek: week,
+                    removePhoto: (String photoPath) async {
+                      await controller.deletePhoto(photoPath);
+                      setState(() {});
+                    },
+                  ),
                   const SizedBox(height: 20.0,),
                   WeekResume(
                     week: week,

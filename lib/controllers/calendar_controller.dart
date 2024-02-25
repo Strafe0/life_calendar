@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
@@ -85,6 +85,16 @@ class CalendarController extends ChangeNotifier {
     selectedWeek.photos.add(photo.path);
     await _calendarModel.updatePhoto(selectedWeek);
     selectedWeek = await _calendarModel.getWeekById(selectedWeek.id);
+  }
+
+  Future<void> deletePhoto(String photoPath) async {
+    bool isRemoved = selectedWeek.photos.remove(photoPath);
+    if (isRemoved) {
+      await _calendarModel.updatePhoto(selectedWeek);
+      selectedWeek = await _calendarModel.getWeekById(selectedWeek.id);
+    } else {
+      debugPrint("Error removing photo from selected week");
+    }
   }
 
   Future<void> deleteResume() async {

@@ -1,12 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:life_calendar/calendar/week.dart';
+import 'package:life_calendar/views/week/week_photo.dart';
 
 class WeekPhotos extends StatelessWidget {
-  const WeekPhotos({super.key, required this.selectedWeek});
+  const WeekPhotos({super.key,
+    required this.selectedWeek,
+    required this.removePhoto,
+  });
 
   final Week selectedWeek;
+  final Future<void> Function(String path) removePhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class WeekPhotos extends StatelessWidget {
     double width = (screenWidth - 2 * externalPadding - 2 * internalPadding) / n; // width of one photo
     int photoNumber = selectedWeek.photos.length;
     int rowNumber = (photoNumber / 3).ceil();
-    double gridHeight = width * rowNumber + internalPadding * (rowNumber + 1);
+    double gridHeight = width * rowNumber/* + internalPadding * (rowNumber + 1)*/;
 
     const double textPaddingBottom = 14;
 
@@ -46,17 +49,10 @@ class WeekPhotos extends StatelessWidget {
                 mainAxisSpacing: internalPadding,
                 shrinkWrap: true,
                 children: List.generate(
-                  photoNumber, (index) => Material(
-                  borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                  elevation: 2.0,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-                    child: Image.file(
-                      File(selectedWeek.photos[index]),
-                      fit: BoxFit.fill,
-                    ),
+                  photoNumber, (index) => WeekPhoto(
+                    photoPath: selectedWeek.photos[index],
+                    removePhoto: removePhoto,
                   ),
-                ),
                 ),
               ),
             ),
