@@ -59,7 +59,7 @@ class CalendarModel {
     } else {
       await buildFromDatabase();
     }
-    updateCurrentWeek();
+    await updateCurrentWeek();
   }
 
   DateTime get birthday => _birthday;
