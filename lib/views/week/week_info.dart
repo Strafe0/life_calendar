@@ -62,7 +62,6 @@ class _WeekInfoState extends State<WeekInfo> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: manage rebuild
     // rebuilds when keyboard appears
     debugPrint('build WeekInfo');
 
@@ -77,39 +76,42 @@ class _WeekInfoState extends State<WeekInfo> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 70),
-            child: ListView(
+            child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              children: [
-                const SizedBox(height: 20.0,),
-                Assessment(
-                  changeAssessment: controller.changeAssessment,
-                  initialAssessment: week.assessment,
-                ),
-                const SizedBox(height: 20.0,),
-                WeekGoals(
-                  selectedWeek: week,
-                  changeGoalCompletion: controller.changeGoalCompletion,
-                  changeGoalTitle: controller.changeGoalTitle,
-                  deleteGoal: controller.deleteGoal,
-                ),
-                const SizedBox(height: 20.0,),
-                WeekEvents(
-                  week: week,
-                  deleteEvent: controller.deleteEvent,
-                  changeEvent: controller.changeEvent,
-                ),
-                const SizedBox(height: 20.0,),
-                WeekPhotos(selectedWeek: week),
-                const SizedBox(height: 20.0,),
-                WeekResume(
-                  week: week,
-                  addResume: addResume,
-                  deleteResume: controller.deleteResume,
-                ),
-                const SizedBox(height: 100.0,),
-              ],
+              // shrinkWrap: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20.0,),
+                  Assessment(
+                    changeAssessment: controller.changeAssessment,
+                    initialAssessment: week.assessment,
+                  ),
+                  const SizedBox(height: 20.0,),
+                  WeekGoals(
+                    selectedWeek: week,
+                    changeGoalCompletion: controller.changeGoalCompletion,
+                    changeGoalTitle: controller.changeGoalTitle,
+                    deleteGoal: controller.deleteGoal,
+                  ),
+                  const SizedBox(height: 20.0,),
+                  WeekEvents(
+                    week: week,
+                    deleteEvent: controller.deleteEvent,
+                    changeEvent: controller.changeEvent,
+                  ),
+                  const SizedBox(height: 20.0,),
+                  WeekPhotos(selectedWeek: week),
+                  const SizedBox(height: 20.0,),
+                  WeekResume(
+                    week: week,
+                    addResume: addResume,
+                    deleteResume: controller.deleteResume,
+                  ),
+                  const SizedBox(height: 100.0,),
+                ],
+              ),
             ),
           ),
           Align(
