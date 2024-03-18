@@ -38,7 +38,9 @@ class _WeekInfoState extends State<WeekInfo> {
         // adUnitId: 'demo-banner-yandex',
         adUnitId: 'R-M-2265467-1',
         adSize: adSize,
-        adRequest: const AdRequest(),
+        adRequest: AdRequest(
+          age: controller.currentWeek.yearId,
+        ),
         onAdLoaded: () {
           if (!mounted) {
             _banner.destroy();
@@ -225,6 +227,11 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future<void> addPhoto() async {
+    //TODO: add rewarded ad
+    if (week.photos.isNotEmpty) {
+      
+    }
+
     ImagePicker picker = ImagePicker();
 
     XFile? file = await picker.pickImage(source: ImageSource.gallery);

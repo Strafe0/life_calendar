@@ -14,37 +14,14 @@ class WeekPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPressStart: (details) {
-        final offset = details.globalPosition;
-        final size = MediaQuery.of(context).size;
-        showMenu(
-          context: context,
-          position: RelativeRect.fromLTRB(
-            offset.dx,
-            offset.dy,
-            size.width - offset.dx,
-            size.height - offset.dy,
-          ),
-          items: <PopupMenuEntry>[
-            PopupMenuItem(
-              onTap: () async {
-                await removePhoto(photoPath);
-              },
-              child: Text('Удалить', style: Theme.of(context).textTheme.bodyMedium,),
-            ),
-          ],
-        );
-      },
-      child: Material(
+    return Material(
+      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+      elevation: 2.0,
+      child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-        elevation: 2.0,
-        child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Image.file(
-            File(photoPath),
-            fit: BoxFit.fill,
-          ),
+        child: Image.file(
+          File(photoPath),
+          fit: BoxFit.fill,
         ),
       ),
     );
