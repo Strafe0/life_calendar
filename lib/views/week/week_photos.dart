@@ -26,21 +26,19 @@ class _WeekPhotosState extends State<WeekPhotos> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      fullScreenPhotos = widget.selectedWeek.photos.map((photoPath) => Dismissible(
-        key: Key(photoPath),
-        direction: DismissDirection.down,
-        dismissThresholds: const {DismissDirection.down: 0.2},
-        onDismissed: (direction) => Navigator.pop(context),
-        child: ColoredBox(
-          color: Theme.of(context).colorScheme.background,
-          child: Image.file(File(photoPath)),
-        ),
-      )).toList();
+      fullScreenPhotos = updateFullScreenPhotos();
     });
   }
 
   @override
+  void didUpdateWidget(covariant WeekPhotos oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    fullScreenPhotos = updateFullScreenPhotos();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    //TODO: fix height
     double screenWidth = MediaQuery.of(context).size.width;
     int n = 3; // number of photos in one row of GridView
     double externalPadding = 12, internalPadding = 10; // padding in GridView
@@ -115,5 +113,18 @@ class _WeekPhotosState extends State<WeekPhotos> {
         ],
       ),
     );
+  }
+
+  List<Widget> updateFullScreenPhotos() {
+    return widget.selectedWeek.photos.map((photoPath) => Dismissible(
+      key: Key(photoPath),
+      direction: DismissDirection.down,
+      dismissThresholds: const {DismissDirection.down: 0.2},
+      onDismissed: (direction) => Navigator.pop(context),
+      child: ColoredBox(
+        color: Theme.of(context).colorScheme.background,
+        child: Image.file(File(photoPath)),
+      ),
+    )).toList();
   }
 }
