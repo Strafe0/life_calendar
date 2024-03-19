@@ -15,7 +15,9 @@ Week _$WeekFromJson(Map<String, dynamic> json) => Week(
       $enumDecode(_$WeekAssessmentEnumMap, json['assessment']),
       Week.goalsFromJson(json['goals'] as String),
       json['resume'] as String,
-    )..events = Week.eventsFromJson(json['events'] as String);
+    )
+      ..events = Week.eventsFromJson(json['events'] as String)
+      ..photos = Week.photosFromJson(json['photos'] as String?);
 
 Map<String, dynamic> _$WeekToJson(Week instance) => <String, dynamic>{
       'id': instance.id,
@@ -27,6 +29,7 @@ Map<String, dynamic> _$WeekToJson(Week instance) => <String, dynamic>{
       'goals': Week.goalsToJson(instance.goals),
       'events': Week.eventsToJson(instance.events),
       'resume': instance.resume,
+      'photos': Week.photosToJson(instance.photos),
     };
 
 const _$WeekStateEnumMap = {
@@ -54,9 +57,19 @@ Map<String, dynamic> _$GoalToJson(Goal instance) => <String, dynamic>{
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['title'] as String,
       dateFromJson(json['date'] as int),
+      $enumDecodeNullable(_$RecurrenceEnumMap, json['recurrence']) ??
+          Recurrence.none,
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'title': instance.title,
       'date': dateToJson(instance.date),
+      'recurrence': _$RecurrenceEnumMap[instance.recurrence]!,
     };
+
+const _$RecurrenceEnumMap = {
+  Recurrence.none: 'none',
+  Recurrence.weekly: 'weekly',
+  Recurrence.monthly: 'monthly',
+  Recurrence.annually: 'annually',
+};

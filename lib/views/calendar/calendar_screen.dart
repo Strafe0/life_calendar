@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_calendar/utils/snackbar.dart';
 import 'package:life_calendar/utils/transitions_builder.dart';
 import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
@@ -8,7 +9,7 @@ import 'package:life_calendar/setup.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:life_calendar/calendar/week.dart';
-import 'package:life_calendar/views/calendar/week_info.dart';
+import 'package:life_calendar/views/week/week_info.dart';
 import 'package:life_calendar/views/drawer.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -135,7 +136,7 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
                                     transitionsBuilder: ScreenTransition.fadeTransition,
                                   )).then((value) => controller.changedWeekId.value = foundWeek.id);
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неделя не найдена')));
+                                  showSnackBar(context, 'Неделя не найдена');
                                 }
                               }
                             }

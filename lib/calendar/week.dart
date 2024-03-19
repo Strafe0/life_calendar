@@ -24,6 +24,9 @@ class Week {
   List<Event> events = [];
   String resume = '';
 
+  @JsonKey(toJson: photosToJson, fromJson: photosFromJson)
+  List<String> photos = [];
+
   factory Week.fromJson(Map<String, dynamic> json) => _$WeekFromJson(json);
   Map<String, dynamic> toJson() => _$WeekToJson(this);
 
@@ -44,6 +47,16 @@ class Week {
       list[i]['title'],
       list[i]['isCompleted'],
     ));
+  }
+
+  static String photosToJson(List<String> photos) => jsonEncode(photos);
+  static List<String> photosFromJson(String? values) {
+    if (values != null && values.isNotEmpty) {
+      List list = jsonDecode(values);
+      return list.map((e) => e as String).toList();
+    }
+
+    return [];
   }
 }
 

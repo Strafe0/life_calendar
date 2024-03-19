@@ -59,7 +59,7 @@ class CalendarModel {
     } else {
       await buildFromDatabase();
     }
-    updateCurrentWeek();
+    await updateCurrentWeek();
   }
 
   DateTime get birthday => _birthday;
@@ -131,6 +131,8 @@ class CalendarModel {
 
   Week getWeek(int id) => _weeks[id];
 
+  Future<Week> getWeekById(int id) => _db.getWeekById(id);
+
   List<Week> getWeeksInYear(int yearId) {
     List<Week> result = [];
     int lowerBound = yearId * 52;
@@ -160,5 +162,9 @@ class CalendarModel {
 
   Future updateResume(Week week) async {
     await _db.updateResume(week);
+  }
+
+  Future updatePhoto(Week week) async {
+    await _db.updatePhoto(week);
   }
 }

@@ -3,7 +3,7 @@ import 'package:life_calendar/setup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:life_calendar/theme.dart';
 import 'package:life_calendar/views/calendar/calendar_screen.dart';
-import 'package:life_calendar/views/calendar/week_info.dart';
+import 'package:life_calendar/views/week/week_info.dart';
 import 'package:life_calendar/views/onboarding.dart';
 import 'package:life_calendar/views/thanks_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
