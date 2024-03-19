@@ -185,7 +185,7 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future<void> addEvent() async {
-    if (controller.selectedWeek.events.length >= 3) {
+    if (week.events.length >= 3) {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.error(
@@ -197,10 +197,10 @@ class _WeekInfoState extends State<WeekInfo> {
     }
 
     Event? newEvent = await eventDialog(context,
-      initialDate: controller.selectedWeek.start,
+      initialDate: week.start,
       title: "Создание события",
-      weekStartDate: controller.selectedWeek.start,
-      weekEndDate: controller.selectedWeek.end,
+      weekStartDate: week.start,
+      weekEndDate: week.end,
     );
     if (newEvent != null) {
       controller.addEvent(newEvent);
@@ -208,7 +208,7 @@ class _WeekInfoState extends State<WeekInfo> {
   }
 
   Future<void> addGoal() async {
-    if (controller.selectedWeek.goals.length >= 3) {
+    if (week.goals.length >= 3) {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.error(
@@ -227,8 +227,15 @@ class _WeekInfoState extends State<WeekInfo> {
 
   Future<void> addPhoto() async {
     //TODO: add rewarded ad
-    if (week.photos.isNotEmpty) {
-      
+    if (week.photos.length >= 3) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "Достигнут предел фото на неделю",
+          icon: Icon(Icons.error_outline, size: 0),
+        ),
+      );
+      return;
     }
 
     ImagePicker picker = ImagePicker();
@@ -237,7 +244,7 @@ class _WeekInfoState extends State<WeekInfo> {
     if (file != null) {
       controller.addPhoto(file).then((value) => setState(() {}));
     } else {
-      if (!context.mounted) return;
+      if (!mounted) return;
       showSnackBar(context, "Ошибка добавления фото");
     }
   }

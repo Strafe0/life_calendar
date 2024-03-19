@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/views/week/photo_view_gallery.dart';
