@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/views/week/photo_view_gallery.dart';
@@ -128,7 +129,21 @@ class _WeekPhotosState extends State<WeekPhotos> {
       onDismissed: (direction) => Navigator.pop(context),
       child: ColoredBox(
         color: Theme.of(context).colorScheme.background,
-        child: Image.file(File(photoPath)),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Image.file(File(photoPath)),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onBackground,),
+              ),
+            ),
+          ],
+        ),
       ),
     )).toList();
   }

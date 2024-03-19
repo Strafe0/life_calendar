@@ -36,25 +36,27 @@ class _PhotoViewGalleryState extends State<PhotoViewGallery> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PageView(
-          controller: _pageController,
-          onPageChanged: _onPageChanged,
-          children: widget.photos,
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: TabPageSelector(
-              controller: _tabController,
-              color: Theme.of(context).colorScheme.background,
-              selectedColor: Theme.of(context).colorScheme.primary,
+    return SafeArea(
+      child: Stack(
+        children: [
+          PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            children: widget.photos,
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: TabPageSelector(
+                controller: _tabController,
+                color: Theme.of(context).colorScheme.background,
+                selectedColor: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
