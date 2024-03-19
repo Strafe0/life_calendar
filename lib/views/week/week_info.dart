@@ -85,7 +85,6 @@ class _WeekInfoState extends State<WeekInfo> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               scrollDirection: Axis.vertical,
-              // shrinkWrap: true,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

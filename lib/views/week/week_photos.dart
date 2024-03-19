@@ -38,80 +38,85 @@ class _WeekPhotosState extends State<WeekPhotos> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: fix height
-    double screenWidth = MediaQuery.of(context).size.width;
-    int n = 3; // number of photos in one row of GridView
-    double externalPadding = 12, internalPadding = 10; // padding in GridView
-    double width = (screenWidth - 2 * externalPadding - 2 * internalPadding) / n; // width of one photo
-    int photoNumber = widget.selectedWeek.photos.length;
-    int rowNumber = (photoNumber / 3).ceil();
-    double gridHeight = width * rowNumber/* + internalPadding * (rowNumber + 1)*/;
-
     const double textPaddingBottom = 14;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: externalPadding),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Фото',
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          if (photoNumber == 0)
-            const Text('Нет фото'),
-          if (photoNumber > 0)
-            const SizedBox(height: textPaddingBottom,),
-          if (photoNumber > 0)
-            SizedBox(
-              height: gridHeight,
-              child: GridView.count(
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: n,
-                crossAxisSpacing: internalPadding,
-                mainAxisSpacing: internalPadding,
-                shrinkWrap: true,
-                children: List.generate(
-                  photoNumber,
-                  (index) => GestureDetector(
-                    onLongPressStart: (details) {
-                      final offset = details.globalPosition;
-                      final size = MediaQuery.of(context).size;
-                      showMenu(
-                        context: context,
-                        position: RelativeRect.fromLTRB(
-                          offset.dx,
-                          offset.dy,
-                          size.width - offset.dx,
-                          size.height - offset.dy,
-                        ),
-                        items: <PopupMenuEntry>[
-                          PopupMenuItem(
-                            onTap: () async {
-                              await widget.removePhoto(widget.selectedWeek.photos[index]);
-                            },
-                            child: Text(
-                              'Удалить',
-                              style: Theme.of(context).textTheme.bodyMedium,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        debugPrint("constraints: $constraints");
+
+        double screenWidth = constraints.maxWidth;
+        int n = 3; // number of photos in one row of GridView
+        double externalPadding = 12, internalPadding = 10; // padding in GridView
+        double width = (screenWidth - 2 * externalPadding - 2 * internalPadding) / n; // width of one photo
+        int photoNumber = widget.selectedWeek.photos.length;
+        int rowNumber = (photoNumber / 3).ceil();
+        double gridHeight = width * rowNumber + internalPadding * (rowNumber - 1);
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: externalPadding),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Фото',
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              if (photoNumber == 0)
+                const Text('Нет фото'),
+              if (photoNumber > 0)
+                const SizedBox(height: textPaddingBottom,),
+              if (photoNumber > 0)
+                SizedBox(
+                  height: gridHeight,
+                  child: GridView.count(
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: n,
+                    crossAxisSpacing: internalPadding,
+                    mainAxisSpacing: internalPadding,
+                    shrinkWrap: true,
+                    children: List.generate(
+                      photoNumber,
+                      (index) => GestureDetector(
+                        onLongPressStart: (details) {
+                          final offset = details.globalPosition;
+                          final size = MediaQuery.of(context).size;
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(
+                              offset.dx,
+                              offset.dy,
+                              size.width - offset.dx,
+                              size.height - offset.dy,
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                    onTap: () => Navigator.push(context, PhotoViewGallery.route(fullScreenPhotos, index)),
-                    child: WeekPhoto(
-                      photoPath: widget.selectedWeek.photos[index],
-                      removePhoto: widget.removePhoto,
+                            items: <PopupMenuEntry>[
+                              PopupMenuItem(
+                                onTap: () async {
+                                  await widget.removePhoto(widget.selectedWeek.photos[index]);
+                                },
+                                child: Text(
+                                  'Удалить',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        onTap: () => Navigator.push(context, PhotoViewGallery.route(fullScreenPhotos, index)),
+                        child: WeekPhoto(
+                          photoPath: widget.selectedWeek.photos[index],
+                          removePhoto: widget.removePhoto,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-        ],
-      ),
+            ],
+          ),
+        );
+      }
     );
   }
 
