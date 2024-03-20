@@ -15,6 +15,7 @@ class CalendarController extends ChangeNotifier {
   late Week selectedWeek;
   Week get currentWeek => _calendarModel.currentWeek;
   int get numberOfYears => _calendarModel.numberOfYears;
+  int get age => currentWeek.yearId;
 
 
   ValueNotifier<int> changedWeekId = ValueNotifier(0);

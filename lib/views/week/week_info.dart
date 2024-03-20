@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_calendar/ad_manager.dart';
 import 'package:life_calendar/controllers/calendar_controller.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
@@ -13,8 +14,6 @@ import 'package:life_calendar/views/week/week_goals.dart';
 import 'package:life_calendar/views/week/week_photos.dart';
 import 'package:life_calendar/views/week/week_resume.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:image_picker/image_picker.dart';
 
 class WeekInfo extends StatefulWidget {
@@ -26,6 +25,7 @@ class WeekInfo extends StatefulWidget {
 
 class _WeekInfoState extends State<WeekInfo> {
   final CalendarController controller = getIt<CalendarController>();
+  final AdManager _adManager = AdManager();
   late BannerAd _banner;
   bool _bannerInitialized = false;
   double adHeight = 0.0;
@@ -39,7 +39,7 @@ class _WeekInfoState extends State<WeekInfo> {
         adUnitId: 'R-M-2265467-1',
         adSize: adSize,
         adRequest: AdRequest(
-          age: controller.currentWeek.yearId,
+          age: controller.age,
         ),
         onAdLoaded: () {
           if (!mounted) {
@@ -56,6 +56,11 @@ class _WeekInfoState extends State<WeekInfo> {
       setState(() {
         _bannerInitialized = true;
       });
+    });
+
+    _adManager.createRewardedAdLoader();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _adManager.loadRewardedAd(age: controller.age, brightness: Theme.of(context).brightness);
     });
   }
 
@@ -152,7 +157,7 @@ class _WeekInfoState extends State<WeekInfo> {
               child: Text('Событие'),
             ),
             child: const Icon(Icons.calendar_today),
-            onTap: addEvent,
+            onTap: onAddEventTap,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
@@ -163,7 +168,7 @@ class _WeekInfoState extends State<WeekInfo> {
               child: Text('Цель'),
             ),
             child: const Icon(Icons.check),
-            onTap: addGoal,
+            onTap: onAddGoalTap,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
@@ -174,7 +179,7 @@ class _WeekInfoState extends State<WeekInfo> {
               child: Text('Фото'),
             ),
             child: const Icon(Icons.photo),
-            onTap: addPhoto,
+            onTap: onAddPhotoTap,
             backgroundColor: Theme.of(context).cardTheme.color,
             foregroundColor: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
@@ -184,18 +189,21 @@ class _WeekInfoState extends State<WeekInfo> {
     );
   }
 
-  Future<void> addEvent() async {
+  Future<void> onAddEventTap() async {
     if (week.events.length >= 3) {
-      showTopSnackBar(
-        Overlay.of(context),
-        const CustomSnackBar.error(
-          message: "Достигнут предел событий на неделю",
-          icon: Icon(Icons.error_outline, size: 0),
-        ),
-      );
+      bool success = await _adManager.showAd(age: controller.age, brightness: Theme.of(context).brightness);
+
+      if (success) {
+        if (!mounted) return;
+        addEvent();
+      }
       return;
     }
 
+    addEvent();
+  }
+
+  Future<void> addEvent() async {
     Event? newEvent = await eventDialog(context,
       initialDate: week.start,
       title: "Создание события",
@@ -207,37 +215,43 @@ class _WeekInfoState extends State<WeekInfo> {
     }
   }
 
-  Future<void> addGoal() async {
+  Future<void> onAddGoalTap() async {
     if (week.goals.length >= 3) {
-      showTopSnackBar(
-        Overlay.of(context),
-        const CustomSnackBar.error(
-          message: "Достигнут предел целей на неделю",
-          icon: Icon(Icons.error_outline, size: 0),
-        ),
-      );
+      bool success = await _adManager.showAd(age: controller.age, brightness: Theme.of(context).brightness);
+
+      if (success) {
+        if (!mounted) return;
+        addGoal();
+      }
       return;
     }
 
+    addGoal();
+  }
+
+  Future<void> addGoal() async {
     String? goalTitle = await textDialog(context, title: 'Создание цели');
     if (goalTitle != null && goalTitle.isNotEmpty) {
       controller.addGoal(goalTitle);
     }
   }
 
-  Future<void> addPhoto() async {
+  Future<void> onAddPhotoTap() async {
     //TODO: add rewarded ad
     if (week.photos.length >= 3) {
-      showTopSnackBar(
-        Overlay.of(context),
-        const CustomSnackBar.error(
-          message: "Достигнут предел фото на неделю",
-          icon: Icon(Icons.error_outline, size: 0),
-        ),
-      );
+      bool success = await _adManager.showAd(age: controller.age, brightness: Theme.of(context).brightness);
+
+      if (success) {
+        if (!mounted) return;
+        addPhoto();
+      }
       return;
     }
 
+    addPhoto();
+  }
+
+  Future<void> addPhoto() async {
     ImagePicker picker = ImagePicker();
 
     XFile? file = await picker.pickImage(source: ImageSource.gallery);
@@ -245,7 +259,7 @@ class _WeekInfoState extends State<WeekInfo> {
       controller.addPhoto(file).then((value) => setState(() {}));
     } else {
       if (!mounted) return;
-      showSnackBar(context, "Ошибка добавления фото");
+      showSnackBar(context, "Фото не добавлено");
     }
   }
 
