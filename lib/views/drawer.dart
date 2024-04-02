@@ -1,4 +1,9 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:life_calendar/controllers/calendar_controller.dart';
+import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -48,6 +53,13 @@ class MyDrawer extends StatelessWidget {
               ),
             ),
             ListTile(
+              leading: const Icon(Icons.file_upload_outlined),
+              title: const Text("Экспорт календаря"),
+              onTap: () {
+                _showExportDialog(context);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.feedback_outlined),
               title: const Text("Связь с разработчиком"),
               onTap: () => Navigator.pushNamed(context, '/thanks'),
@@ -87,5 +99,45 @@ class MyDrawer extends StatelessWidget {
       return DateTime.fromMillisecondsSinceEpoch(birthdayMilliseconds);
     }
     return null;
+  }
+
+  void _showExportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Экспорт данных приложения"),
+          content: FutureBuilder<File?>(
+            future: getIt<CalendarController>().exportCalendar(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active ||
+                  snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.connectionState == ConnectionState.none) {
+                return const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text("Происходит создание архива."),
+                  ],
+                );
+              } else {
+                if (snapshot.hasData) {
+                  return const Text("Архив успешно создан.");
+                } else {
+                  log("Snapshot is empty", error: snapshot.error, stackTrace: snapshot.stackTrace);
+                  return const Text("Произошла ошибка при создании архива. Попробуйте снова.");
+                }
+              }
+            }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Ок"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

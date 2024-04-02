@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 const int freeLimit = 3;
@@ -26,6 +27,7 @@ final dateMaskFormatter = MaskTextInputFormatter(
   },
   type: MaskAutoCompletionType.lazy,
 );
+final dateFileFormat = DateFormat('dd-MM-yyyy – hh:mm');
 
 final RegExp dateRegExp = RegExp(r'[0-3]\d\.[01]\d\.\d\d\d\d');
 

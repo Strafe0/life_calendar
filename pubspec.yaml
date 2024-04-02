@@ -30,6 +30,9 @@ dependencies:
   appmetrica_plugin: ^2.1.1
   collection: ^1.18.0
   image_picker: ^1.0.7
+  flutter_archive: ^6.0.0
+  path_provider: ^2.1.2
+  file_saver: ^0.2.12
 
 dev_dependencies:
   flutter_test:

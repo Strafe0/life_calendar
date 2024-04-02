@@ -55,45 +55,9 @@ class _ThanksScreenState extends State<ThanksScreen> {
     );
   }
 
-  void _donateButton() async {
-    await showDialog(context: context, builder: (ctx) {
-      return AlertDialog(
-        title: const Text('Перевод на карту'),
-        insetPadding: const EdgeInsets.all(16.0),
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          // height: MediaQuery.of(context).size.height * 0.5,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('2200 7008 2194 7958'),
-                subtitle: const Text('Тинькофф'),
-                leading: const Icon(Icons.credit_card),
-                trailing: IconButton(
-                  onPressed: () async => await Clipboard.setData(
-                      const ClipboardData(text: "2200 7008 2194 7958")),
-                  icon: const Icon(Icons.copy),),
-              ),
-              ListTile(
-                title: const Text('2202 2017 5198 8458'),
-                subtitle: const Text('Сбер'),
-                leading: const Icon(Icons.credit_card),
-                trailing: IconButton(
-                  onPressed: () async => await Clipboard.setData(
-                      const ClipboardData(text: "2202 2017 5198 8458")),
-                  icon: const Icon(Icons.copy),),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
   Future<void> _writeButton() async {
     if (!await launchUrl(_url)) {
-      if (!context.mounted) return;
+      if (!mounted) return;
       showSnackBar(context, 'Упс... Возникла неизвестная проблема');
     }
   }

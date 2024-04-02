@@ -1,3 +1,7 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
@@ -5,6 +9,8 @@ import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_archive/flutter_archive.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CalendarModel {
   late DateTime _birthday;
@@ -166,5 +172,83 @@ class CalendarModel {
 
   Future updatePhoto(Week week) async {
     await _db.updatePhoto(week);
+  }
+
+  Future<File?> export() async {
+    try {
+      final zipFile = await _createZipFile();
+      if (zipFile != null) {
+        final Directory sourceDir = await _createSourceDir();
+        await ZipFile.createFromDirectory(
+          sourceDir: sourceDir,
+          zipFile: zipFile,
+          recurseSubDirs: true,
+        );
+
+        String formattedDate = dateFileFormat.format(DateTime.now());
+        FileSaver.instance.saveAs(
+          name: "life-calendar-$formattedDate.zip",
+          file: zipFile,
+          ext: "zip",
+          mimeType: MimeType.zip,
+        );
+      }
+
+      if (zipFile?.existsSync() ?? false) {
+        return zipFile!;
+      }
+      return null;
+    } catch (e, stackTrace) {
+      log("Error creating archive during export", error: e, stackTrace: stackTrace);
+      return null;
+    }
+  }
+
+  Future<File?> _createZipFile() async {
+    Directory? externalStorageDir = await getExternalStorageDirectory();
+    if (externalStorageDir?.existsSync() ?? false) {
+      File file = File("${externalStorageDir!.path}/life-calendar.zip");
+      return file;
+    } else {
+      log("Error creating zip file in external storage directory");
+      return null;
+    }
+  }
+
+  Future<Directory> _createSourceDir() async {
+    Directory tempDir = await getTemporaryDirectory();
+    Directory appDir = tempDir.parent;
+
+    // create the directory that will be archived
+    Directory result = Directory("${appDir.path}/archive_source");
+    if (result.existsSync()) {
+      result.deleteSync(recursive: true);
+    }
+    result.createSync();
+
+    // copy db to the directory
+    File dbFile = File("${appDir.path}/databases/TheCalendarDatabase");
+    if (dbFile.existsSync()) {
+      dbFile.copySync("${result.path}/TheCalendarDatabase");
+    } else {
+      log("Creating archive", error: "DB file does not exist");
+    }
+
+    // copy images to the directory as archive
+    File cacheArchive = File("${result.path}/cache_archive");
+    await ZipFile.createFromDirectory(
+        sourceDir: tempDir,
+        zipFile: cacheArchive,
+        recurseSubDirs: true,
+        onZipping: (String filePath, bool isDirectory, double progress) {
+          if (isDirectory && filePath.contains("WebView")) {
+            return ZipFileOperation.skipItem;
+          } else {
+            return ZipFileOperation.includeItem;
+          }
+        }
+    );
+
+    return result;
   }
 }
