@@ -151,4 +151,6 @@ class CalendarController extends ChangeNotifier {
   }
 
   Future<File?> exportCalendar() => _calendarModel.export();
+
+  Future<ImportResult> importCalendar() => _calendarModel.import();
 }

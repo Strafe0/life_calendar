@@ -11,6 +11,7 @@ import 'package:life_calendar/database/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 class CalendarModel {
   late DateTime _birthday;
@@ -178,20 +179,24 @@ class CalendarModel {
     try {
       final zipFile = await _createZipFile();
       if (zipFile != null) {
-        final Directory sourceDir = await _createSourceDir();
-        await ZipFile.createFromDirectory(
-          sourceDir: sourceDir,
-          zipFile: zipFile,
-          recurseSubDirs: true,
-        );
+        final Directory? sourceDir = await _createSourceDir();
+        if (sourceDir != null) {
+          await ZipFile.createFromDirectory(
+            sourceDir: sourceDir,
+            zipFile: zipFile,
+            recurseSubDirs: true,
+          );
 
-        String formattedDate = dateFileFormat.format(DateTime.now());
-        FileSaver.instance.saveAs(
-          name: "life-calendar-$formattedDate.zip",
-          file: zipFile,
-          ext: "zip",
-          mimeType: MimeType.zip,
-        );
+          String formattedDate = dateFileFormat.format(DateTime.now());
+          FileSaver.instance.saveAs(
+            name: "life-calendar-$formattedDate",
+            file: zipFile,
+            ext: "zip",
+            mimeType: MimeType.zip,
+          );
+        } else {
+          return null;
+        }
       }
 
       if (zipFile?.existsSync() ?? false) {
@@ -215,40 +220,113 @@ class CalendarModel {
     }
   }
 
-  Future<Directory> _createSourceDir() async {
+  Future<Directory?> _createSourceDir() async {
     Directory tempDir = await getTemporaryDirectory();
     Directory appDir = tempDir.parent;
 
-    // create the directory that will be archived
+    // creating the directory that will be archived
     Directory result = Directory("${appDir.path}/archive_source");
     if (result.existsSync()) {
       result.deleteSync(recursive: true);
     }
     result.createSync();
 
-    // copy db to the directory
+    // copying db to the directory
     File dbFile = File("${appDir.path}/databases/TheCalendarDatabase");
     if (dbFile.existsSync()) {
       dbFile.copySync("${result.path}/TheCalendarDatabase");
     } else {
       log("Creating archive", error: "DB file does not exist");
+      return null;
     }
 
-    // copy images to the directory as archive
+    // copying shared_prefs to the directory
+    File sharedPrefsFile = File("${appDir.path}/shared_prefs/FlutterSharedPreferences.xml");
+    if (sharedPrefsFile.existsSync()) {
+      sharedPrefsFile.copySync("${result.path}/FlutterSharedPreferences.xml");
+    } else {
+      log("Creating archive", error: "SharedPrefs file does not exist");
+      return null;
+    }
+
+    // copying images to the directory as archive
     File cacheArchive = File("${result.path}/cache_archive");
     await ZipFile.createFromDirectory(
-        sourceDir: tempDir,
-        zipFile: cacheArchive,
-        recurseSubDirs: true,
-        onZipping: (String filePath, bool isDirectory, double progress) {
-          if (isDirectory && filePath.contains("WebView")) {
-            return ZipFileOperation.skipItem;
-          } else {
-            return ZipFileOperation.includeItem;
-          }
+      sourceDir: tempDir,
+      zipFile: cacheArchive,
+      recurseSubDirs: true,
+      onZipping: (String filePath, bool isDirectory, double progress) {
+        if (isDirectory && filePath.contains("WebView")) {
+          return ZipFileOperation.skipItem;
+        } else {
+          return ZipFileOperation.includeItem;
         }
+      },
     );
 
     return result;
   }
+
+  Future<ImportResult> import() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ["zip"],
+      );
+
+      if (result != null) {
+        File file = File(result.files.single.path!);
+
+        Directory tempDir = await getTemporaryDirectory();
+        Directory appDir = tempDir.parent;
+
+        // creating a directory in which the archive will be extracted
+        Directory archiveExtractDir = Directory("${appDir.path}/archive_source");
+        if (archiveExtractDir.existsSync()) {
+          archiveExtractDir.deleteSync(recursive: true);
+        }
+        archiveExtractDir.createSync();
+
+        await ZipFile.extractToDirectory(
+          zipFile: file,
+          destinationDir: archiveExtractDir,
+        );
+
+        // replacing db
+        File oldDbFile = File("${appDir.path}/databases/TheCalendarDatabase");
+        oldDbFile.deleteSync(recursive: true);
+        File newDbFile = File("${archiveExtractDir.path}/TheCalendarDatabase");
+        newDbFile.copySync("${appDir.path}/databases/TheCalendarDatabase");
+
+        // replacing shared_preferences
+        File oldPrefs = File("${appDir.path}/shared_prefs/FlutterSharedPreferences.xml");
+        oldPrefs.deleteSync(recursive: true);
+        File newPrefs = File("${archiveExtractDir.path}/FlutterSharedPreferences.xml");
+        newPrefs.copySync("${appDir.path}/shared_prefs/FlutterSharedPreferences.xml");
+
+        // deleting old images
+        tempDir.listSync().forEach((element) => element.deleteSync(recursive: true));
+
+        // extracting new images
+        File imageArchive = File("${archiveExtractDir.path}/cache_archive");
+        await ZipFile.extractToDirectory(
+          zipFile: imageArchive,
+          destinationDir: tempDir,
+        );
+
+        return ImportResult.success;
+      } else {
+        return ImportResult.cancel;
+      }
+    } catch (error, stackTrace) {
+      log("Import", error: error, stackTrace: stackTrace);
+      return ImportResult.error;
+    }
+  }
+}
+
+enum ImportResult {
+  success,
+  cancel,
+  error
 }
