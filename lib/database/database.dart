@@ -10,7 +10,8 @@ class AppDatabase {
   final int _dbVersion = 2;
 
   Future init() async {
-    _db = await openDatabase("${await getDatabasesPath()}${Platform.pathSeparator}$tableName",
+    _db = await openDatabase(
+      "${await getDatabasesPath()}${Platform.pathSeparator}$tableName",
       version: _dbVersion,
       onCreate: (db, version) async {
         var batch = db.batch();
@@ -47,14 +48,17 @@ class AppDatabase {
   }
 
   Future<bool> insertWeek(Week week) async {
-    return await _db.insert(tableName, week.toJson(), conflictAlgorithm: ConflictAlgorithm.replace) != 0;
+    return await _db.insert(tableName, week.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace) !=
+        0;
   }
 
   Future<bool> insertAllWeeks(List<Week> weeks) async {
     return await _db.transaction((txn) async {
       var batch = txn.batch();
       for (var week in weeks) {
-        batch.insert(tableName, week.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+        batch.insert(tableName, week.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
       }
       var result = await batch.commit(continueOnError: false, noResult: false);
       if (result.isNotEmpty) {
@@ -68,7 +72,8 @@ class AppDatabase {
 
   Future<List<Week>> getAllWeeks() async {
     var records = await _db.query(tableName);
-    List<Week> weeks = List.generate(records.length, (i) => Week.fromJson(records[i]));
+    List<Week> weeks =
+        List.generate(records.length, (i) => Week.fromJson(records[i]));
     return weeks;
   }
 
@@ -78,7 +83,8 @@ class AppDatabase {
   }
 
   Future<Week> getCurrentWeek() async {
-    var records = await _db.query(tableName, where: 'state = ?', whereArgs: [WeekState.current.name]);
+    var records = await _db.query(tableName,
+        where: 'state = ?', whereArgs: [WeekState.current.name]);
     return Week.fromJson(records.first);
   }
 
@@ -86,31 +92,41 @@ class AppDatabase {
     int changeNumber = 0;
     int currentWeekId = (await getCurrentWeek()).id;
 
-    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id < ?', [WeekState.past.name, currentWeekId]);
-    changeNumber += await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id > ?', [WeekState.future.name, currentWeekId]);
+    changeNumber += await _db.rawUpdate(
+        'UPDATE $tableName SET state = ? WHERE id < ?',
+        [WeekState.past.name, currentWeekId]);
+    changeNumber += await _db.rawUpdate(
+        'UPDATE $tableName SET state = ? WHERE id > ?',
+        [WeekState.future.name, currentWeekId]);
 
     debugPrint('Changed $changeNumber weeks');
   }
 
   Future<void> updateCurrentWeek(int currentWeekId) async {
-    await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id = ?', [WeekState.current.name, currentWeekId]);
+    await _db.rawUpdate('UPDATE $tableName SET state = ? WHERE id = ?',
+        [WeekState.current.name, currentWeekId]);
     await updateWeekStates();
   }
 
   Future<int> updateAssessment(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET assessment = ? WHERE id = ?', [week.assessment.name, week.id]);
+    return await _db.rawUpdate(
+        'UPDATE $tableName SET assessment = ? WHERE id = ?',
+        [week.assessment.name, week.id]);
   }
 
   Future<int> updateEvents(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?', [Week.eventsToJson(week.events), week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET events = ? WHERE id = ?',
+        [Week.eventsToJson(week.events), week.id]);
   }
 
   Future<int> updateGoals(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET goals = ? WHERE id = ?', [Week.goalsToJson(week.goals), week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET goals = ? WHERE id = ?',
+        [Week.goalsToJson(week.goals), week.id]);
   }
 
   Future<int> updateResume(Week week) async {
-    return await _db.rawUpdate('UPDATE $tableName SET resume = ? WHERE id = ?', [week.resume, week.id]);
+    return await _db.rawUpdate('UPDATE $tableName SET resume = ? WHERE id = ?',
+        [week.resume, week.id]);
   }
 
   Future<int> updatePhoto(Week week) async {
@@ -120,7 +136,8 @@ class AppDatabase {
   }
 
   Future<bool> tableIsEmpty() async {
-    int? count = Sqflite.firstIntValue(await _db.rawQuery('SELECT COUNT(*) FROM $tableName'));
+    int? count = Sqflite.firstIntValue(
+        await _db.rawQuery('SELECT COUNT(*) FROM $tableName'));
 
     if (count != null && count != 0) {
       return false;
