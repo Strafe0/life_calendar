@@ -1,8 +1,8 @@
-import 'package:life_calendar/domain/entities/week_assessment.dart';
-import 'package:life_calendar/domain/entities/week.dart';
-import 'package:life_calendar/domain/entities/week_state.dart';
+import 'package:life_calendar/domain/entities/week/week_assessment.dart';
+import 'package:life_calendar/domain/entities/week/week.dart';
+import 'package:life_calendar/domain/entities/week/week_state.dart';
 
-abstract class Repository {
+abstract class WeekRepository {
   Future<Week> getCurrentWeek();
   Future<Week> getWeekById(int id);
   Future<bool> insertAllWeeks(List<Week> weeks);
