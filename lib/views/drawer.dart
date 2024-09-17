@@ -1,4 +1,12 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:life_calendar/controllers/calendar_controller.dart';
+import 'package:life_calendar/models/calendar_model.dart';
+import 'package:life_calendar/setup.dart';
+import 'package:life_calendar/utils/snackbar.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -37,8 +45,9 @@ class MyDrawer extends StatelessWidget {
                       if (snapshot.hasData) {
                         DateTime birthday = snapshot.data!;
                         return Text(
-                            "${birthday.day}.${birthday.month}.${birthday.year}",
-                            style: Theme.of(context).textTheme.titleLarge);
+                          DateFormat("dd.MM.yyyy").format(birthday),
+                          style: Theme.of(context).textTheme.titleLarge,
+                        );
                       } else {
                         return const Text("Не найдено");
                       }
@@ -46,6 +55,20 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.file_upload_outlined),
+              title: const Text("Экспорт календаря"),
+              onTap: () {
+                _showExportDialog(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.file_download_outlined),
+              title: const Text("Импорт календаря"),
+              onTap: () {
+                _showImportDialog(context);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.feedback_outlined),
@@ -87,5 +110,83 @@ class MyDrawer extends StatelessWidget {
       return DateTime.fromMillisecondsSinceEpoch(birthdayMilliseconds);
     }
     return null;
+  }
+
+  void _showExportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Экспорт данных приложения"),
+          content: FutureBuilder<File?>(
+            future: getIt<CalendarController>().exportCalendar(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active ||
+                  snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.connectionState == ConnectionState.none) {
+                return const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text("Происходит создание архива."),
+                  ],
+                );
+              } else {
+                if (snapshot.hasData) {
+                  return const Text("Архив успешно создан.");
+                } else {
+                  log("Snapshot is empty", error: snapshot.error, stackTrace: snapshot.stackTrace);
+                  return const Text("Произошла ошибка при создании архива. Попробуйте снова.");
+                }
+              }
+            }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Ок"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showImportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text("Импорт данных приложения"),
+          content: const Text("При импорте календаря все ваши текущие данные "
+              "будут удалены и заменены новыми! "
+              "Убедитесь, что старые данные вам не нужны, или сделайте экспорт. "
+              "После импорта вам нужно будет перезайти в приложение."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Отмена"),
+            ),
+            TextButton(
+              onPressed: () async {
+                ImportResult result = await getIt<CalendarController>().importCalendar();
+                if (result == ImportResult.success) {
+                  exit(0);
+                } else if (result == ImportResult.cancel) {
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+
+                  showSnackBar(context, "Импорт отменен");
+                } else {
+                  if (!context.mounted) return;
+                  showSnackBar(context, "Произошла ошибка во время импорта");
+                }
+              },
+              child: const Text("Продолжить"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

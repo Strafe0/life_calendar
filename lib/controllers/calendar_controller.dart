@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:life_calendar/models/calendar_model.dart';
@@ -147,4 +149,8 @@ class CalendarController extends ChangeNotifier {
 
     return null;
   }
+
+  Future<File?> exportCalendar() => _calendarModel.export();
+
+  Future<ImportResult> importCalendar() => _calendarModel.import();
 }
