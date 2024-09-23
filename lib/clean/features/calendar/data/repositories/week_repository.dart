@@ -1,6 +1,4 @@
-import 'package:life_calendar/domain/entities/week/week_assessment.dart';
-import 'package:life_calendar/domain/entities/week/week.dart';
-import 'package:life_calendar/domain/entities/week/week_state.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/week.dart';
 
 abstract class WeekRepository {
   Future<Week> getCurrentWeek();

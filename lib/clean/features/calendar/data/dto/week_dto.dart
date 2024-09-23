@@ -1,7 +1,5 @@
-import 'package:life_calendar/calendar/week.dart';
-
-class Week {
-  Week({
+class WeekDto {
+  WeekDto({
     required this.id,
     required this.yearId,
     required this.start,
@@ -16,12 +14,12 @@ class Week {
 
   int id;
   int yearId;
-  DateTime start;
-  DateTime end;
-  WeekState weekState;
-  WeekAssessment assessment;
-  List<Goal> goals;
-  List<Event> events;
+  int start;
+  int end;
+  String weekState;
+  String assessment;
+  List<Map<String, dynamic>> goals;
+  List<Map<String, dynamic>> events;
   String resume;
   List<String> photos;
 }
