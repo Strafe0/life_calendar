@@ -26,7 +26,6 @@ class _CalendarScreenState extends State<CalendarScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('build CalendarScreen');
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

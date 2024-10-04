@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:life_calendar/logger.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:life_calendar/calendar/week.dart';
 import 'package:flutter/material.dart' show debugPrint;
@@ -62,10 +63,10 @@ class AppDatabase {
       }
       var result = await batch.commit(continueOnError: false, noResult: false);
       if (result.isNotEmpty) {
-        debugPrint('Inserted ${result.length} rows in table');
+        logger.i('Inserted ${result.length} rows in table');
         return true;
       }
-      debugPrint('Some error: inserted 0 rows');
+      logger.w('Some error: inserted 0 rows');
       return false;
     });
   }
@@ -99,7 +100,7 @@ class AppDatabase {
         'UPDATE $tableName SET state = ? WHERE id > ?',
         [WeekState.future.name, currentWeekId]);
 
-    debugPrint('Changed $changeNumber weeks');
+    logger.d('Changed $changeNumber weeks');
   }
 
   Future<void> updateCurrentWeek(int currentWeekId) async {

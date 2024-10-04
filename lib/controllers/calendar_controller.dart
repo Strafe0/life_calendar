@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:life_calendar/logger.dart';
 import 'package:life_calendar/models/calendar_model.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:life_calendar/calendar/week.dart';
@@ -96,7 +97,7 @@ class CalendarController extends ChangeNotifier {
       await _calendarModel.updatePhoto(selectedWeek);
       selectedWeek = await _calendarModel.getWeekById(selectedWeek.id);
     } else {
-      debugPrint("Error removing photo from selected week");
+      logger.w("Cannot remove photo from selected week");
     }
   }
 

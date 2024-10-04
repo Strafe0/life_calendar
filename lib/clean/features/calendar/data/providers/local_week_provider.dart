@@ -2,8 +2,6 @@ import 'package:life_calendar/clean/features/calendar/data/dto/week_dto.dart';
 import 'package:life_calendar/clean/features/calendar/data/providers/week_provider.dart';
 
 class LocalWeekProvider implements WeekProvider {
-
-
   @override
   Future<bool> createWeek(WeekDto weekDto) {
     // TODO: implement createWeek

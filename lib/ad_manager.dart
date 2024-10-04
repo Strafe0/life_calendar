@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:life_calendar/logger.dart';
 import 'package:yandex_mobileads/mobile_ads.dart';
 import 'package:flutter/material.dart' show debugPrint;
 
@@ -72,7 +73,7 @@ class AdManager {
     await _ad?.show();
     final reward = await _ad?.waitForDismiss();
     if (reward != null) {
-      debugPrint('got ${reward.amount} of ${reward.type}');
+      logger.i('got ${reward.amount} of ${reward.type}');
       return true;
     }
 

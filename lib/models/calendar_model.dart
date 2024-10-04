@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:life_calendar/calendar/week.dart';
+import 'package:life_calendar/logger.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 import 'package:life_calendar/utils/utility_functions.dart';
 import 'package:life_calendar/setup.dart';
@@ -119,7 +120,7 @@ class CalendarModel {
     }
 
     if (resultNumberOfWeeks == totalNumberOfWeeksInLife) {
-      debugPrint('Number of weeks is the same');
+      logger.d('Number of weeks is the same');
     }
 
     if (!(await _db.tableIsEmpty())) {

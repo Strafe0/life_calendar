@@ -42,8 +42,6 @@ class _WeekPhotosState extends State<WeekPhotos> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        debugPrint("constraints: $constraints");
-
         double screenWidth = constraints.maxWidth;
         int n = 3; // number of photos in one row of GridView
         double externalPadding = 12, internalPadding = 10; // padding in GridView

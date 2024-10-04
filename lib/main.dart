@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_calendar/logger.dart';
 import 'package:life_calendar/setup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:life_calendar/theme.dart';
@@ -14,6 +15,7 @@ import 'package:appmetrica_plugin/appmetrica_plugin.dart';
 bool firstTime = true;
 
 Future main() async {
+  logger.i("Start app", time: DateTime.now());
   WidgetsFlutterBinding.ensureInitialized();
   await setup();
 
@@ -26,7 +28,8 @@ Future main() async {
     getIt<CalendarModel>().selectedBirthday = DateTime.fromMillisecondsSinceEpoch(birthday);
     await getIt<CalendarModel>().buildCalendar(firstTime);
   }
-  MobileAds.initialize().whenComplete(() => debugPrint('MobileAds initialized'));
+
+  MobileAds.initialize().whenComplete(() => logger.i('MobileAds initialized'));
   const String appMetricaKey = String.fromEnvironment("appmetrica_key");
   if (appMetricaKey.isNotEmpty) {
     AppMetrica.activate(const AppMetricaConfig(appMetricaKey)).then((value) => AppMetrica.reportEvent('AppMetrica activated!'));

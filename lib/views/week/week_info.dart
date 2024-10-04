@@ -74,8 +74,6 @@ class _WeekInfoState extends State<WeekInfo> {
   @override
   Widget build(BuildContext context) {
     // rebuilds when keyboard appears
-    debugPrint('build WeekInfo');
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

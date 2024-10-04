@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:life_calendar/logger.dart';
 import 'package:life_calendar/utils/utility_variables.dart';
 
 DateTime previousMonday(DateTime date) {
@@ -54,7 +55,7 @@ bool validateDateTime(DateTime dateTime) {
   int year = dateTime.year;
 
   if (year < minDate.year || year > maxDate.year || month <= 0 || month > 12) {
-    debugPrint('The year or month is out of range');
+    logger.d('The year or month is out of range');
     return false;
   }
 
@@ -66,14 +67,14 @@ bool validateDateTime(DateTime dateTime) {
   if (day > 0 && day <= monthLength[month - 1]) {
     return true;
   } else {
-    debugPrint('The invalid number of days $day in the ${month}th month');
+    logger.d('The invalid number of days $day in the ${month}th month');
     return false;
   }
 }
 
 DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTime? lastDate}) {
   if (!dateRegExp.hasMatch(dateTime)) {
-    debugPrint('The date does not match the pattern.');
+    logger.d('The date does not match the pattern.');
     return null;
   }
 
@@ -83,7 +84,7 @@ DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTim
 
   if (day != null && month != null && year != null) {
     if (year < minDate.year || year > maxDate.year || month <= 0 || month > 12) {
-      debugPrint('The year or month is out of range');
+      logger.d('The year or month is out of range');
       return null;
     }
 
@@ -102,7 +103,7 @@ DateTime? convertStringToDateTime(String dateTime, {DateTime? firstDate, DateTim
         return result;
       }
     } else {
-      debugPrint('The invalid number of days $day in the ${month}th month');
+      logger.d('The invalid number of days $day in the ${month}th month');
     }
   }
   return null;
