@@ -1,32 +1,45 @@
-import 'package:life_calendar/calendar/week.dart';
-
-export 'week_assessment.dart';
-export 'week_state.dart';
-export 'event.dart';
-export 'goal.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/event.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/goal.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_assessment.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_time_state.dart';
 
 class Week {
   Week({
     required this.id,
     required this.yearId,
+    required this.number,
     required this.start,
     required this.end,
-    required this.weekState,
+    required this.timeState,
     required this.assessment,
     this.goals = const [],
     this.events = const [],
-    required this.resume,
     this.photos = const [],
+    required this.resume,
   });
 
-  int id;
+  String id;
   int yearId;
+  int number;
   DateTime start;
   DateTime end;
-  WeekState weekState;
+  WeekTimeState timeState;
   WeekAssessment assessment;
   List<Goal> goals;
   List<Event> events;
-  String resume;
   List<String> photos;
+  String resume;
+
+  Week.empty({
+    required this.yearId,
+    required this.number,
+    required this.start,
+    required this.end,
+  })  : id = '',
+        timeState = WeekTimeState.past,
+        assessment = WeekAssessment.poor,
+        goals = [],
+        events = [],
+        resume = '',
+        photos = [];
 }

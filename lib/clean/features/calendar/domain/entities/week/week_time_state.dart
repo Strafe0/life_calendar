@@ -1,4 +1,4 @@
-enum WeekState {
+enum WeekTimeState {
   past,
   current,
   future,
