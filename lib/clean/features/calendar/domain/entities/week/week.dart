@@ -42,4 +42,14 @@ class Week {
         events = [],
         resume = '',
         photos = [];
+
+  WeekTimeState constructTimeState(DateTime now) {
+    if (now.isAfter(end)) {
+      return WeekTimeState.past;
+    } else if (now.isBefore(start)) {
+      return WeekTimeState.future;
+    } else {
+      return WeekTimeState.current;
+    }
+  }
 }

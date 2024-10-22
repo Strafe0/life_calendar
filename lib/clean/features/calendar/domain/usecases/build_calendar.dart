@@ -20,6 +20,7 @@ class BuildCalendar {
     var currentBirthday = birthdate.copyWith();
 
     int weekNumber = 0;
+    DateTime now = DateTime.now();
     for (int yearNumber = 0; yearNumber < lifeSpan + 1; yearNumber++) {
       DateTime monday = CalendarUtils.mondayOfWeekContaining(currentBirthday);
       DateTime nextYearBirthday = CalendarUtils.mondayOfWeekContaining(
@@ -36,6 +37,8 @@ class BuildCalendar {
               start: monday,
               end: CalendarUtils.sundayOfWeekContaining(monday),
             );
+
+        week.timeState = week.constructTimeState(now);
 
         weeks.add(week);
 

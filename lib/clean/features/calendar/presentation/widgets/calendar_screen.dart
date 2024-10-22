@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:life_calendar/clean/features/calendar/domain/entities/week/week.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_assessment.dart';
+import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_time_state.dart';
 import 'package:life_calendar/clean/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:life_calendar/logger.dart';
 
@@ -13,20 +15,22 @@ class CalendarScreen extends StatelessWidget {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     return Scaffold(
-      body: BlocBuilder<CalendarBloc, CalendarState>(
-        builder: (context, state) {
-          if (state is CalendarBuilding) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is CalendarSuccess) {
-            return SafeArea(
-              child: CalendarPadding(
-                child: CalendarCanvas(weeks: state.weeks),
-              ),
-            );
-          }
+      body: InteractiveViewer(
+        child: BlocBuilder<CalendarBloc, CalendarState>(
+          builder: (context, state) {
+            if (state is CalendarBuilding) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is CalendarSuccess) {
+              return SafeArea(
+                child: CalendarPadding(
+                  child: CalendarCanvas(weeks: state.weeks),
+                ),
+              );
+            }
 
-          return const Center(child: Text('Ошибка'));
-        },
+            return const Center(child: Text('Ошибка'));
+          },
+        ),
       ),
     );
   }
@@ -80,79 +84,63 @@ class CalendarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double horSpaceBetweenBoxes = size.width / (29 + 11 * weekInRowCount);
+    double boxPaddingHor = size.width / (29 + 11 * weekInRowCount);
 
-    double boxSide = 10 * horSpaceBetweenBoxes;
-    double labelsSpace = 20 * horSpaceBetweenBoxes;
-    double labelsPadding = 10 * horSpaceBetweenBoxes;
+    double boxSide = 10 * boxPaddingHor;
+    double labelSize = 20 * boxPaddingHor;
+    double labelPadding = 10 * boxPaddingHor;
 
     int lifeSpan = weeks.last.yearId + 1;
-    double vrtSpaceBetweenBoxes =
-        (size.height - labelsSpace - labelsPadding - lifeSpan * boxSide) /
+    double boxPaddingVert =
+        (size.height - labelSize - labelPadding - lifeSpan * boxSide) /
             (lifeSpan - 1);
 
     logger.d('size.width = ${size.width}, size.height = ${size.height},\n'
         'boxSize = $boxSide, '
-        'horSpaceBetweenBoxes = $horSpaceBetweenBoxes, '
-        'vrtSpaceBetweenBoxes = $vrtSpaceBetweenBoxes,\n'
-        'labelsSpace = $labelsSpace, labelsPadding = $labelsPadding');
+        'boxPaddingHor = $boxPaddingHor, '
+        'boxPaddingVert = $boxPaddingVert,\n'
+        'labelSize = $labelSize, labelPadding = $labelPadding');
 
     _drawTopLabels(
-      canvas,
-      labelsSpace,
-      labelsPadding,
-      boxSide,
-      horSpaceBetweenBoxes,
-      size.width,
+      canvas: canvas,
+      labelSize: labelSize,
+      labelPadding: labelPadding,
+      boxSide: boxSide,
+      boxPadding: boxPaddingHor,
+      screenWidth: size.width,
     );
+
     _drawLeftLabels(
       canvas: canvas,
       lifeSpan: lifeSpan,
-      labelSize: labelsSpace,
-      labelPadding: labelsPadding,
+      labelSize: labelSize,
+      labelPadding: labelPadding,
       boxSide: boxSide,
-      boxPadding: vrtSpaceBetweenBoxes,
+      boxPadding: boxPaddingVert,
       screenHeight: size.height,
     );
 
-    double left = labelsSpace + labelsPadding;
-    double top = labelsSpace + labelsPadding;
-
-    int yearNumber = 0;
-    for (int i = 0; i < weeks.length; i++) {
-      final Rect rect = Rect.fromLTWH(left, top, boxSide, boxSide);
-
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, const Radius.circular(1.5)),
-        Paint()..color = Colors.blueGrey,
-      );
-
-      if (i + 1 < weeks.length) {
-        if (yearNumber == weeks[i + 1].yearId) {
-          left += boxSide + horSpaceBetweenBoxes;
-        } else {
-          top += boxSide + vrtSpaceBetweenBoxes;
-          left = labelsSpace + labelsPadding;
-          yearNumber++;
-        }
-      }
-    }
-
-    logger.d('yearNumber = $yearNumber, lifeSpan = $lifeSpan');
+    _drawCalendarGrid(
+      canvas: canvas,
+      labelSize: labelSize,
+      labelPadding: labelPadding,
+      boxSide: boxSide,
+      boxPaddingHor: boxPaddingHor,
+      boxPaddingVert: boxPaddingVert,
+    );
   }
 
-  void _drawTopLabels(
-    Canvas canvas,
-    double labelSize,
-    double labelPadding,
-    double boxSide,
-    double boxPadding,
-    double screenWidth,
-  ) {
-    for (int i = 0; i < 11; i++) {
-      String label = (i == 0 ? 1 : i * 5).toString();
+  void _drawTopLabels({
+    required Canvas canvas,
+    required double labelSize,
+    required double labelPadding,
+    required double boxSide,
+    required double boxPadding,
+    required double screenWidth,
+  }) {
+    for (int i = 1; i <= 53; i += i == 1 ? 4 : 5) {
       final textSpan = TextSpan(
-        text: label,
+        text: i.toString(),
         style: TextStyle(
           fontSize: labelSize,
           color: Colors.black,
@@ -167,13 +155,12 @@ class CalendarPainter extends CustomPainter {
 
       double textWidth = textPainter.width;
 
-      int k = i == 0 ? 0 : 1;
       textPainter.paint(
         canvas,
         Offset(
           labelSize +
               labelPadding +
-              (i * 5 - k) * (boxSide + boxPadding) +
+              (i - 1) * (boxSide + boxPadding) +
               boxSide / 2 -
               textWidth / 2,
           0,
@@ -204,7 +191,7 @@ class CalendarPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: textSpan,
         textDirection: TextDirection.ltr,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.end,
       );
       textPainter.layout(minWidth: labelSize);
 
@@ -214,14 +201,60 @@ class CalendarPainter extends CustomPainter {
         canvas,
         Offset(
           0,
-          labelSize + labelPadding +
+          labelSize +
+              labelPadding +
               i * (boxSide + boxPadding) +
-              boxSide / 2 - textHeight / 2,
+              boxSide / 2 -
+              textHeight / 2,
         ),
       );
 
       textPainter.dispose();
     }
+  }
+
+  void _drawCalendarGrid({
+    required Canvas canvas,
+    required labelSize,
+    required labelPadding,
+    required boxSide,
+    required boxPaddingHor,
+    required boxPaddingVert,
+  }) {
+    double left = labelSize + labelPadding;
+    double top = labelSize + labelPadding;
+    int yearNumber = 0;
+
+    for (int i = 0; i < weeks.length; i++) {
+      final Rect rect = Rect.fromLTWH(left, top, boxSide, boxSide);
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(1.5)),
+        Paint()..color = getWeekColor(weeks[i]),
+      );
+
+      if (i + 1 < weeks.length) {
+        if (yearNumber == weeks[i + 1].yearId) {
+          left += boxSide + boxPaddingHor;
+        } else {
+          top += boxSide + boxPaddingVert;
+          left = labelSize + labelPadding;
+          yearNumber++;
+        }
+      }
+    }
+  }
+
+  Color getWeekColor(Week week) {
+    return switch (week.assessment) {
+      WeekAssessment.good => Colors.green,
+      WeekAssessment.bad => Colors.red,
+      WeekAssessment.poor => switch (week.timeState) {
+        WeekTimeState.current => Colors.blue,
+        WeekTimeState.past => Colors.black45,
+        WeekTimeState.future => Colors.white70,
+      }
+    };
   }
 
   @override
