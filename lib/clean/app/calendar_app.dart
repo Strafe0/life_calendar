@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:life_calendar/clean/common/styles/theme.dart';
 import 'package:life_calendar/clean/features/auth/data/repositories/user_repository.dart';
 import 'package:life_calendar/clean/features/calendar/data/repositories/week_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,8 +46,8 @@ class CalendarApp extends StatelessWidget {
             Locale('en'),
             Locale('ru'),
           ],
-          // theme: lightTheme,
-          // darkTheme: darkTheme,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
           routes: {
             '/': (context) => const CalendarScreen(),
             // '/datePicker': (context) => const OnBoardingScreen(),

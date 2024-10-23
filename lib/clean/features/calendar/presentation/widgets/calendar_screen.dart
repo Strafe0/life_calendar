@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:life_calendar/clean/common/styles/theme.dart';
 import 'package:life_calendar/clean/features/calendar/domain/entities/week/week.dart';
 import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_assessment.dart';
 import 'package:life_calendar/clean/features/calendar/domain/entities/week/week_time_state.dart';
@@ -69,18 +70,19 @@ class CalendarCanvas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: CalendarPainter(weeks),
+      painter: CalendarPainter(weeks, Theme.of(context).colorScheme),
       child: Container(),
     );
   }
 }
 
 class CalendarPainter extends CustomPainter {
-  CalendarPainter(this.weeks);
+  CalendarPainter(this.weeks, this.colorScheme);
 
   static const int weekInRowCount = 53;
 
   final List<Week> weeks;
+  final ColorScheme colorScheme;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -143,7 +145,7 @@ class CalendarPainter extends CustomPainter {
         text: i.toString(),
         style: TextStyle(
           fontSize: labelSize,
-          color: Colors.black,
+          color: colorScheme.onSurface,
         ),
       );
       final textPainter = TextPainter(
@@ -185,7 +187,7 @@ class CalendarPainter extends CustomPainter {
         text: i.toString(),
         style: TextStyle(
           fontSize: labelSize,
-          color: Colors.black,
+          color: colorScheme.onSurface,
         ),
       );
       final textPainter = TextPainter(
@@ -247,12 +249,12 @@ class CalendarPainter extends CustomPainter {
 
   Color getWeekColor(Week week) {
     return switch (week.assessment) {
-      WeekAssessment.good => Colors.green,
-      WeekAssessment.bad => Colors.red,
+      WeekAssessment.good => AppTheme.goodWeekColor,
+      WeekAssessment.bad => AppTheme.badWeekColor,
       WeekAssessment.poor => switch (week.timeState) {
-        WeekTimeState.current => Colors.blue,
-        WeekTimeState.past => Colors.black45,
-        WeekTimeState.future => Colors.white70,
+        WeekTimeState.current => AppTheme.currentWeekColor,
+        WeekTimeState.past => colorScheme.secondary,
+        WeekTimeState.future => colorScheme.secondaryContainer,
       }
     };
   }
