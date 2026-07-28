@@ -258,5 +258,7 @@
     "notificationSwitchTitle": "Sunday Evening Reminder",
     "notificationWeeklyReviewTitle": "Time for yourself",
     "notificationWeeklyReviewBody": "Sunday evening is the perfect time to remember the good moments. Take a look at your calendar.",
-    "aboutAppDrawerTitle": "About app"
+    "aboutAppDrawerTitle": "About app",
+    "onboardingTitle3v": "Update 3.0.0",
+    "onboardingContent3v": "Home screen widget, reminders, main screen update, editable life expectancy, iOS release, and no ads!"
 }

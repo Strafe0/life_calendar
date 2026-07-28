@@ -276,5 +276,7 @@
     "notificationWeeklyReviewBody": "Воскресный вечер — лучшее время, чтобы вспомнить всё хорошее. Загляни в календарь.",
     "@notificationWeeklyReviewBody": {},
     "aboutAppDrawerTitle": "О приложении",
-    "@aboutAppDrawerTitle": {}
+    "@aboutAppDrawerTitle": {},
+    "onboardingTitle3v": "Обновление 3.0.0",
+    "onboardingContent3v": "Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!"
 }

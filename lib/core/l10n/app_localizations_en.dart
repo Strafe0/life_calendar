@@ -353,4 +353,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutAppDrawerTitle => 'About app';
+
+  @override
+  String get onboardingTitle3v => 'Update 3.0.0';
+
+  @override
+  String get onboardingContent3v =>
+      'Home screen widget, reminders, main screen update, editable life expectancy, iOS release, and no ads!';
 }

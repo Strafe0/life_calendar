@@ -709,6 +709,18 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'О приложении'**
   String get aboutAppDrawerTitle;
+
+  /// No description provided for @onboardingTitle3v.
+  ///
+  /// In ru, this message translates to:
+  /// **'Обновление 3.0.0'**
+  String get onboardingTitle3v;
+
+  /// No description provided for @onboardingContent3v.
+  ///
+  /// In ru, this message translates to:
+  /// **'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!'**
+  String get onboardingContent3v;
 }
 
 class _AppLocalizationsDelegate

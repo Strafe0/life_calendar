@@ -23,6 +23,12 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
             titleResolver: (l10n) => l10n.onboardingTitleGrid,
             contentResolver: (l10n) => l10n.onboardingContentGrid,
           ),
+        if (!isFullOnboarding)
+          OnboardingPage(
+            image: 'assets/onboarding/life_calendar_paper.png',
+            titleResolver: (l10n) => l10n.onboardingTitle3v,
+            contentResolver: (l10n) => l10n.onboardingContent3v,
+          ),
         OnboardingPage(
           image: 'assets/onboarding/zoom_select.png',
           titleResolver: (l10n) => l10n.onboardingTitleZoom,

@@ -360,4 +360,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get aboutAppDrawerTitle => 'О приложении';
+
+  @override
+  String get onboardingTitle3v => 'Обновление 3.0.0';
+
+  @override
+  String get onboardingContent3v =>
+      'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!';
 }
