@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' show Locale;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:life_calendar/core/l10n/app_localizations.dart';
 import 'package:life_calendar/core/logger/logger.dart';
 import 'package:life_calendar/data/services/notifications/local_notification_id_enum.dart';
@@ -16,8 +17,13 @@ class LocalNotificationService implements NotificationService {
   // Initialization logic
   @override
   Future<void> initialize() async {
-    // 1. Initialize Timezones (needed for scheduled notifications)
+    // 1. Initialize Timezones (needed for scheduled notifications).
+    // Loading the DB is not enough: tz.local defaults to UTC until we point
+    // it at the device's zone. Without this, zonedSchedule with
+    // matchDateTimeComponents computes the wall-clock in UTC and can fire
+    // immediately.
     tz.initializeTimeZones();
+    await _configureLocalTimeZone();
 
     // 2. Android Initialization
     // 'notification_icon' must exist in android/app/src/main/res/drawable
@@ -38,6 +44,19 @@ class LocalNotificationService implements NotificationService {
 
     // 4. Finalize initialization
     await _plugin.initialize(settings: initSettings);
+  }
+
+  /// Points `tz.local` at the device's real time zone so scheduled
+  /// notifications fire at the intended wall-clock time.
+  Future<void> _configureLocalTimeZone() async {
+    try {
+      final timeZoneName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (e, s) {
+      // Fall back to UTC rather than crashing; scheduling still works,
+      // just without device-local wall-clock alignment.
+      logger.e('Failed to resolve local time zone', error: e, stackTrace: s);
+    }
   }
 
   /// Request permissions.
@@ -137,19 +156,7 @@ class LocalNotificationService implements NotificationService {
   Future<void> scheduleWeeklyReview(Locale locale) async {
     final l10n = lookupAppLocalizations(locale);
 
-    final now = DateTime.now();
-    final daysUntilSunday = DateTime.sunday - now.weekday;
-    DateTime scheduledDate = DateTime(
-      now.year,
-      now.month,
-      now.day + daysUntilSunday,
-      20,
-      0,
-    );
-
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 7));
-    }
+    final scheduledDate = _nextSundayAt(hour: 20, minute: 0);
 
     const androidDetails = AndroidNotificationDetails(
       'weekly_review_channel',
@@ -168,13 +175,34 @@ class LocalNotificationService implements NotificationService {
       id: LocalNotificationId.sumUpWeek.id,
       title: l10n.notificationWeeklyReviewTitle,
       body: l10n.notificationWeeklyReviewBody,
-      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+      scheduledDate: scheduledDate,
       notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
 
-    logger.i('Set weekly notification');
+    logger.i('Set weekly notification for $scheduledDate');
+  }
+
+  /// Next occurrence of Sunday at [hour]:[minute] in the device's local zone,
+  /// strictly in the future. Built in `tz.local` so the wall-clock the plugin
+  /// matches against is the device's, not UTC.
+  tz.TZDateTime _nextSundayAt({required int hour, required int minute}) {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    while (scheduled.weekday != DateTime.sunday || !scheduled.isAfter(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+
+    return scheduled;
   }
 
   @override
