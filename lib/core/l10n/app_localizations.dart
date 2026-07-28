@@ -710,6 +710,12 @@ abstract class AppLocalizations {
   /// **'О приложении'**
   String get aboutAppDrawerTitle;
 
+  /// No description provided for @notificationPermissionDeniedHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Чтобы получать напоминания, разрешите уведомления в настройках'**
+  String get notificationPermissionDeniedHint;
+
   /// No description provided for @onboardingTitle3v.
   ///
   /// In ru, this message translates to:

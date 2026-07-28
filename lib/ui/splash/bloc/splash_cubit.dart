@@ -48,7 +48,7 @@ class SplashCubit extends Cubit<SplashState> {
   }
 
   Future<void> _prepareNotifications() async {
-    await _weeklyNotificationInteractor.initializeWithPermissions();
+    await _weeklyNotificationInteractor.initialize();
     await _weeklyNotificationInteractor.checkAndScheduleAtStartup();
   }
 }

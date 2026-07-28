@@ -42,19 +42,21 @@ class LocalNotificationService implements NotificationService {
 
   /// Request permissions.
   /// Android 13+ requires manual request. iOS always requires it.
+  /// Returns whether the permission was granted.
   @override
-  Future<bool?> requestPermissions() async {
+  Future<bool> requestPermissions() async {
     if (Platform.isIOS) {
       final iosImplementation =
           _plugin
               .resolvePlatformSpecificImplementation<
                 IOSFlutterLocalNotificationsPlugin
               >();
-      return await iosImplementation?.requestPermissions(
+      final granted = await iosImplementation?.requestPermissions(
         alert: true,
         badge: true,
         sound: true,
       );
+      return granted ?? false;
     } else if (Platform.isAndroid) {
       final androidImplementation =
           _plugin
@@ -62,30 +64,11 @@ class LocalNotificationService implements NotificationService {
                 AndroidFlutterLocalNotificationsPlugin
               >();
       // For Android 13+ (API 33+)
-      return await androidImplementation?.requestNotificationsPermission();
+      final granted =
+          await androidImplementation?.requestNotificationsPermission();
+      return granted ?? false;
     }
     return false;
-  }
-
-  /// Checks and requests exact-alarm permission (Android 12+)
-  @override
-  Future<void> requestExactAlarmsPermission() async {
-    if (Platform.isAndroid) {
-      final androidImplementation =
-          _plugin
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
-
-      // Check whether we can schedule exact notifications
-      final bool? granted =
-          await androidImplementation?.canScheduleExactNotifications();
-
-      // If permission is missing, request it (opens a dialog or settings)
-      if (granted == false) {
-        await androidImplementation?.requestExactAlarmsPermission();
-      }
-    }
   }
 
   /// Show an instant notification
@@ -144,7 +127,7 @@ class LocalNotificationService implements NotificationService {
       body: body,
       scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
       notificationDetails: details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       // Makes it repeat (e.g. every week on this weekday at this time):
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
@@ -187,7 +170,7 @@ class LocalNotificationService implements NotificationService {
       body: l10n.notificationWeeklyReviewBody,
       scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
       notificationDetails: details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
 

@@ -6,9 +6,8 @@ import 'dart:ui' show Locale;
 abstract interface class NotificationService {
   Future<void> initialize();
 
-  Future<void> requestPermissions();
-
-  Future<void> requestExactAlarmsPermission();
+  /// Requests notification permission. Returns whether it was granted.
+  Future<bool> requestPermissions();
 
   Future<void> scheduleWeeklyReview(Locale locale);
 

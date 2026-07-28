@@ -355,6 +355,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutAppDrawerTitle => 'About app';
 
   @override
+  String get notificationPermissionDeniedHint =>
+      'To get reminders, allow notifications in Settings';
+
+  @override
   String get onboardingTitle3v => 'Update 3.0.0';
 
   @override

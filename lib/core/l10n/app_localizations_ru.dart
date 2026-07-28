@@ -362,6 +362,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aboutAppDrawerTitle => 'О приложении';
 
   @override
+  String get notificationPermissionDeniedHint =>
+      'Чтобы получать напоминания, разрешите уведомления в настройках';
+
+  @override
   String get onboardingTitle3v => 'Обновление 3.0.0';
 
   @override

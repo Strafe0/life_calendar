@@ -2,7 +2,10 @@ import 'dart:ui' show Locale, PlatformDispatcher;
 import 'package:life_calendar/core/logger/logger.dart';
 import 'package:life_calendar/domain/services/notification_service.dart';
 import 'package:life_calendar/domain/services/reminder_settings_service.dart';
-import 'package:life_calendar/utils/result.dart';
+
+/// Outcome of toggling the weekly reminder, so the UI can react
+/// (e.g. revert the switch and prompt the user to allow notifications).
+enum ToggleReminderResult { enabled, disabled, permissionDenied, error }
 
 class WeeklyNotificationInteractor {
   final NotificationService _notificationService;
@@ -17,10 +20,10 @@ class WeeklyNotificationInteractor {
 
   static Locale _platformLocale() => PlatformDispatcher.instance.locale;
 
-  Future<void> initializeWithPermissions() async {
+  /// Initializes the notification plugin without requesting any permission.
+  /// Permission is requested only when the user enables the reminder.
+  Future<void> initialize() async {
     await _notificationService.initialize();
-    await _notificationService.requestPermissions();
-    await _notificationService.requestExactAlarmsPermission();
   }
 
   Future<void> checkAndScheduleAtStartup() async {
@@ -36,12 +39,25 @@ class WeeklyNotificationInteractor {
     }
   }
 
-  Future<Result<void>> toggleNotification({required bool isEnabled}) async {
+  Future<ToggleReminderResult> toggleNotification({
+    required bool isEnabled,
+  }) async {
     try {
+      // Ask for permission in-context, only when the user turns it on.
+      if (isEnabled) {
+        final granted = await _notificationService.requestPermissions();
+        if (!granted) {
+          await _settingsService.setWeeklyReminderEnabled(isEnabled: false);
+          return ToggleReminderResult.permissionDenied;
+        }
+      }
+
       await _settingsService.setWeeklyReminderEnabled(isEnabled: isEnabled);
       await _syncNotificationState(isEnabled: isEnabled);
 
-      return const Result.ok(null);
+      return isEnabled
+          ? ToggleReminderResult.enabled
+          : ToggleReminderResult.disabled;
     } catch (e, s) {
       logger.e(
         'Failed to set $isEnabled for weekly notification',
@@ -49,7 +65,7 @@ class WeeklyNotificationInteractor {
         stackTrace: s,
       );
 
-      return Result.error(e);
+      return ToggleReminderResult.error;
     }
   }
 

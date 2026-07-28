@@ -162,16 +162,17 @@ class SharedPreferencesService implements ReminderSettingsService {
     }
   }
 
-  /// Whether the weekly reminder is enabled (defaults to true).
+  /// Whether the weekly reminder is enabled (defaults to false, so the app
+  /// never requests notification permission until the user opts in).
   @override
   Future<bool> isWeeklyReminderEnabled() async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      return prefs.getBool(_weeklyReminderKey) ?? true;
+      return prefs.getBool(_weeklyReminderKey) ?? false;
     } catch (e, s) {
       logger.e('SharedPrefs error', error: e, stackTrace: s);
-      return true;
+      return false;
     }
   }
 

@@ -277,6 +277,8 @@
     "@notificationWeeklyReviewBody": {},
     "aboutAppDrawerTitle": "О приложении",
     "@aboutAppDrawerTitle": {},
+    "notificationPermissionDeniedHint": "Чтобы получать напоминания, разрешите уведомления в настройках",
+    "@notificationPermissionDeniedHint": {},
     "onboardingTitle3v": "Обновление 3.0.0",
     "onboardingContent3v": "Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!"
 }
