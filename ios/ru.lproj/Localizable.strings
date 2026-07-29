@@ -1,4 +1,4 @@
 "NSPhotoLibraryUsageDescription" = "Календарю Жизни нужен доступ к фото для загрузки изображений в деталях недели.";
 "NSCameraUsageDescription" = "Календарю Жизни нужен доступ к камере для создания фото в деталях недели.";
 "NSMicrophoneUsageDescription" = "Календарю Жизни нужен доступ к микрофону для записи видео.";
-"CFBundleDisplayName" = "Календарь Жизни";
+"CFBundleDisplayName" = "Календарь жизни в неделях";

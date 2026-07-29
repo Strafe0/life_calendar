@@ -1,0 +1,1 @@
+fvm flutter build ios --config-only --debug --simulator
