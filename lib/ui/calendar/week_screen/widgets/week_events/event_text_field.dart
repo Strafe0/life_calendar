@@ -33,7 +33,9 @@ class _EventTextFieldState extends State<EventTextField> {
     return TextFormField(
       controller: _textController,
       maxLength: maxTitleLength,
+      autofocus: true,
       textInputAction: TextInputAction.done,
+      textCapitalization: TextCapitalization.sentences,
       decoration: const InputDecoration(border: UnderlineInputBorder()),
       onChanged: widget.onChanged,
       onEditingComplete: () => widget.onEditingComplete(_textController.text),

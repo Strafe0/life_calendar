@@ -33,6 +33,7 @@ class _ResumeTextFieldState extends State<ResumeTextField> {
       autofocus: true,
       textAlignVertical: TextAlignVertical.top,
       textInputAction: TextInputAction.done,
+      textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
       ),

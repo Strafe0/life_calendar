@@ -32,7 +32,9 @@ class _GoalChangeSheetState extends State<GoalChangeSheet> {
           TextFormField(
             controller: _textController,
             maxLength: maxTitleLength,
+            autofocus: true,
             textInputAction: TextInputAction.done,
+            textCapitalization: TextCapitalization.sentences,
             decoration: const InputDecoration(border: UnderlineInputBorder()),
             validator: (value) {
               if (value == null || value.isEmpty) {
