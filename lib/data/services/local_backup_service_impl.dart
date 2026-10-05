@@ -104,17 +104,17 @@ class LocalBackupServiceImpl implements LocalBackupService {
     bool applyStarted = false;
 
     try {
-      final result = await FilePicker.pickFiles(
+      final pickedFile = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['zip'],
       );
 
-      if (result == null) {
+      if (pickedFile == null) {
         logger.w('File was not picked');
         return const Result.ok(false);
       }
 
-      final zipFile = File(result.files.single.path!);
+      final zipFile = File(pickedFile.path!);
       final docsDir = await getApplicationDocumentsDirectory();
 
       restoreTempDir = Directory(p.join(docsDir.path, 'restore_temp'));
