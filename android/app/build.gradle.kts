@@ -34,10 +34,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.vgol.life_calendar"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -49,7 +46,7 @@ android {
             keyAlias = keystoreProperties["keyAlias"] as String?
             keyPassword = keystoreProperties["keyPassword"] as String?
             storePassword = keystoreProperties["storePassword"] as String?
-            
+
             val storeFileKey = keystoreProperties["storeFile"] as String?
             storeFile = if (storeFileKey != null) file(storeFileKey) else null
         }
@@ -59,7 +56,7 @@ android {
     productFlavors {
         create("lifeCalendar") {
             dimension = "app"
-            
+
             signingConfig = signingConfigs.getByName("release")
         }
 
@@ -67,7 +64,7 @@ android {
             dimension = "app"
             applicationIdSuffix = ".test"
             versionNameSuffix = "-test"
-            
+
             signingConfig = signingConfigs.getByName("debug")
         }
 
