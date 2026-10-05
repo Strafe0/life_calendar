@@ -9,10 +9,13 @@ birth date and expected lifespan into a grid of weeks: past, current and
 future. Open any week to rate it, plan goals, log events, attach photos and
 write a short summary.
 
-The app is live on Google Play (version 3.0.0). There is no account or server:
-weeks, notes and photos are stored only on the device.
+The app is live on Google Play and the App Store (version 3.0.0). There is no
+account or server: weeks, notes and photos are stored only on the device.
 
-<a href="https://play.google.com/store/apps/details?id=com.vgol.life_calendar"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="72"></a>
+<p>
+  <a href="https://play.google.com/store/apps/details?id=com.vgol.life_calendar"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="72"></a>
+  <a href="https://apps.apple.com/app/id6756362091"><img alt="Download on the App Store" src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" height="48"></a>
+</p>
 
 <!-- Screenshots: add store screenshots here (e.g. docs/screenshots/*.png in a 4-column table). -->
 
