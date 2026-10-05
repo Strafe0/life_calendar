@@ -51,3 +51,6 @@ app.*.map.json
 
 # keys
 upload-keystore.jks
+
+# Local build exports
+archives/
