@@ -35,70 +35,63 @@ import 'package:life_calendar/domain/services/local_backup_service.dart';
 import 'package:life_calendar/ui/calendar/drawer/bloc/settings_cubit.dart';
 import 'package:life_calendar/ui/core/themes/app_theme.dart';
 import 'package:life_calendar/ui/user/bloc/user_bloc.dart';
-import 'package:provider/provider.dart';
 
 class CalendarApp extends StatelessWidget {
   const CalendarApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiRepositoryProvider(
       providers: [
-        Provider(create: (_) => DatabaseService()),
-        Provider(create: (_) => const SharedPreferencesService()),
-        Provider(
+        RepositoryProvider(create: (_) => DatabaseService()),
+        RepositoryProvider(create: (_) => const SharedPreferencesService()),
+        RepositoryProvider(
           create: (context) => AppInitializer(context.read<DatabaseService>()),
         ),
-        Provider<SettingsRepository>(
+        RepositoryProvider<SettingsRepository>(
           create: (context) =>
               SettingsRepositoryImpl(sharedPreferencesService: context.read()),
         ),
-        Provider(create: (context) => LocalNotificationService()),
-        Provider(
+        RepositoryProvider(create: (context) => LocalNotificationService()),
+        RepositoryProvider(
           create: (context) => WeeklyNotificationInteractor(
             context.read<LocalNotificationService>(),
             context.read<SharedPreferencesService>(),
           ),
         ),
-        BlocProvider(
-          create: (context) => SettingsCubit(
-            context.read<WeeklyNotificationInteractor>(),
-            context.read<SettingsRepository>(),
-          ),
-        ),
-        Provider<AnalyticsService>(
+        RepositoryProvider<AnalyticsService>(
           create: (context) => FirebaseAnalyticsService(),
         ),
-        Provider<ImagePickerService>(
+        RepositoryProvider<ImagePickerService>(
           create: (_) => const ImagePickerServiceImpl(),
         ),
-        Provider<HomeWidgetService>(
+        RepositoryProvider<HomeWidgetService>(
           create: (_) => const HomeWidgetServiceImpl(),
         ),
-        Provider<ImageStorageService>(
+        RepositoryProvider<ImageStorageService>(
           create: (_) => const ImageStorageServiceImpl(),
         ),
-        Provider<OnboardingRepository>(
+        RepositoryProvider<OnboardingRepository>(
           create: (_) => const OnboardingRepositoryImpl(),
         ),
-        Provider<AuthRepository>(
+        RepositoryProvider<AuthRepository>(
           create: (context) {
             return AuthRepositoryImpl(sharedPreferencesService: context.read());
           },
         ),
-        Provider<UserRepository>(
+        RepositoryProvider<UserRepository>(
           create: (context) => UserRepositoryImpl(
             sharedPreferencesService: context.read(),
             databaseService: context.read(),
           ),
         ),
-        Provider<WeekRepository>(
+        RepositoryProvider<WeekRepository>(
           create: (context) => WeekRepositoryImpl(
             databaseService: context.read(),
             imageStorageService: context.read(),
           ),
         ),
-        Provider<LocalBackupService>(
+        RepositoryProvider<LocalBackupService>(
           create: (context) => LocalBackupServiceImpl(
             strategies: [
               DatabaseBackupStrategy(databaseService: context.read()),
@@ -110,36 +103,42 @@ class CalendarApp extends StatelessWidget {
           ),
         ),
       ],
-      child: Builder(
-        builder: (context) {
-          return BlocProvider(
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => SettingsCubit(
+              context.read<WeeklyNotificationInteractor>(),
+              context.read<SettingsRepository>(),
+            ),
+          ),
+          BlocProvider(
             create: (context) => UserBloc(
               userRepository: context.read(),
               analytics: context.read(),
             ),
-            child: MaterialApp.router(
-              title: 'Life Calendar',
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              routerConfig: goRouter,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              debugShowCheckedModeBanner: false,
-              builder: (context, widget) {
-                Widget error = Center(child: Text(context.l10n.errorHappened));
-                if (widget is Scaffold || widget is Navigator) {
-                  error = Scaffold(body: error);
-                }
-                ErrorWidget.builder = (errorDetails) {
-                  logger.e('Error building widget ${widget.runtimeType}');
-                  return error;
-                };
-                if (widget != null) return widget;
-                throw StateError('Widget is null');
-              },
-            ),
-          );
-        },
+          ),
+        ],
+        child: MaterialApp.router(
+          title: 'Life Calendar',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          routerConfig: goRouter,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          debugShowCheckedModeBanner: false,
+          builder: (context, widget) {
+            Widget error = Center(child: Text(context.l10n.errorHappened));
+            if (widget is Scaffold || widget is Navigator) {
+              error = Scaffold(body: error);
+            }
+            ErrorWidget.builder = (errorDetails) {
+              logger.e('Error building widget ${widget.runtimeType}');
+              return error;
+            };
+            if (widget != null) return widget;
+            throw StateError('Widget is null');
+          },
+        ),
       ),
     );
   }

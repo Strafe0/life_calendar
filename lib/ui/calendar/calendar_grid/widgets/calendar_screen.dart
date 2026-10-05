@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:life_calendar/ui/calendar/calendar_grid/widgets/calendar_view.dart';
 import 'package:life_calendar/ui/calendar/drawer/calendar_drawer_controller.dart';
 import 'package:life_calendar/ui/calendar/drawer/widgets/calendar_drawer.dart';
 import 'package:life_calendar/ui/core/themes/system_overlay_style.dart';
-import 'package:provider/provider.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -81,7 +81,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                 );
                 _drawerController.drawerWidth = drawerWidth;
 
-                return Provider<CalendarDrawerController>.value(
+                return RepositoryProvider<CalendarDrawerController>.value(
                   value: _drawerController,
                   child: Stack(
                     children: [
