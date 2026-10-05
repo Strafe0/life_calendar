@@ -369,14 +369,14 @@ class WeekCubit extends Cubit<WeekState> {
       if (result is ResultError) {
         emit(prevState);
         logger.e(
-          'Failed to add new goal. Returning previous state',
+          'Failed to add new photo. Returning previous state',
           error: result.error,
         );
       }
 
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.photo));
     } else {
-      logger.e('Cannot change goal, because week is not ready');
+      logger.e('Cannot add photo, because week is not ready');
     }
   }
 
@@ -400,7 +400,7 @@ class WeekCubit extends Cubit<WeekState> {
         );
       }
 
-      unawaited(_analytics.logAddWeekContent(WeekContentEvent.photo));
+      unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.photo));
     } else {
       logger.e('Cannot delete photo, because week is not ready');
     }
