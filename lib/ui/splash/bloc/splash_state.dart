@@ -15,7 +15,7 @@ final class SplashLoading extends SplashState {
 final class SplashReady extends SplashState {
   final User user;
   final bool isFirstLaunchV3;
-  
+
   const SplashReady({required this.user, required this.isFirstLaunchV3});
 
   bool get isAuthenticated => !user.isEmpty;

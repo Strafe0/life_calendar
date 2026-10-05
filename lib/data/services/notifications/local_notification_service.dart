@@ -65,11 +65,10 @@ class LocalNotificationService implements NotificationService {
   @override
   Future<bool> requestPermissions() async {
     if (Platform.isIOS) {
-      final iosImplementation =
-          _plugin
-              .resolvePlatformSpecificImplementation<
-                IOSFlutterLocalNotificationsPlugin
-              >();
+      final iosImplementation = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       final granted = await iosImplementation?.requestPermissions(
         alert: true,
         badge: true,
@@ -77,14 +76,13 @@ class LocalNotificationService implements NotificationService {
       );
       return granted ?? false;
     } else if (Platform.isAndroid) {
-      final androidImplementation =
-          _plugin
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
+      final androidImplementation = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       // For Android 13+ (API 33+)
-      final granted =
-          await androidImplementation?.requestNotificationsPermission();
+      final granted = await androidImplementation
+          ?.requestNotificationsPermission();
       return granted ?? false;
     }
     return false;

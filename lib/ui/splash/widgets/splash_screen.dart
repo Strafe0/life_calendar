@@ -21,13 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
     return AnnotatedRegion(
       value: surfaceOverlayStyle(context),
       child: BlocProvider(
-        create:
-            (context) => SplashCubit(
-              appInitializer: context.read(),
-              userRepository: context.read(),
-              weeklyNotificationInteractor: context.read(),
-              settingsRepository: context.read(),
-            )..prepareApp(),
+        create: (context) => SplashCubit(
+          appInitializer: context.read(),
+          userRepository: context.read(),
+          weeklyNotificationInteractor: context.read(),
+          settingsRepository: context.read(),
+        )..prepareApp(),
         child: Builder(
           builder: (context) {
             return BlocListener<SplashCubit, SplashState>(

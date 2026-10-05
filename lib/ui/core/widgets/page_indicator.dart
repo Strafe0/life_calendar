@@ -48,20 +48,20 @@ class PageIndicator extends StatelessWidget {
           alignment: Alignment.bottomRight,
           child:
               lastPageRightButton == null ||
-                      currentPageIndex < tabController.length - 1
-                  ? Visibility.maintain(
-                    visible: currentPageIndex < tabController.length - 1,
-                    child: IconButton(
-                      onPressed: () {
-                        onUpdateCurrentPageIndex(currentPageIndex + 1);
-                      },
-                      icon: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                  currentPageIndex < tabController.length - 1
+              ? Visibility.maintain(
+                  visible: currentPageIndex < tabController.length - 1,
+                  child: IconButton(
+                    onPressed: () {
+                      onUpdateCurrentPageIndex(currentPageIndex + 1);
+                    },
+                    icon: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                  )
-                  : lastPageRightButton!,
+                  ),
+                )
+              : lastPageRightButton!,
         ),
       ],
     );

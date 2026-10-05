@@ -74,8 +74,9 @@ class _OnboardingViewState extends State<OnboardingView>
               const Spacer(),
               TextButton(
                 onPressed: () async {
-                  final result =
-                      await context.read<LocalBackupService>().importCalendar();
+                  final result = await context
+                      .read<LocalBackupService>()
+                      .importCalendar();
 
                   if (!context.mounted) {
                     logger.w('Context is not mounted');
@@ -125,13 +126,12 @@ class _OnboardingViewState extends State<OnboardingView>
               curve: Curves.easeInOut,
             );
           },
-          lastPageRightButton:
-              widget.isFullOnboarding
-                  ? null
-                  : TextButton(
-                    onPressed: () => context.go(AppRoute.calendar),
-                    child: Text(context.l10n.gotIt),
-                  ),
+          lastPageRightButton: widget.isFullOnboarding
+              ? null
+              : TextButton(
+                  onPressed: () => context.go(AppRoute.calendar),
+                  child: Text(context.l10n.gotIt),
+                ),
         ),
       ],
     );

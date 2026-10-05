@@ -50,25 +50,21 @@ class CalendarApp extends StatelessWidget {
           create: (context) => AppInitializer(context.read<DatabaseService>()),
         ),
         Provider<SettingsRepository>(
-          create:
-              (context) => SettingsRepositoryImpl(
-                sharedPreferencesService: context.read(),
-              ),
+          create: (context) =>
+              SettingsRepositoryImpl(sharedPreferencesService: context.read()),
         ),
         Provider(create: (context) => LocalNotificationService()),
         Provider(
-          create:
-              (context) => WeeklyNotificationInteractor(
-                context.read<LocalNotificationService>(),
-                context.read<SharedPreferencesService>(),
-              ),
+          create: (context) => WeeklyNotificationInteractor(
+            context.read<LocalNotificationService>(),
+            context.read<SharedPreferencesService>(),
+          ),
         ),
         BlocProvider(
-          create:
-              (context) => SettingsCubit(
-                context.read<WeeklyNotificationInteractor>(),
-                context.read<SettingsRepository>(),
-              ),
+          create: (context) => SettingsCubit(
+            context.read<WeeklyNotificationInteractor>(),
+            context.read<SettingsRepository>(),
+          ),
         ),
         Provider<AnalyticsService>(
           create: (context) => FirebaseAnalyticsService(),
@@ -91,40 +87,36 @@ class CalendarApp extends StatelessWidget {
           },
         ),
         Provider<UserRepository>(
-          create:
-              (context) => UserRepositoryImpl(
-                sharedPreferencesService: context.read(),
-                databaseService: context.read(),
-              ),
+          create: (context) => UserRepositoryImpl(
+            sharedPreferencesService: context.read(),
+            databaseService: context.read(),
+          ),
         ),
         Provider<WeekRepository>(
-          create:
-              (context) => WeekRepositoryImpl(
-                databaseService: context.read(),
-                imageStorageService: context.read(),
-              ),
+          create: (context) => WeekRepositoryImpl(
+            databaseService: context.read(),
+            imageStorageService: context.read(),
+          ),
         ),
         Provider<LocalBackupService>(
-          create:
-              (context) => LocalBackupServiceImpl(
-                strategies: [
-                  DatabaseBackupStrategy(databaseService: context.read()),
-                  const SharedPreferencesBackupStrategy(),
-                  CacheBackupStrategy(databaseService: context.read()),
-                ],
-                analytics: context.read(),
-                sharedPreferencesService: context.read(),
-              ),
+          create: (context) => LocalBackupServiceImpl(
+            strategies: [
+              DatabaseBackupStrategy(databaseService: context.read()),
+              const SharedPreferencesBackupStrategy(),
+              CacheBackupStrategy(databaseService: context.read()),
+            ],
+            analytics: context.read(),
+            sharedPreferencesService: context.read(),
+          ),
         ),
       ],
       child: Builder(
         builder: (context) {
           return BlocProvider(
-            create:
-                (context) => UserBloc(
-                  userRepository: context.read(),
-                  analytics: context.read(),
-                ),
+            create: (context) => UserBloc(
+              userRepository: context.read(),
+              analytics: context.read(),
+            ),
             child: MaterialApp.router(
               title: 'Life Calendar',
               theme: AppTheme.lightTheme,

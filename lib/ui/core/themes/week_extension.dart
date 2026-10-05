@@ -25,7 +25,6 @@ extension WeekColorExtension on Week {
   }
 }
 
-ColorScheme _schemeFor(Brightness brightness) =>
-    brightness == Brightness.light
-        ? AppTheme.lightTheme.colorScheme
-        : AppTheme.darkTheme.colorScheme;
+ColorScheme _schemeFor(Brightness brightness) => brightness == Brightness.light
+    ? AppTheme.lightTheme.colorScheme
+    : AppTheme.darkTheme.colorScheme;

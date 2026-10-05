@@ -24,18 +24,17 @@ class SearchPullIndicator extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child:
-                    isSearchTriggered
-                        ? const Icon(
-                          Icons.check_circle,
-                          size: 24,
-                          color: Colors.green,
-                        )
-                        : Icon(
-                          Icons.arrow_circle_down_sharp,
-                          size: 24,
-                          color: ColorScheme.of(context).onSurface,
-                        ),
+                child: isSearchTriggered
+                    ? const Icon(
+                        Icons.check_circle,
+                        size: 24,
+                        color: Colors.green,
+                      )
+                    : Icon(
+                        Icons.arrow_circle_down_sharp,
+                        size: 24,
+                        color: ColorScheme.of(context).onSurface,
+                      ),
               ),
               if (isSearchTriggered)
                 Text(

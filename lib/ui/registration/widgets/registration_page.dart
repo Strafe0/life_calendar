@@ -23,12 +23,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => RegistrationCubit(
-            authRepository: context.read(),
-            weekRepository: context.read(),
-            analytics: context.read(),
-          ),
+      create: (context) => RegistrationCubit(
+        authRepository: context.read(),
+        weekRepository: context.read(),
+        analytics: context.read(),
+      ),
       child: Builder(
         builder: (context) {
           return BlocListener<RegistrationCubit, RegistrationState>(
@@ -57,9 +56,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 32),
-                    child: Image.asset(
-                      'assets/calendar.png',
-                    ),
+                    child: Image.asset('assets/calendar.png'),
                   ),
                 ),
                 Expanded(

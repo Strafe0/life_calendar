@@ -27,16 +27,14 @@ final goRouter = GoRouter(
       builder: (context, state) => const SplashScreen(),
     ),
     ShellRoute(
-      builder:
-          (context, state, child) => BlocProvider(
-            create:
-                (_) => CalendarCubit(
-                  weekRepository: context.read(),
-                  settingsRepository: context.read(),
-                  homeWidgetService: context.read(),
-                ),
-            child: child,
-          ),
+      builder: (context, state, child) => BlocProvider(
+        create: (_) => CalendarCubit(
+          weekRepository: context.read(),
+          settingsRepository: context.read(),
+          homeWidgetService: context.read(),
+        ),
+        child: child,
+      ),
       routes: [
         GoRoute(
           path: AppRoute.calendar,
@@ -76,12 +74,11 @@ final goRouter = GoRouter(
                 }
 
                 final child = BlocProvider(
-                  create:
-                      (context) => WeekCubit(
-                        weekRepository: context.read(),
-                        analytics: context.read(),
-                        homeWidgetService: context.read(),
-                      )..getWeek(weekId: selectedWeekId),
+                  create: (context) => WeekCubit(
+                    weekRepository: context.read(),
+                    analytics: context.read(),
+                    homeWidgetService: context.read(),
+                  )..getWeek(weekId: selectedWeekId),
                   child: WeekScreen(selectedWeekId: selectedWeekId),
                 );
 
@@ -95,17 +92,15 @@ final goRouter = GoRouter(
             GoRoute(
               path: AppRoute.feedback,
               name: 'FeedbackScreen',
-              pageBuilder:
-                  (context, state) =>
-                      Platform.isIOS
-                          ? CupertinoPage(
-                            key: state.pageKey,
-                            child: const FeedbackScreen(),
-                          )
-                          : MaterialPage(
-                            key: state.pageKey,
-                            child: const FeedbackScreen(),
-                          ),
+              pageBuilder: (context, state) => Platform.isIOS
+                  ? CupertinoPage(
+                      key: state.pageKey,
+                      child: const FeedbackScreen(),
+                    )
+                  : MaterialPage(
+                      key: state.pageKey,
+                      child: const FeedbackScreen(),
+                    ),
             ),
           ],
         ),

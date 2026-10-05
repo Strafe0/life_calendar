@@ -39,31 +39,30 @@ class AdaptiveActionMenu extends StatelessWidget {
       onPressed: () {
         showCupertinoModalPopup(
           context: context,
-          builder:
-              (context) => CupertinoActionSheet(
-                actions: [
-                  CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onEdit();
-                    },
-                    child: Text(editLabel),
-                  ),
-                  CupertinoActionSheetAction(
-                    isDestructiveAction: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onDelete();
-                    },
-                    child: Text(deleteLabel),
-                  ),
-                ],
-                cancelButton: CupertinoActionSheetAction(
-                  isDefaultAction: true,
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(cancelLabel),
-                ),
+          builder: (context) => CupertinoActionSheet(
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onEdit();
+                },
+                child: Text(editLabel),
               ),
+              CupertinoActionSheetAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  onDelete();
+                },
+                child: Text(deleteLabel),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              isDefaultAction: true,
+              onPressed: () => Navigator.pop(context),
+              child: Text(cancelLabel),
+            ),
+          ),
         );
       },
     );
@@ -80,11 +79,10 @@ class AdaptiveActionMenu extends StatelessWidget {
         if (value == 1) onEdit();
         if (value == 2) onDelete();
       },
-      itemBuilder:
-          (context) => [
-            PopupMenuItem(value: 1, child: Text(editLabel)),
-            PopupMenuItem(value: 2, child: Text(deleteLabel)),
-          ],
+      itemBuilder: (context) => [
+        PopupMenuItem(value: 1, child: Text(editLabel)),
+        PopupMenuItem(value: 2, child: Text(deleteLabel)),
+      ],
     );
   }
 }

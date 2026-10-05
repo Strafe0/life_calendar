@@ -22,8 +22,8 @@ class CalendarDrawer extends StatelessWidget {
         DrawerItem(
           icon: Icons.feedback_outlined,
           title: context.l10n.contactDeveloper,
-          onPressed:
-              () => context.push('${AppRoute.calendar}/${AppRoute.feedback}'),
+          onPressed: () =>
+              context.push('${AppRoute.calendar}/${AppRoute.feedback}'),
         ),
         const ChangeLifespanDrawerButton(),
         const NotificationSwitch(),

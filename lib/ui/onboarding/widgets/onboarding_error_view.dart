@@ -19,10 +19,9 @@ class OnboardingErrorView extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           TextButton(
-            onPressed:
-                () => context.read<OnboardingCubit>().loadPages(
-                  isFullOnboarding: isFullOnboarding,
-                ),
+            onPressed: () => context.read<OnboardingCubit>().loadPages(
+              isFullOnboarding: isFullOnboarding,
+            ),
             child: Text(context.l10n.tryAgain),
           ),
         ],

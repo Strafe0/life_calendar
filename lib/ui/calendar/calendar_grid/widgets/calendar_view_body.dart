@@ -146,17 +146,16 @@ class _CalendarViewBodyState extends State<CalendarViewBody> {
     Offset position,
     CalendarSize calendarSize,
   ) {
-    final weekId =
-        widget.weekBoxes
-            .firstWhere(
-              (weekRect) =>
-                  weekRect.rect.left <= position.dx &&
-                  position.dx <= weekRect.rect.right &&
-                  weekRect.rect.top <= position.dy &&
-                  position.dy <= weekRect.rect.bottom,
-              orElse: WeekBox.empty,
-            )
-            .weekId;
+    final weekId = widget.weekBoxes
+        .firstWhere(
+          (weekRect) =>
+              weekRect.rect.left <= position.dx &&
+              position.dx <= weekRect.rect.right &&
+              weekRect.rect.top <= position.dy &&
+              position.dy <= weekRect.rect.bottom,
+          orElse: WeekBox.empty,
+        )
+        .weekId;
 
     logger.i('Tapped on $weekId week');
     if (weekId != -1) {

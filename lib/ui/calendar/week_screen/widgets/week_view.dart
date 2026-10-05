@@ -41,9 +41,7 @@ class WeekView extends StatelessWidget {
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.only(top: 20),
-                  sliver: SliverToBoxAdapter(
-                    child: WeekAssessmentWidget(),
-                  ),
+                  sliver: SliverToBoxAdapter(child: WeekAssessmentWidget()),
                 ),
                 SliverPadding(
                   padding: EdgeInsets.only(top: 20),

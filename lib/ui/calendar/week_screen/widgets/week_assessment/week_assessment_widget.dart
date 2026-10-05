@@ -82,14 +82,12 @@ class _CupertinoAssessmentSelector extends StatelessWidget {
                   assessment.label(context.l10n),
                   textAlign: TextAlign.center,
                   style: TextTheme.of(context).bodyMedium?.copyWith(
-                    color:
-                        selected == assessment
-                            ? Colors.white
-                            : ColorScheme.of(context).onSurface,
-                    fontWeight:
-                        selected == assessment
-                            ? FontWeight.w600
-                            : FontWeight.normal,
+                    color: selected == assessment
+                        ? Colors.white
+                        : ColorScheme.of(context).onSurface,
+                    fontWeight: selected == assessment
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
                 ),
               ),
@@ -130,10 +128,9 @@ class _MaterialAssessmentSelector extends StatelessWidget {
                       textAlign: TextAlign.center,
                       softWrap: true,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color:
-                            selected == assessment
-                                ? Colors.white
-                                : ColorScheme.of(context).onSurface,
+                        color: selected == assessment
+                            ? Colors.white
+                            : ColorScheme.of(context).onSurface,
                       ),
                     ),
                   ),

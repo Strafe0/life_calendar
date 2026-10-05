@@ -24,10 +24,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final theme = OnboardingTheme(brightness: brightness);
 
     return BlocProvider(
-      create:
-          (context) =>
-              OnboardingCubit(onboardingRepository: context.read())
-                ..loadPages(isFullOnboarding: widget.isFullOnboarding),
+      create: (context) =>
+          OnboardingCubit(onboardingRepository: context.read())
+            ..loadPages(isFullOnboarding: widget.isFullOnboarding),
       child: AnnotatedRegion(
         value: SystemUiOverlayStyle(
           statusBarColor: theme.statusBarColor,

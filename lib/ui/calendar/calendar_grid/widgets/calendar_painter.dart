@@ -54,8 +54,9 @@ class CalendarPainter extends CustomPainter {
       }
 
       final week = weekBoxes[weekId];
-      (pathsByColor[week.color(brightness: brightness)] ??= Path())
-          .addRRect(week.rect);
+      (pathsByColor[week.color(brightness: brightness)] ??= Path()).addRRect(
+        week.rect,
+      );
 
       if (weekId + 1 < weekBoxes.length &&
           weekBoxes[weekId + 1].yearId > yearId) {
@@ -85,10 +86,8 @@ class CalendarPainter extends CustomPainter {
 
       final String label = (i == 0 ? 1 : i * 5).toString();
       builder.addText(label);
-      final ui.Paragraph paragraph =
-          builder.build()..layout(
-            ui.ParagraphConstraints(width: calendarSize.weekBoxSide * 2),
-          );
+      final ui.Paragraph paragraph = builder.build()
+        ..layout(ui.ParagraphConstraints(width: calendarSize.weekBoxSide * 2));
 
       final double leftPadding =
           calendarSize.horPadding + calendarSize.labelHorPadding;
@@ -119,10 +118,8 @@ class CalendarPainter extends CustomPainter {
           ..pushStyle(ui.TextStyle(color: textColor))
           ..addText(yearNumber.toString());
 
-    final ui.Paragraph paragraph =
-        builder.build()..layout(
-          ui.ParagraphConstraints(width: calendarSize.labelHorPadding),
-        );
+    final ui.Paragraph paragraph = builder.build()
+      ..layout(ui.ParagraphConstraints(width: calendarSize.labelHorPadding));
 
     final double topPadding =
         calendarSize.vrtPadding + calendarSize.labelVrtPadding;

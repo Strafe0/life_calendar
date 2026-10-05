@@ -11,8 +11,9 @@ import 'package:flutter/services.dart';
 /// hence the two fields hold opposite values.
 SystemUiOverlayStyle surfaceOverlayStyle(BuildContext context) {
   final brightness = ColorScheme.of(context).brightness;
-  final iconBrightness =
-      brightness == Brightness.dark ? Brightness.light : Brightness.dark;
+  final iconBrightness = brightness == Brightness.dark
+      ? Brightness.light
+      : Brightness.dark;
 
   return SystemUiOverlayStyle(
     statusBarColor: ColorScheme.of(context).surface,

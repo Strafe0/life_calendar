@@ -80,12 +80,11 @@ class WeekCubit extends Cubit<WeekState> {
   }) async {
     final prevState = state;
     if (prevState is WeekSuccess) {
-      final newGoals =
-          prevState.week.goals.map((goal) {
-            return goal.id == goalId
-                ? goal.copyWith(isCompleted: isCompleted)
-                : goal;
-          }).toList();
+      final newGoals = prevState.week.goals.map((goal) {
+        return goal.id == goalId
+            ? goal.copyWith(isCompleted: isCompleted)
+            : goal;
+      }).toList();
       emit(prevState.copyWith(goals: newGoals));
 
       final result = await _weekRepository.updateGoals(
@@ -164,11 +163,7 @@ class WeekCubit extends Cubit<WeekState> {
     if (prevState is WeekSuccess) {
       final newEventList = [
         ...prevState.week.events,
-        Event(
-          id: AppUuid.generateTimeBasedUuid(),
-          title: title,
-          date: date,
-        ),
+        Event(id: AppUuid.generateTimeBasedUuid(), title: title, date: date),
       ]..sort((a, b) => a.date.compareTo(b.date));
 
       emit(prevState.copyWith(events: newEventList));
@@ -187,9 +182,7 @@ class WeekCubit extends Cubit<WeekState> {
       }
 
       unawaited(
-        _homeWidgetService.updateEventsCount(
-          eventsCount: newEventList.length,
-        ),
+        _homeWidgetService.updateEventsCount(eventsCount: newEventList.length),
       );
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.event));
     } else {
@@ -256,9 +249,7 @@ class WeekCubit extends Cubit<WeekState> {
       }
 
       unawaited(
-        _homeWidgetService.updateEventsCount(
-          eventsCount: newEventList.length,
-        ),
+        _homeWidgetService.updateEventsCount(eventsCount: newEventList.length),
       );
       unawaited(_analytics.logChangeWeekContent(WeekContentEvent.event));
     } else {
@@ -294,9 +285,7 @@ class WeekCubit extends Cubit<WeekState> {
       }
 
       unawaited(
-        _homeWidgetService.updateGoalsCount(
-          goalsCount: newGoalList.length,
-        ),
+        _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
       );
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.goal));
     } else {
@@ -357,9 +346,7 @@ class WeekCubit extends Cubit<WeekState> {
       }
 
       unawaited(
-        _homeWidgetService.updateGoalsCount(
-          goalsCount: newGoalList.length,
-        ),
+        _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
       );
       unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.goal));
     } else {

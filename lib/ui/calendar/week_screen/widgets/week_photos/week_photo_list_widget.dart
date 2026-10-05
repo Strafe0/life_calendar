@@ -25,8 +25,9 @@ class WeekPhotoListWidget extends StatelessWidget {
         ),
         BlocBuilder<WeekCubit, WeekState>(
           builder: (context, state) {
-            final photos =
-                state is WeekSuccess ? state.week.photos : <String>[];
+            final photos = state is WeekSuccess
+                ? state.week.photos
+                : <String>[];
 
             if (photos.isEmpty) {
               return SliverToBoxAdapter(
@@ -50,9 +51,8 @@ class WeekPhotoListWidget extends StatelessWidget {
                     child: PhotoCard(
                       photoUrl: path,
                       onPressed: () => _onPhotoPressed(context, photos, index),
-                      onLongPressStart:
-                          (details) =>
-                              _onLongPressStart(context, index, details),
+                      onLongPressStart: (details) =>
+                          _onLongPressStart(context, index, details),
                     ),
                   );
                 },
@@ -72,9 +72,8 @@ class WeekPhotoListWidget extends StatelessWidget {
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
-        pageBuilder:
-            (_, _, _) =>
-                PhotoViewer(photoPathList: photos, initialIndex: initialIndex),
+        pageBuilder: (_, _, _) =>
+            PhotoViewer(photoPathList: photos, initialIndex: initialIndex),
       ),
     );
   }

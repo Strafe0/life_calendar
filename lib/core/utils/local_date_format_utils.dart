@@ -34,10 +34,9 @@ String getLocalizedHint({
   // 3. Walk through in order and replace GROUPS of characters
   for (int i = 0; i < sortedIndices.length; i++) {
     // Safely get the length
-    final length =
-        (i < effectiveLengths.length)
-            ? effectiveLengths[i]
-            : (effectiveLengths.isNotEmpty ? effectiveLengths.last : 2);
+    final length = (i < effectiveLengths.length)
+        ? effectiveLengths[i]
+        : (effectiveLengths.isNotEmpty ? effectiveLengths.last : 2);
 
     final charOriginalIndex = sortedIndices[i];
     final char = indexMap[charOriginalIndex]!;

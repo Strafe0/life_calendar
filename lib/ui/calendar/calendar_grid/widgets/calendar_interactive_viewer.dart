@@ -123,15 +123,16 @@ class _CalendarInteractiveViewerState extends State<CalendarInteractiveViewer>
 
         final dragDistance = _dragDistance;
         if (_isAtRestScale) {
-          _animation = Tween<double>(begin: _dragDistance, end: 0).animate(
-            CurvedAnimation(
-              parent: _animationController,
-              curve: Curves.easeOut,
-            ),
-          )..addListener(() {
-            _dragDistance = _animation.value;
-            widget.onDrag(_animation.value);
-          });
+          _animation =
+              Tween<double>(begin: _dragDistance, end: 0).animate(
+                CurvedAnimation(
+                  parent: _animationController,
+                  curve: Curves.easeOut,
+                ),
+              )..addListener(() {
+                _dragDistance = _animation.value;
+                widget.onDrag(_animation.value);
+              });
           _animationController.forward(from: 0);
         }
         widget.onDragEnd(dragDistance);

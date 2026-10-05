@@ -14,11 +14,7 @@ class DateConverter implements JsonConverter<DateTime, Object> {
       }
       throw FormatException('Invalid type: ${json.runtimeType}');
     } on Exception catch (e, s) {
-      logger.e(
-        'Failed to parse DateTime from $json',
-        error: e,
-        stackTrace: s,
-      );
+      logger.e('Failed to parse DateTime from $json', error: e, stackTrace: s);
       rethrow;
     }
   }

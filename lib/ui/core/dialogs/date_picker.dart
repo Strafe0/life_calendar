@@ -22,41 +22,40 @@ Future<DateTime?> showAdaptiveDatePicker(
 
   return showCupertinoModalPopup<DateTime>(
     context: context,
-    builder:
-        (context) => Container(
-          height: 300,
-          padding: const EdgeInsets.only(top: 6),
-          // Background color should adapt to the dark/light theme
-          color: CupertinoColors.systemBackground.resolveFrom(context),
-          child: SafeArea(
-            top: false,
-            child: Column(
+    builder: (context) => Container(
+      height: 300,
+      padding: const EdgeInsets.only(top: 6),
+      // Background color should adapt to the dark/light theme
+      color: CupertinoColors.systemBackground.resolveFrom(context),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CupertinoButton(
-                      child: Text(context.l10n.ready),
-                      onPressed: () {
-                        Navigator.of(context).pop(tempPickedDate);
-                      },
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: firstDate,
-                    minimumDate: firstDate,
-                    maximumDate: lastDate,
-                    onDateTimeChanged: (newDate) {
-                      tempPickedDate = newDate;
-                    },
-                  ),
+                CupertinoButton(
+                  child: Text(context.l10n.ready),
+                  onPressed: () {
+                    Navigator.of(context).pop(tempPickedDate);
+                  },
                 ),
               ],
             ),
-          ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: firstDate,
+                minimumDate: firstDate,
+                maximumDate: lastDate,
+                onDateTimeChanged: (newDate) {
+                  tempPickedDate = newDate;
+                },
+              ),
+            ),
+          ],
         ),
+      ),
+    ),
   );
 }

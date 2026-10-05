@@ -63,8 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '69522046073',
     projectId: 'life-calendar-2ad86',
     storageBucket: 'life-calendar-2ad86.firebasestorage.app',
-    androidClientId: '69522046073-n9ng5sanjlgg0u1tgv2fo65o29ked59v.apps.googleusercontent.com',
-    iosClientId: '69522046073-5hqveh89rcd6ck3tf2chlcacomvv1dj1.apps.googleusercontent.com',
+    androidClientId:
+        '69522046073-n9ng5sanjlgg0u1tgv2fo65o29ked59v.apps.googleusercontent.com',
+    iosClientId:
+        '69522046073-5hqveh89rcd6ck3tf2chlcacomvv1dj1.apps.googleusercontent.com',
     iosBundleId: 'com.vgol.lifeCalendar2',
   );
 }

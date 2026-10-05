@@ -24,26 +24,24 @@ class CurrentWeekIndicator extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child:
-                    isCurrentWeekTriggered
-                        ? const Icon(
-                          Icons.check_circle,
-                          size: 24,
-                          color: Colors.green,
-                        )
-                        : Icon(
-                          Icons.arrow_circle_up_sharp,
-                          size: 24,
-                          color: ColorScheme.of(context).onSurface,
-                        ),
+                child: isCurrentWeekTriggered
+                    ? const Icon(
+                        Icons.check_circle,
+                        size: 24,
+                        color: Colors.green,
+                      )
+                    : Icon(
+                        Icons.arrow_circle_up_sharp,
+                        size: 24,
+                        color: ColorScheme.of(context).onSurface,
+                      ),
               ),
               Text(
                 context.l10n.pullToGoToCurrentWeek,
                 style: TextTheme.of(context).bodyMedium?.copyWith(
-                  color:
-                      isCurrentWeekTriggered
-                          ? Colors.green
-                          : ColorScheme.of(context).onSurface,
+                  color: isCurrentWeekTriggered
+                      ? Colors.green
+                      : ColorScheme.of(context).onSurface,
                 ),
               ),
             ],
