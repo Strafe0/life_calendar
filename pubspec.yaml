@@ -49,6 +49,8 @@ dev_dependencies:
   build_runner: ^2.4.15
   freezed: ^3.0.6
   json_serializable: ^6.9.5
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.5
 
   # Build-time CLI tools only, not imported from lib/.
   flutter_launcher_icons: ^0.14.3
