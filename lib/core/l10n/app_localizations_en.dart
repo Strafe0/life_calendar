@@ -345,6 +345,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationWeeklyReviewTitle => 'Time for yourself';
 
   @override
+  String get notificationChannelDescription => 'Reminders to review your week';
+
+  @override
   String get notificationWeeklyReviewBody =>
       'Sunday evening is the perfect time to remember the good moments. Take a look at your calendar.';
 

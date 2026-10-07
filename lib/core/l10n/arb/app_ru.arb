@@ -271,6 +271,10 @@
     "@notificationSwitchTitle": {},
     "notificationWeeklyReviewTitle": "Время для себя",
     "@notificationWeeklyReviewTitle": {},
+    "notificationChannelDescription": "Напоминания подвести итоги недели",
+    "@notificationChannelDescription": {
+        "description": "Описание канала уведомлений в настройках Android"
+    },
     "notificationWeeklyReviewBody": "Воскресный вечер — лучшее время, чтобы вспомнить всё хорошее. Загляни в календарь.",
     "@notificationWeeklyReviewBody": {},
     "aboutAppDrawerTitle": "О приложении",

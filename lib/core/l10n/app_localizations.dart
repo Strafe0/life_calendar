@@ -692,6 +692,12 @@ abstract class AppLocalizations {
   /// **'Время для себя'**
   String get notificationWeeklyReviewTitle;
 
+  /// Описание канала уведомлений в настройках Android
+  ///
+  /// In ru, this message translates to:
+  /// **'Напоминания подвести итоги недели'**
+  String get notificationChannelDescription;
+
   /// No description provided for @notificationWeeklyReviewBody.
   ///
   /// In ru, this message translates to:

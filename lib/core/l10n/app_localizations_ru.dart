@@ -352,6 +352,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notificationWeeklyReviewTitle => 'Время для себя';
 
   @override
+  String get notificationChannelDescription =>
+      'Напоминания подвести итоги недели';
+
+  @override
   String get notificationWeeklyReviewBody =>
       'Воскресный вечер — лучшее время, чтобы вспомнить всё хорошее. Загляни в календарь.';
 

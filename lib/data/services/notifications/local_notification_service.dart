@@ -156,17 +156,17 @@ class LocalNotificationService implements NotificationService {
 
     final scheduledDate = _nextSundayAt(hour: 20, minute: 0);
 
-    const androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       'weekly_review_channel',
-      'Weekly Review',
-      channelDescription: 'Reminders to review your week',
+      l10n.notificationSwitchTitle,
+      channelDescription: l10n.notificationChannelDescription,
       importance: Importance.high,
       priority: Priority.high,
     );
 
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
 
     await _plugin.zonedSchedule(
