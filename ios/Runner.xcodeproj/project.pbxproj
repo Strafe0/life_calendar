@@ -12,8 +12,8 @@
 		3798F2192EE889E800E73D62 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F004812EE861BA00A1FDA9 /* WidgetKit.framework */; };
 		3798F21A2EE889E800E73D62 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F004832EE861BA00A1FDA9 /* SwiftUI.framework */; };
 		3798F2252EE889E900E73D62 /* HomeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3798F2182EE889E800E73D62 /* HomeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		37FCA5862EEC7D330000B6D1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37FCA5842EEC7D330000B6D1 /* Localizable.strings */; };
-		37FCA5872EEC7D330000B6D1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37FCA5842EEC7D330000B6D1 /* Localizable.strings */; };
+		37FCA5862EEC7D330000B6D1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37FCA5842EEC7D330000B6D1 /* InfoPlist.strings */; };
+		37FCA5872EEC7D330000B6D1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37FCA5842EEC7D330000B6D1 /* InfoPlist.strings */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		73354B0743B4BB0DD803A58C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B2F7104D13A45C5AF79F2C5B /* GoogleService-Info.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -74,8 +74,8 @@
 		37F004812EE861BA00A1FDA9 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		37F004832EE861BA00A1FDA9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		37F0049A2EE861CA00A1FDA9 /* HomeWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HomeWidgetExtension.entitlements; sourceTree = "<group>"; };
-		37FCA5852EEC7D330000B6D1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		37FCA5882EEC7D9C0000B6D1 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		37FCA5852EEC7D330000B6D1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		37FCA5882EEC7D9C0000B6D1 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -174,7 +174,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				37FCA5842EEC7D330000B6D1 /* Localizable.strings */,
+				37FCA5842EEC7D330000B6D1 /* InfoPlist.strings */,
 				37F0049A2EE861CA00A1FDA9 /* HomeWidgetExtension.entitlements */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
@@ -349,7 +349,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37FCA5862EEC7D330000B6D1 /* Localizable.strings in Resources */,
+				37FCA5862EEC7D330000B6D1 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
-				37FCA5872EEC7D330000B6D1 /* Localizable.strings in Resources */,
+				37FCA5872EEC7D330000B6D1 /* InfoPlist.strings in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
@@ -461,13 +461,13 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		37FCA5842EEC7D330000B6D1 /* Localizable.strings */ = {
+		37FCA5842EEC7D330000B6D1 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				37FCA5852EEC7D330000B6D1 /* en */,
 				37FCA5882EEC7D9C0000B6D1 /* ru */,
 			);
-			name = Localizable.strings;
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
