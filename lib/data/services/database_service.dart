@@ -20,7 +20,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseService implements DatabaseInitializer {
   static const tableName = 'TheCalendarDatabase';
   late Database _db;
-  final int _dbVersion = 4;
+  final int _dbVersion = 5;
 
   @override
   Future<Result> init() async {
@@ -49,6 +49,9 @@ class DatabaseService implements DatabaseInitializer {
           // File.copy), which cannot be queued into a sqflite Batch.
           if (oldVersion < 4) {
             await _migratePhotosToAppDirV3toV4(db);
+          }
+          if (oldVersion < 5) {
+            await repairShiftedWeekIds(db);
           }
         },
       );
@@ -181,6 +184,116 @@ class DatabaseService implements DatabaseInitializer {
         );
       }
     }
+  }
+
+  /// Repairs week ids broken by lifespan increases in 3.0.0 (v4→v5).
+  ///
+  /// That build appended new weeks starting from the id of the last existing
+  /// week, so every increase overwrote that week and shifted all appended
+  /// weeks one id down. Weeks are contiguous Monday to Sunday blocks, so the
+  /// correct id of a week is the number of weeks since the first one: rows are
+  /// renumbered by that rule and each overwritten week is recreated empty.
+  ///
+  /// Only this exact damage is repaired. If start dates aren't 7 days apart or
+  /// an id would have to move down, the table is left as is.
+  @visibleForTesting
+  Future<void> repairShiftedWeekIds(Database db, {DateTime? now}) async {
+    try {
+      final rows = await db.query(
+        tableName,
+        columns: ['id', 'yearId', 'start'],
+        orderBy: 'start ASC',
+      );
+      if (rows.isEmpty) return;
+
+      final firstStart = _calendarDay(rows.first['start']! as int);
+      final expectedIds = <int>[];
+      for (final row in rows) {
+        final days = _calendarDay(
+          row['start']! as int,
+        ).difference(firstStart).inDays;
+        if (days % 7 != 0 || days ~/ 7 < (row['id']! as int)) {
+          logger.w('Unexpected week layout, week ids are not repaired');
+          return;
+        }
+        expectedIds.add(days ~/ 7);
+      }
+      if (expectedIds.toSet().length != expectedIds.length) {
+        logger.w('Duplicate week start dates, week ids are not repaired');
+        return;
+      }
+
+      var isIntact = expectedIds.last + 1 == rows.length;
+      for (var i = 0; isIntact && i < rows.length; i++) {
+        isIntact = rows[i]['id'] == expectedIds[i];
+      }
+      if (isIntact) return;
+
+      final firstMonday = DateTime.fromMillisecondsSinceEpoch(
+        rows.first['start']! as int,
+      );
+      final today = now ?? DateTime.now();
+
+      await db.transaction((txn) async {
+        // Two passes through negative ids, so a row never takes the id of a
+        // row that hasn't moved yet.
+        for (var i = 0; i < rows.length; i++) {
+          await txn.rawUpdate('UPDATE $tableName SET id = ? WHERE id = ?', [
+            -expectedIds[i] - 1,
+            rows[i]['id'],
+          ]);
+        }
+        await txn.rawUpdate('UPDATE $tableName SET id = -id - 1 WHERE id < 0');
+
+        final yearIds = {
+          for (var i = 0; i < rows.length; i++)
+            expectedIds[i]: rows[i]['yearId']! as int,
+        };
+        var yearId = yearIds[0]!;
+        for (var id = 0; id <= expectedIds.last; id++) {
+          final knownYearId = yearIds[id];
+          if (knownYearId != null) {
+            yearId = knownYearId;
+            continue;
+          }
+
+          final start = DateTime(
+            firstMonday.year,
+            firstMonday.month,
+            firstMonday.day + 7 * id,
+          );
+          final end = DateTime(
+            start.year,
+            start.month,
+            start.day + 6,
+            23,
+            59,
+            59,
+          );
+          final week = Week(
+            id: id,
+            yearId: yearId,
+            start: start,
+            end: end,
+            tense: end.isBefore(today) ? WeekTense.past : WeekTense.future,
+            assessment: WeekAssessment.poor,
+            goals: const [],
+            events: const [],
+            resume: '',
+            photos: const [],
+          );
+          await txn.insert(tableName, week.toJson());
+        }
+      });
+      logger.i('Repaired week ids after lifespan increase');
+    } catch (e, s) {
+      logger.e('Failed to repair week ids (v4→v5)', error: e, stackTrace: s);
+    }
+  }
+
+  static DateTime _calendarDay(int millisecondsSinceEpoch) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+    return DateTime.utc(date.year, date.month, date.day);
   }
 
   Future<bool> insertWeeks(List<Week> weeks) {
