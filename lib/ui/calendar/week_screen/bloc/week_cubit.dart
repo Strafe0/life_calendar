@@ -10,6 +10,7 @@ import 'package:life_calendar/domain/models/week/event/event.dart';
 import 'package:life_calendar/domain/models/week/goal/goal.dart';
 import 'package:life_calendar/domain/models/week/week.dart';
 import 'package:life_calendar/domain/models/week/week_assessment/week_assessment.dart';
+import 'package:life_calendar/domain/models/week/week_tense/week_tense.dart';
 import 'package:life_calendar/domain/services/home_widget_service.dart';
 import 'package:life_calendar/ui/calendar/week_screen/bloc/week_state.dart';
 import 'package:life_calendar/utils/result.dart';
@@ -186,9 +187,13 @@ class WeekCubit extends Cubit<WeekState> {
         return;
       }
 
-      unawaited(
-        _homeWidgetService.updateEventsCount(eventsCount: newEventList.length),
-      );
+      if (prevState.week.tense == WeekTense.current) {
+        unawaited(
+          _homeWidgetService.updateEventsCount(
+            eventsCount: newEventList.length,
+          ),
+        );
+      }
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.event));
     } else {
       logger.e('Cannot change event, because week is not ready');
@@ -255,9 +260,13 @@ class WeekCubit extends Cubit<WeekState> {
         return;
       }
 
-      unawaited(
-        _homeWidgetService.updateEventsCount(eventsCount: newEventList.length),
-      );
+      if (prevState.week.tense == WeekTense.current) {
+        unawaited(
+          _homeWidgetService.updateEventsCount(
+            eventsCount: newEventList.length,
+          ),
+        );
+      }
       unawaited(_analytics.logChangeWeekContent(WeekContentEvent.event));
     } else {
       logger.e('Cannot delete event, because week is not ready');
@@ -292,9 +301,11 @@ class WeekCubit extends Cubit<WeekState> {
         return;
       }
 
-      unawaited(
-        _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
-      );
+      if (prevState.week.tense == WeekTense.current) {
+        unawaited(
+          _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
+        );
+      }
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.goal));
     } else {
       logger.e('Cannot add goal, because week is not ready');
@@ -355,9 +366,11 @@ class WeekCubit extends Cubit<WeekState> {
         return;
       }
 
-      unawaited(
-        _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
-      );
+      if (prevState.week.tense == WeekTense.current) {
+        unawaited(
+          _homeWidgetService.updateGoalsCount(goalsCount: newGoalList.length),
+        );
+      }
       unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.goal));
     } else {
       logger.e('Cannot delete goal, because week is not ready');

@@ -505,6 +505,29 @@ void main() {
     'deletePhoto': (cubit) => cubit.deletePhoto(0),
   };
 
+  group('editing a week other than the current one', () {
+    final pastWeek = WeekSuccess(
+      week: week.copyWith(tense: WeekTense.past),
+      lastUpdate: DateTime(2000),
+    );
+    final counterMutations = <String, Future<void> Function(WeekCubit)>{
+      'addEvent': (cubit) => cubit.addEvent(DateTime(2026, 10, 7), 'Call'),
+      'deleteEvent': (cubit) => cubit.deleteEvent(event1),
+      'addGoal': (cubit) => cubit.addGoal('Swim'),
+      'deleteGoal': (cubit) => cubit.deleteGoal(goal1),
+    };
+
+    for (final MapEntry(key: name, value: mutate) in counterMutations.entries) {
+      blocTest<WeekCubit, WeekState>(
+        '$name leaves the home widget counters alone',
+        build: build,
+        seed: () => pastWeek,
+        act: mutate,
+        verify: (_) => verifyZeroInteractions(homeWidget),
+      );
+    }
+  });
+
   for (final MapEntry(key: name, value: mutate) in mutations.entries) {
     group(name, () {
       blocTest<WeekCubit, WeekState>(
