@@ -85,7 +85,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboardingContentWelcome =>
-      'Этот календарь дает наглядное представление о количестве прожитых и оставшихся неделей нашей жизни.';
+      'Этот календарь дает наглядное представление о количестве прожитых и оставшихся недель нашей жизни.';
 
   @override
   String get onboardingTitleGrid => 'Календарь жизни в неделях';
@@ -230,7 +230,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get writeFeedbackToMail =>
-      'Для предложений и сообщениях об ошибках\n пишите на почту.';
+      'Для предложений и сообщений об ошибках\n пишите на почту.';
 
   @override
   String get errorWriteFeedback => 'Упс... Возникла неизвестная проблема';
@@ -370,5 +370,5 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get onboardingContent3v =>
-      'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!';
+      'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продолжительности жизни, релиз для iOS и никакой рекламы!';
 }

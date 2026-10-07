@@ -251,7 +251,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingContentWelcome.
   ///
   /// In ru, this message translates to:
-  /// **'Этот календарь дает наглядное представление о количестве прожитых и оставшихся неделей нашей жизни.'**
+  /// **'Этот календарь дает наглядное представление о количестве прожитых и оставшихся недель нашей жизни.'**
   String get onboardingContentWelcome;
 
   /// No description provided for @onboardingTitleGrid.
@@ -509,7 +509,7 @@ abstract class AppLocalizations {
   /// No description provided for @writeFeedbackToMail.
   ///
   /// In ru, this message translates to:
-  /// **'Для предложений и сообщениях об ошибках\n пишите на почту.'**
+  /// **'Для предложений и сообщений об ошибках\n пишите на почту.'**
   String get writeFeedbackToMail;
 
   /// No description provided for @errorWriteFeedback.
@@ -725,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingContent3v.
   ///
   /// In ru, this message translates to:
-  /// **'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!'**
+  /// **'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продолжительности жизни, релиз для iOS и никакой рекламы!'**
   String get onboardingContent3v;
 }
 
