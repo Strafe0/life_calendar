@@ -38,8 +38,8 @@ abstract class User with _$User {
   DateTime get lastDate => DateTime(
     birthdate.year + lifeSpan + 1,
     birthdate.month,
-    birthdate.day,
-  ).subtract(const Duration(days: 1));
+    birthdate.day - 1,
+  );
 
   static const minLifeSpan = 60;
   static const maxLifeSpan = 100;

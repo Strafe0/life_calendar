@@ -41,6 +41,16 @@ void main() {
 
       expect(newYear.lastDate, DateTime(2050, 12, 31));
     });
+
+    test('is a calendar day even when the clocks change the day before', () {
+      // Clocks go forward on 2026-03-29 in Europe.
+      final dstUser = user.copyWith(
+        birthdate: DateTime(1965, 3, 30),
+        lifeSpan: 60,
+      );
+
+      expect(dstUser.lastDate, DateTime(2026, 3, 29));
+    });
   });
 
   test('isLifeSpanValid accepts only values within the bounds', () {
