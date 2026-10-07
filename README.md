@@ -1,6 +1,6 @@
 # Life Calendar
 
-[![CI](https://github.com/Strafe0/life_calendar2/actions/workflows/ci.yml/badge.svg)](https://github.com/Strafe0/life_calendar2/actions/workflows/ci.yml)
+[![CI](https://github.com/Strafe0/life_calendar/actions/workflows/ci.yml/badge.svg)](https://github.com/Strafe0/life_calendar/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter)
 ![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-lightgrey)
 
