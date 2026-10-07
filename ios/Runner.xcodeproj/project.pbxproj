@@ -91,6 +91,7 @@
 		B2F7104D13A45C5AF79F2C5B /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E3CCBC622F324D7E134608B6 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0DBD86DE67982AF83A476C58 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4680C90007D1819573D08492 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -325,6 +326,7 @@
 				ru,
 				de,
 				es,
+				"pt-BR",
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
@@ -472,6 +474,7 @@
 				37FCA5882EEC7D9C0000B6D1 /* ru */,
 				E3CCBC622F324D7E134608B6 /* de */,
 				0DBD86DE67982AF83A476C58 /* es */,
+				4680C90007D1819573D08492 /* pt-BR */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
