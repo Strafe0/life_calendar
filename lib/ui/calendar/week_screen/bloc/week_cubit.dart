@@ -66,6 +66,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to change assessment. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logAssessmentChange(newAssessment));
@@ -98,6 +99,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to change goal. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logChangeWeekContent(WeekContentEvent.goal));
@@ -122,6 +124,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to change resume. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(
@@ -150,6 +153,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to delete resume. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.resume));
@@ -179,6 +183,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to add new event. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(
@@ -211,6 +216,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to change event. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logChangeWeekContent(WeekContentEvent.event));
@@ -246,6 +252,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to delete event. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(
@@ -282,6 +289,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to add new goal. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(
@@ -314,6 +322,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to change goal. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logChangeWeekContent(WeekContentEvent.goal));
@@ -343,6 +352,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to delete goal. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(
@@ -372,6 +382,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to add new photo. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logAddWeekContent(WeekContentEvent.photo));
@@ -398,6 +409,7 @@ class WeekCubit extends Cubit<WeekState> {
           'Failed to delete photo. Returning previous state',
           error: result.error,
         );
+        return;
       }
 
       unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.photo));

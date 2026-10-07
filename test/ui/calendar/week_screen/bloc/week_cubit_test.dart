@@ -514,6 +514,10 @@ void main() {
         seed: () => loaded,
         act: mutate,
         expect: () => [successWith(isNot(week)), loaded],
+        verify: (_) {
+          verifyZeroInteractions(analytics);
+          verifyZeroInteractions(homeWidget);
+        },
       );
 
       blocTest<WeekCubit, WeekState>(
