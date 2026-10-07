@@ -1,0 +1,3 @@
+"NSPhotoLibraryUsageDescription" = "Life Calendar a besoin d'accéder à vos photos pour ajouter des images à vos semaines.";
+"NSCameraUsageDescription" = "Life Calendar a besoin d'accéder à l'appareil photo pour prendre des photos de vos semaines.";
+"NSMicrophoneUsageDescription" = "Life Calendar a besoin d'accéder au micro pour les fonctionnalités vidéo.";

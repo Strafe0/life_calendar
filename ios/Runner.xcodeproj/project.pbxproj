@@ -92,6 +92,7 @@
 		E3CCBC622F324D7E134608B6 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0DBD86DE67982AF83A476C58 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4680C90007D1819573D08492 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		49B0444D5E52FD3A52CB65F1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -327,6 +328,7 @@
 				de,
 				es,
 				"pt-BR",
+				fr,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
@@ -475,6 +477,7 @@
 				E3CCBC622F324D7E134608B6 /* de */,
 				0DBD86DE67982AF83A476C58 /* es */,
 				4680C90007D1819573D08492 /* pt-BR */,
+				49B0444D5E52FD3A52CB65F1 /* fr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
