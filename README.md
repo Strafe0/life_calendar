@@ -36,8 +36,10 @@ account or server: weeks, notes and photos are stored only on the device.
   archive and import it back. A failed import rolls back to the previous state.
 - **Editable lifespan.** The calendar grows or shrinks; the app warns before
   removing weeks that already have data.
-- Light and dark themes, English and Russian localization, onboarding for new
-  users and a short "what's new" for those upgrading.
+- Six languages: English, Russian, German, Spanish, Portuguese (Brazil) and
+  French.
+- Light and dark themes, onboarding for new users and a short "what's new"
+  for those upgrading.
 
 ## Architecture
 
@@ -88,7 +90,7 @@ lib/
   `ResultError`) instead of throwing, so every Cubit handles failure with an
   exhaustive `switch`.
 - **SQLite via sqflite.** One row per week, with goals, events and photos in
-  JSON columns. Schema migrations (v1 to v4) run cumulatively, so restoring a
+  JSON columns. Schema migrations (v1 to v5) run cumulatively, so restoring a
   backup made by an old version still upgrades correctly. Parsing thousands of
   rows runs in a background isolate with `compute`.
 - **One `CustomPainter` for the grid.** Thousands of squares are drawn by a
@@ -108,7 +110,7 @@ lib/
 
 ## Testing
 
-About 250 unit tests, mirroring the `lib/` structure under `test/`.
+About 290 unit tests, mirroring the `lib/` structure under `test/`.
 
 - Every Cubit and Bloc is covered with `bloc_test` and `mocktail`: loading and
   error states, optimistic updates and their rollback when saving fails.
@@ -118,8 +120,10 @@ About 250 unit tests, mirroring the `lib/` structure under `test/`.
 - Week search is checked against the calendar generator for every date of a
   60-year calendar, for birthdays on each day of the week and on February 29.
 - Models and JSON converters are round-tripped, including malformed input.
-- The photo storage migration (database v3 to v4) is tested on in-memory
-  SQLite through `sqflite_common_ffi`.
+- Database migrations (photo storage in v4, week id repair in v5) are tested
+  on in-memory SQLite through `sqflite_common_ffi`.
+- Every translation is checked against the template: the same messages, the
+  same placeholders, and English as the fallback language.
 - CI runs formatting, a generated-code freshness check, static analysis, tests
   and an Android build on every push and pull request.
 
