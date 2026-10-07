@@ -386,12 +386,6 @@ abstract class AppLocalizations {
   /// **'Ошибка'**
   String get error;
 
-  /// No description provided for @errorAdLoading.
-  ///
-  /// In ru, this message translates to:
-  /// **'Не получилось загрузить рекламу'**
-  String get errorAdLoading;
-
   /// No description provided for @gotIt.
   ///
   /// In ru, this message translates to:

@@ -165,9 +165,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get error => 'Ошибка';
 
   @override
-  String get errorAdLoading => 'Не получилось загрузить рекламу';
-
-  @override
   String get gotIt => 'Понятно';
 
   @override

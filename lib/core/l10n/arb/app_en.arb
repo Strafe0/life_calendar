@@ -124,8 +124,6 @@
     "@errorEmptyField": {},
     "error": "Error",
     "@error": {},
-    "errorAdLoading": "Failed to load ad",
-    "@errorAdLoading": {},
     "gotIt": "Got it",
     "@gotIt": {},
     "errorPhotoAttach": "Failed to attach photo",

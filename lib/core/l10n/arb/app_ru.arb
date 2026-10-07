@@ -138,8 +138,6 @@
     "@errorEmptyField": {},
     "error": "Ошибка",
     "@error": {},
-    "errorAdLoading": "Не получилось загрузить рекламу",
-    "@errorAdLoading": {},
     "gotIt": "Понятно",
     "@gotIt": {},
     "errorPhotoAttach": "Не получилось прикрепить фото",

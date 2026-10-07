@@ -164,9 +164,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
-  String get errorAdLoading => 'Failed to load ad';
-
-  @override
   String get gotIt => 'Got it';
 
   @override
