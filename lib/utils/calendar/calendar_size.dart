@@ -59,6 +59,13 @@ class CalendarSize extends Equatable {
     final labelVrtPadding = m3 * cVrt;
 
     final weekBoxPaddingX = (w - N * weekBoxSide) / (N + 2 * k2 + k3 - 1);
+
+    // In portrait a tablet can be too narrow for 53 columns at the size the
+    // height allows, so fit the width instead.
+    if (weekBoxPaddingX < weekBoxPaddingY) {
+      return CalendarSize.forPhone(w, h, yearsCount);
+    }
+
     final horPadding = k2 * weekBoxPaddingX;
     final labelHorPadding = k3 * weekBoxPaddingX;
 

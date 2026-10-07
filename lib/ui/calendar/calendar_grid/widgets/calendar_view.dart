@@ -43,7 +43,8 @@ class _CalendarViewState extends State<CalendarView> {
       return;
     }
 
-    final yearsCount = userState.user.lifeSpan;
+    // Years 0..lifeSpan, both inclusive.
+    final yearsCount = userState.user.lifeSpan + 1;
     logger.i('_loadCalendar, yearsCount: $yearsCount');
 
     final deviceType = device_type.getDeviceType();
