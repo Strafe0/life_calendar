@@ -50,6 +50,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
           case Ok():
             logger.d('Successfully registered and generated weeks');
             emit(RegistrationSuccess(result.value));
+            unawaited(_analytics.logRegistration(birthday, lifeSpan));
           case ResultError():
             logger.e('User saved, but weeks weren\'t generated');
             emit(const RegistrationCalendarFailure());
@@ -58,7 +59,5 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         logger.e('Registration is failed', error: result.error);
         emit(const RegistrationFailure());
     }
-
-    unawaited(_analytics.logRegistration(birthday, lifeSpan));
   }
 }
