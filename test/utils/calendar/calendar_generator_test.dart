@@ -154,8 +154,10 @@ void main() {
 
     test('marks the week current through Monday morning and Sunday night', () {
       for (final time in [
+        DateTime(2026, 10, 5),
         DateTime(2026, 10, 5, 0, 0, 1),
         DateTime(2026, 10, 11, 23, 59, 58),
+        DateTime(2026, 10, 11, 23, 59, 59, 500),
       ]) {
         final weeks = generate(birthday, 60, time: time);
         final current = weeks.singleWhere((w) => w.tense == WeekTense.current);

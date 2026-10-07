@@ -45,11 +45,11 @@ class CalendarGenerator {
             yearId: (startYearIndex ?? 0) + yearId,
             start: weekMonday,
             end: weekSunday,
-            tense: weekSunday.isBefore(now)
-                ? WeekTense.past
-                : weekMonday.isBefore(now)
+            tense: now.isBefore(weekMonday)
+                ? WeekTense.future
+                : now.isBefore(weekMonday.copyWith(day: weekMonday.day + 7))
                 ? WeekTense.current
-                : WeekTense.future,
+                : WeekTense.past,
             assessment: WeekAssessment.poor,
             goals: [],
             events: [],
