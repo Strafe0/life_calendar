@@ -267,7 +267,7 @@ class WeekCubit extends Cubit<WeekState> {
           ),
         );
       }
-      unawaited(_analytics.logChangeWeekContent(WeekContentEvent.event));
+      unawaited(_analytics.logDeleteWeekContent(WeekContentEvent.event));
     } else {
       logger.e('Cannot delete event, because week is not ready');
     }

@@ -348,6 +348,10 @@ void main() {
           () => weekRepository.updateEvents(weekId: 7, events: [event2]),
         ).called(1);
         verify(() => homeWidget.updateEventsCount(eventsCount: 1)).called(1);
+        verify(
+          () => analytics.logDeleteWeekContent(WeekContentEvent.event),
+        ).called(1);
+        verifyNever(() => analytics.logChangeWeekContent(any()));
       },
     );
 
