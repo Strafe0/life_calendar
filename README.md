@@ -108,8 +108,16 @@ lib/
 
 ## Testing
 
+About 250 unit tests, mirroring the `lib/` structure under `test/`.
+
+- Every Cubit and Bloc is covered with `bloc_test` and `mocktail`: loading and
+  error states, optimistic updates and their rollback when saving fails.
+- Calendar generation is checked for contiguous Monday to Sunday weeks, year
+  boundaries at birthdays and past, current and future weeks with a fixed
+  clock.
 - Week search is checked against the calendar generator for every date of a
   60-year calendar, for birthdays on each day of the week and on February 29.
+- Models and JSON converters are round-tripped, including malformed input.
 - The photo storage migration (database v3 to v4) is tested on in-memory
   SQLite through `sqflite_common_ffi`.
 - CI runs formatting, a generated-code freshness check, static analysis, tests
@@ -130,6 +138,7 @@ fvm flutter test
 | Platform features | home_widget, flutter_local_notifications, image_picker, file_picker, flutter_archive |
 | Monitoring | Firebase Crashlytics, Firebase Analytics |
 | Localization | flutter_localizations, intl (ARB files) |
+| Testing | flutter_test, bloc_test, mocktail, sqflite_common_ffi |
 | Tooling | fvm, build_runner, GitHub Actions |
 
 ## Getting started
