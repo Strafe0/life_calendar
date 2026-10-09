@@ -54,3 +54,11 @@ upload-keystore.jks
 
 # Local build exports
 archives/
+
+# fastlane
+fastlane/.env
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/metadata/android/*/images/
+fastlane/test_output/
