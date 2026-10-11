@@ -62,3 +62,4 @@ fastlane/Preview.html
 fastlane/screenshots/
 fastlane/metadata/android/*/images/
 fastlane/test_output/
+fastlane/metadata/ios/review_information/
