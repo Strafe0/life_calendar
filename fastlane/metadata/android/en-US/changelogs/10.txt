@@ -1,0 +1,9 @@
+The app has been rebuilt from scratch.
+
+• Redesigned main screen with gestures for search, jumping to the current week, and opening the menu
+• Home screen widget
+• Fixed export and import: backups no longer lose photos or entries
+• Weekly reminders to review your week
+• You can now change your expected lifespan
+• All ads removed; support development from the menu
+• Noticeably faster and more stable
