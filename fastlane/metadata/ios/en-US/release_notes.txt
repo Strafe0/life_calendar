@@ -1,1 +1,6 @@
-
+• Now available in German, Spanish, Portuguese and French
+• Search and the current week gesture always open the right week
+• Changing your life expectancy keeps all your weeks intact
+• Better calendar layout on iPad
+• The home screen widget always shows the goals and events of the current week
+• Other fixes and improvements

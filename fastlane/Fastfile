@@ -78,10 +78,11 @@ platform :ios do
     end
   end
 
-  desc 'Upload App Store texts for the version in pubspec.yaml (asks for confirmation)'
-  lane :metadata do
+  desc 'Upload App Store texts for the version in pubspec.yaml (force:true skips the preview)'
+  lane :metadata do |options|
     deliver(
       api_key: api_key,
+      force: options[:force] || false,
       app_version: app_version,
       metadata_path: IOS_METADATA,
       skip_binary_upload: true,
@@ -91,10 +92,11 @@ platform :ios do
     )
   end
 
-  desc 'Replace App Store screenshots (asks for confirmation)'
-  lane :screenshots do
+  desc 'Replace App Store screenshots (force:true skips the preview)'
+  lane :screenshots do |options|
     deliver(
       api_key: api_key,
+      force: options[:force] || false,
       app_version: app_version,
       screenshots_path: IOS_SCREENSHOTS,
       overwrite_screenshots: true,

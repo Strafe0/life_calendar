@@ -1,0 +1,1 @@
+lebensuhr,zeit,motivation,ziele,tagebuch,gewohnheiten,alter,geburtstag,countdown,stoiker,reflexion
