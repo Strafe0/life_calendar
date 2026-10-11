@@ -4,10 +4,11 @@ require 'tmpdir'
 
 # Store listing automation. Secrets come from fastlane/.env (see .env.example).
 
-ROOT = File.expand_path('..', FastlaneCore::FastlaneFolder.path)
-IOS_METADATA = File.join(FastlaneCore::FastlaneFolder.path, 'metadata', 'ios')
-ANDROID_METADATA = File.join(FastlaneCore::FastlaneFolder.path, 'metadata', 'android')
-IOS_SCREENSHOTS = File.join(FastlaneCore::FastlaneFolder.path, 'screenshots')
+FASTLANE_DIR = File.expand_path(FastlaneCore::FastlaneFolder.path)
+ROOT = File.dirname(FASTLANE_DIR)
+IOS_METADATA = File.join(FASTLANE_DIR, 'metadata', 'ios')
+ANDROID_METADATA = File.join(FASTLANE_DIR, 'metadata', 'android')
+IOS_SCREENSHOTS = File.join(FASTLANE_DIR, 'screenshots')
 
 # App languages and the store locales they are published under.
 LOCALES = {
@@ -42,10 +43,12 @@ lane :prepare_screenshots do
     end
     locales[:android].each do |locale|
       images = File.join(ANDROID_METADATA, locale, 'images')
-      %w[phoneScreenshots tenInchScreenshots].each { |dir| FileUtils.mkdir_p(File.join(images, dir)) }
+      %w[phoneScreenshots sevenInchScreenshots tenInchScreenshots].each { |dir| FileUtils.mkdir_p(File.join(images, dir)) }
       (1..4).each do |n|
         FileUtils.cp(File.join(source, 'play', 'phone', lang, "#{n}.png"), File.join(images, 'phoneScreenshots', "#{n}.png"))
-        FileUtils.cp(File.join(source, 'play', 'tablet-10', lang, "#{n}.png"), File.join(images, 'tenInchScreenshots', "#{n}.png"))
+        %w[sevenInchScreenshots tenInchScreenshots].each do |dir|
+          FileUtils.cp(File.join(source, 'play', 'tablet-10', lang, "#{n}.png"), File.join(images, dir, "#{n}.png"))
+        end
       end
       FileUtils.cp(File.join(source, 'play', 'feature-graphic', "#{lang}.png"), File.join(images, 'featureGraphic.png'))
     end

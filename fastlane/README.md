@@ -40,7 +40,7 @@ Download the live App Store listing into fastlane/metadata/ios
 [bundle exec] fastlane ios metadata
 ```
 
-Upload App Store texts for the version in pubspec.yaml (asks for confirmation)
+Upload App Store texts for the version in pubspec.yaml (force:true skips the preview)
 
 ### ios screenshots
 
@@ -48,7 +48,7 @@ Upload App Store texts for the version in pubspec.yaml (asks for confirmation)
 [bundle exec] fastlane ios screenshots
 ```
 
-Replace App Store screenshots (asks for confirmation)
+Replace App Store screenshots (force:true skips the preview)
 
 ----
 
