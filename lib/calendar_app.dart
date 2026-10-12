@@ -36,8 +36,22 @@ import 'package:life_calendar/ui/calendar/drawer/bloc/settings_cubit.dart';
 import 'package:life_calendar/ui/core/themes/app_theme.dart';
 import 'package:life_calendar/ui/user/bloc/user_bloc.dart';
 
-class CalendarApp extends StatelessWidget {
+class CalendarApp extends StatefulWidget {
   const CalendarApp({super.key});
+
+  @override
+  State<CalendarApp> createState() => _CalendarAppState();
+}
+
+class _CalendarAppState extends State<CalendarApp> {
+  // Owned by the app instance, so a new instance starts from the splash.
+  final _router = createRouter();
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +136,7 @@ class CalendarApp extends StatelessWidget {
           title: 'Life Calendar',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          routerConfig: goRouter,
+          routerConfig: _router,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
