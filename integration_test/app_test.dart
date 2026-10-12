@@ -1,5 +1,6 @@
 import 'package:integration_test/integration_test.dart';
 
+import 'flows/backup.dart';
 import 'flows/first_launch.dart';
 import 'flows/lifespan.dart';
 import 'flows/localization.dart';
@@ -16,5 +17,6 @@ void main() {
   lifespanTests();
   searchTests();
   migrationTests();
+  backupTests();
   localizationTests();
 }
