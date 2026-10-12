@@ -38,8 +38,9 @@ The app uses two Firebase services provided by Google Ireland Limited and Google
 
 - events about how features are used, for example that a week was opened, that a goal, event, photo or summary was added, changed or deleted (the type only, never the text or the photo itself), the rating chosen for a week, changes of life expectancy, backup actions and steps of the donation dialog;
 - when you set up the app: your year of birth and your chosen life expectancy (the full date of birth is not sent);
-- information Firebase collects automatically: an app instance ID, device model, operating system and app version, language, approximate country or region derived from your IP address, and session information such as first launch and updates;
-- on Android, the device advertising ID if it is available and allowed in your device settings. On iOS, the app does not request permission to track you, so no advertising ID is collected.
+- information Firebase collects automatically: an app instance ID, device model, operating system and app version, language, approximate country or region derived from your IP address, and session information such as first launch and updates.
+
+The app does not collect advertising identifiers: their collection is turned off on Android, and on iOS the app does not ask for permission to track you.
 
 **Firebase Crashlytics** receives crash reports: the error and stack trace, device model, operating system and app version, an installation ID and the names of the screens opened before the crash.
 

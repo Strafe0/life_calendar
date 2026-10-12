@@ -926,6 +926,8 @@
 			<string>g69uk9uh2b.skadnetwork</string>
 		</dict>
 	</array>
+	<key>GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS</key>
+	<false/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~3347511713</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
