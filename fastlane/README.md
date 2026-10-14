@@ -26,6 +26,14 @@ Copy generated screenshots into the folders deliver and supply read
 
 ## iOS
 
+### ios beta
+
+```sh
+[bundle exec] fastlane ios beta
+```
+
+Build the IPA for the version in pubspec.yaml and upload it to TestFlight
+
 ### ios download_metadata
 
 ```sh
@@ -54,6 +62,14 @@ Replace App Store screenshots (force:true skips the preview)
 
 
 ## Android
+
+### android internal
+
+```sh
+[bundle exec] fastlane android internal
+```
+
+Build the app bundle and upload it to Internal testing (validate_only:true for a dry run)
 
 ### android download_metadata
 

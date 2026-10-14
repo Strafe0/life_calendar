@@ -24,6 +24,12 @@ def app_version
   File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([\d.]+)/, 1]
 end
 
+# Runs Flutter from the project root, through fvm when it is installed.
+def flutter(*args)
+  command = system('command -v fvm > /dev/null') ? %w[fvm flutter] : %w[flutter]
+  Dir.chdir(ROOT) { sh(*command, *args) }
+end
+
 desc 'Copy generated screenshots into the folders deliver and supply read'
 lane :prepare_screenshots do
   source = File.expand_path(ENV.fetch('SCREENSHOTS_SOURCE', 'archives/store_screenshots_3.1.0'), ROOT)
@@ -63,6 +69,25 @@ platform :ios do
       key_id: ENV.fetch('ASC_KEY_ID'),
       issuer_id: ENV.fetch('ASC_ISSUER_ID'),
       key_filepath: ENV.fetch('ASC_KEY_PATH'),
+    )
+  end
+
+  desc 'Build the IPA for the version in pubspec.yaml and upload it to TestFlight'
+  lane :beta do
+    ipa_dir = File.join(ROOT, 'build', 'ios', 'ipa')
+    FileUtils.rm_rf(ipa_dir)
+    # Signs for distribution with the account signed in to Xcode. When Xcode
+    # cannot sign, Flutter still builds the archive and exits successfully.
+    flutter('build', 'ipa', '--release')
+    ipa = Dir.glob(File.join(ipa_dir, '*.ipa')).first
+    unless ipa
+      UI.user_error!('Xcode could not sign the IPA. Upload the archive from Xcode instead: ' \
+                     'open build/ios/archive/Runner.xcarchive, then Distribute App > App Store Connect')
+    end
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: ipa,
+      skip_waiting_for_build_processing: true,
     )
   end
 
@@ -112,6 +137,21 @@ platform :ios do
 end
 
 platform :android do
+  desc 'Build the app bundle and upload it to Internal testing (validate_only:true for a dry run)'
+  lane :internal do |options|
+    flutter('build', 'appbundle', '--flavor', 'lifeCalendar', '--release')
+    supply(
+      track: 'internal',
+      aab: File.join(ROOT, 'build', 'app', 'outputs', 'bundle', 'lifeCalendarRelease', 'app-lifeCalendar-release.aab'),
+      metadata_path: ANDROID_METADATA,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      validate_only: options[:validate_only] || false,
+    )
+  end
+
   desc 'Download the current Google Play listing into fastlane/metadata/android'
   lane :download_metadata do
     sh('fastlane', 'supply', 'init',
