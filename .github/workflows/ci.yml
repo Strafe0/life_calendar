@@ -64,5 +64,7 @@ jobs:
           flutter-version-file: .fvmrc
           cache: true
 
+      - uses: ./.github/actions/android-ndk
+
       - name: Build debug APK
         run: flutter build apk --debug --flavor lifeCalendarTest

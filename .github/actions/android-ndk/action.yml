@@ -1,0 +1,36 @@
+name: Android NDK
+description: >
+  Installs the NDK pinned in android/app/build.gradle.kts. Without it Gradle
+  downloads the NDK on every run, and one broken download fails the build.
+  Here it comes from the cache, or from sdkmanager with retries.
+
+runs:
+  using: composite
+  steps:
+    - name: Read the NDK version
+      id: ndk
+      shell: bash
+      run: |
+        version=$(sed -n 's/.*ndkVersion = "\(.*\)"/\1/p' android/app/build.gradle.kts)
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "path=$ANDROID_HOME/ndk/$version" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/cache@v6
+      with:
+        path: ${{ steps.ndk.outputs.path }}
+        key: ndk-${{ runner.os }}-${{ steps.ndk.outputs.version }}
+
+    - name: Install the NDK
+      shell: bash
+      run: |
+        [ -f "${{ steps.ndk.outputs.path }}/source.properties" ] && exit 0
+        sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+        for attempt in 1 2 3; do
+          # yes exits on SIGPIPE, so success is judged by the installed files.
+          yes | "$sdkmanager" "ndk;${{ steps.ndk.outputs.version }}" >/dev/null || true
+          [ -f "${{ steps.ndk.outputs.path }}/source.properties" ] && exit 0
+          echo "Attempt $attempt failed, retrying"
+          rm -rf "${{ steps.ndk.outputs.path }}"
+          sleep 15
+        done
+        exit 1

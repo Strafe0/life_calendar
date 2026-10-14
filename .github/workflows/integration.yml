@@ -38,6 +38,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - uses: ./.github/actions/android-ndk
+
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
