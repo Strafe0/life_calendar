@@ -1,0 +1,8 @@
+for_platform :ios do
+  app_identifier('com.vgol.lifeCalendar')
+end
+
+for_platform :android do
+  package_name('com.vgol.life_calendar')
+  json_key_file(ENV['PLAY_JSON_KEY_PATH'])
+end

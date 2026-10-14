@@ -25,10 +25,10 @@ extension StringExtension on String {
 
       return date;
     } catch (e, s) {
+      // The string is user input (e.g. a birth date), so it is not logged.
       logger.w(
-        'Cannot parse string "$this" to date using '
+        'Cannot parse a date (${e.runtimeType}) using '
         'locale: $locale, pattern: $pattern',
-        error: e,
         stackTrace: s,
       );
       return null;

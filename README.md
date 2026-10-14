@@ -36,8 +36,10 @@ account or server: weeks, notes and photos are stored only on the device.
   archive and import it back. A failed import rolls back to the previous state.
 - **Editable lifespan.** The calendar grows or shrinks; the app warns before
   removing weeks that already have data.
-- Light and dark themes, English and Russian localization, onboarding for new
-  users and a short "what's new" for those upgrading.
+- Six languages: English, Russian, German, Spanish, Portuguese (Brazil) and
+  French.
+- Light and dark themes, onboarding for new users and a short "what's new"
+  for those upgrading.
 
 ## Architecture
 
@@ -88,7 +90,7 @@ lib/
   `ResultError`) instead of throwing, so every Cubit handles failure with an
   exhaustive `switch`.
 - **SQLite via sqflite.** One row per week, with goals, events and photos in
-  JSON columns. Schema migrations (v1 to v4) run cumulatively, so restoring a
+  JSON columns. Schema migrations (v1 to v5) run cumulatively, so restoring a
   backup made by an old version still upgrades correctly. Parsing thousands of
   rows runs in a background isolate with `compute`.
 - **One `CustomPainter` for the grid.** Thousands of squares are drawn by a
@@ -108,7 +110,7 @@ lib/
 
 ## Testing
 
-About 250 unit tests, mirroring the `lib/` structure under `test/`.
+About 290 unit tests, mirroring the `lib/` structure under `test/`.
 
 - Every Cubit and Bloc is covered with `bloc_test` and `mocktail`: loading and
   error states, optimistic updates and their rollback when saving fails.
@@ -118,14 +120,37 @@ About 250 unit tests, mirroring the `lib/` structure under `test/`.
 - Week search is checked against the calendar generator for every date of a
   60-year calendar, for birthdays on each day of the week and on February 29.
 - Models and JSON converters are round-tripped, including malformed input.
-- The photo storage migration (database v3 to v4) is tested on in-memory
-  SQLite through `sqflite_common_ffi`.
-- CI runs formatting, a generated-code freshness check, static analysis, tests
-  and an Android build on every push and pull request.
+- Database migrations (photo storage in v4, week id repair in v5) are tested
+  on in-memory SQLite through `sqflite_common_ffi`.
+- Every translation is checked against the template: the same messages, the
+  same placeholders, and English as the fallback language.
 
 ```bash
 fvm flutter test
 ```
+
+Integration tests in `integration_test/` drive the real app on an iPhone, an
+iPad, an Android phone and an Android tablet.
+
+- Main flows: onboarding and registration, editing a week and restarting the
+  app, changing the lifespan, week search and gestures.
+- Every supported language, and the fallback to English for an unsupported
+  one.
+- Backup export and import, and the rollback when an import fails. The system
+  file dialogs are answered from inside the test.
+- A database left by 3.0.0 with shifted week ids is repaired on launch.
+- An upgrade check builds 3.0.0 from its tag, saves data with it, installs the
+  current version over it and checks the data.
+
+```bash
+scripts/integration_tests.sh             # all four devices, one after another
+scripts/integration_tests.sh --parallel  # iOS and Android at the same time
+scripts/upgrade_test.sh ios              # or android
+```
+
+CI runs formatting, a generated-code freshness check, static analysis, unit
+tests and an Android build on every push and pull request. Integration tests
+run in CI on demand, on an Android emulator and an iOS simulator.
 
 ## Tech stack
 
@@ -138,7 +163,7 @@ fvm flutter test
 | Platform features | home_widget, flutter_local_notifications, image_picker, file_picker, flutter_archive |
 | Monitoring | Firebase Crashlytics, Firebase Analytics |
 | Localization | flutter_localizations, intl (ARB files) |
-| Testing | flutter_test, bloc_test, mocktail, sqflite_common_ffi |
+| Testing | flutter_test, integration_test, bloc_test, mocktail, sqflite_common_ffi |
 | Tooling | fvm, build_runner, GitHub Actions |
 
 ## Getting started

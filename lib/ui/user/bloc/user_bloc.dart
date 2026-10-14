@@ -83,11 +83,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(
           UserSuccess(user: currentState.user.copyWith(lifeSpan: newLifeSpan)),
         );
+        unawaited(_analytics.logChangeLifespan(oldLifeSpan, newLifeSpan));
       case ResultError<void>():
         logger.e('Failed to change user life span', error: result.error);
         emit(UserFailure(result.error));
     }
-
-    unawaited(_analytics.logChangeLifespan(oldLifeSpan, newLifeSpan));
   }
 }

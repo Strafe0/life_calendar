@@ -58,7 +58,7 @@
     "@skip": {},
     "onboardingTitleWelcome": "Календарь жизни в неделях",
     "@onboardingTitleWelcome": {},
-    "onboardingContentWelcome": "Этот календарь дает наглядное представление о количестве прожитых и оставшихся неделей нашей жизни.",
+    "onboardingContentWelcome": "Этот календарь дает наглядное представление о количестве прожитых и оставшихся недель нашей жизни.",
     "@onboardingContentWelcome": {},
     "onboardingTitleGrid": "Календарь жизни в неделях",
     "@onboardingTitleGrid": {},
@@ -138,8 +138,6 @@
     "@errorEmptyField": {},
     "error": "Ошибка",
     "@error": {},
-    "errorAdLoading": "Не получилось загрузить рекламу",
-    "@errorAdLoading": {},
     "gotIt": "Понятно",
     "@gotIt": {},
     "errorPhotoAttach": "Не получилось прикрепить фото",
@@ -178,7 +176,7 @@
     "@contactDeveloper": {},
     "leaveReviewMessage": "Если вам понравилось приложение,\n напишите положительный отзыв!",
     "@leaveReviewMessage": {},
-    "writeFeedbackToMail": "Для предложений и сообщениях об ошибках\n пишите на почту.",
+    "writeFeedbackToMail": "Для предложений и сообщений об ошибках\n пишите на почту.",
     "@writeFeedbackToMail": {},
     "errorWriteFeedback": "Упс... Возникла неизвестная проблема",
     "@errorWriteFeedback": {},
@@ -273,6 +271,10 @@
     "@notificationSwitchTitle": {},
     "notificationWeeklyReviewTitle": "Время для себя",
     "@notificationWeeklyReviewTitle": {},
+    "notificationChannelDescription": "Напоминания подвести итоги недели",
+    "@notificationChannelDescription": {
+        "description": "Описание канала уведомлений в настройках Android"
+    },
     "notificationWeeklyReviewBody": "Воскресный вечер — лучшее время, чтобы вспомнить всё хорошее. Загляни в календарь.",
     "@notificationWeeklyReviewBody": {},
     "aboutAppDrawerTitle": "О приложении",
@@ -280,5 +282,5 @@
     "notificationPermissionDeniedHint": "Чтобы получать напоминания, разрешите уведомления в настройках",
     "@notificationPermissionDeniedHint": {},
     "onboardingTitle3v": "Обновление 3.0.0",
-    "onboardingContent3v": "Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!"
+    "onboardingContent3v": "Виджет на домашний экран, напоминания, обновление основного экрана, изменение продолжительности жизни, релиз для iOS и никакой рекламы!"
 }

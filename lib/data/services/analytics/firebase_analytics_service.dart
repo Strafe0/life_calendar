@@ -3,7 +3,10 @@ import 'package:life_calendar/data/services/analytics/analytics_service_interfac
 import 'package:life_calendar/domain/models/week/week_assessment/week_assessment.dart';
 
 class FirebaseAnalyticsService implements AnalyticsService {
-  final FirebaseAnalytics _firebase = FirebaseAnalytics.instance;
+  FirebaseAnalyticsService({FirebaseAnalytics? firebase})
+    : _firebase = firebase ?? FirebaseAnalytics.instance;
+
+  final FirebaseAnalytics _firebase;
 
   @override
   Future<void> logAddWeekContent(WeekContentEvent type) async {
@@ -70,10 +73,9 @@ class FirebaseAnalyticsService implements AnalyticsService {
   Future<void> logRegistration(DateTime birthdate, int lifeSpan) async {
     await _firebase.logEvent(
       name: 'registration',
-      parameters: {
-        'birthdate': birthdate.toIso8601String(),
-        'lifespan': lifeSpan,
-      },
+      // Only the year: the full birth date is personal data the app doesn't
+      // need to send anywhere.
+      parameters: {'birth_year': birthdate.year, 'lifespan': lifeSpan},
     );
   }
 }

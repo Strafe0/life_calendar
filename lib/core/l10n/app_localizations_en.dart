@@ -164,9 +164,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
-  String get errorAdLoading => 'Failed to load ad';
-
-  @override
   String get gotIt => 'Got it';
 
   @override
@@ -346,6 +343,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationWeeklyReviewTitle => 'Time for yourself';
+
+  @override
+  String get notificationChannelDescription => 'Reminders to review your week';
 
   @override
   String get notificationWeeklyReviewBody =>

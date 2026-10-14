@@ -68,6 +68,9 @@ class CacheBackupStrategy implements BackupStrategy {
       if (stagingDir.existsSync()) {
         stagingDir.deleteSync(recursive: true);
       }
+      // On Android an archive without photos extracts nothing and leaves the
+      // folder uncreated, which made the listing below fail the import.
+      stagingDir.createSync(recursive: true);
       await ZipFile.extractToDirectory(
         zipFile: zipToExtract,
         destinationDir: stagingDir,

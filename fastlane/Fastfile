@@ -1,0 +1,188 @@
+require 'fileutils'
+require 'json'
+require 'tmpdir'
+
+# Store listing automation. Secrets come from fastlane/.env (see .env.example).
+
+FASTLANE_DIR = File.expand_path(FastlaneCore::FastlaneFolder.path)
+ROOT = File.dirname(FASTLANE_DIR)
+IOS_METADATA = File.join(FASTLANE_DIR, 'metadata', 'ios')
+ANDROID_METADATA = File.join(FASTLANE_DIR, 'metadata', 'android')
+IOS_SCREENSHOTS = File.join(FASTLANE_DIR, 'screenshots')
+
+# App languages and the store locales they are published under.
+LOCALES = {
+  'en' => { ios: %w[en-US en-GB], android: %w[en-US en-GB] },
+  'ru' => { ios: %w[ru], android: %w[ru-RU] },
+  'de' => { ios: %w[de-DE], android: %w[de-DE] },
+  'es' => { ios: %w[es-ES es-MX], android: %w[es-ES es-419] },
+  'pt' => { ios: %w[pt-BR], android: %w[pt-BR] },
+  'fr' => { ios: %w[fr-FR], android: %w[fr-FR] },
+}.freeze
+
+def app_version
+  File.read(File.join(ROOT, 'pubspec.yaml'))[/^version:\s*([\d.]+)/, 1]
+end
+
+# Runs Flutter from the project root, through fvm when it is installed.
+def flutter(*args)
+  command = system('command -v fvm > /dev/null') ? %w[fvm flutter] : %w[flutter]
+  Dir.chdir(ROOT) { sh(*command, *args) }
+end
+
+desc 'Copy generated screenshots into the folders deliver and supply read'
+lane :prepare_screenshots do
+  source = File.expand_path(ENV.fetch('SCREENSHOTS_SOURCE', 'archives/store_screenshots_3.1.0'), ROOT)
+  UI.user_error!("No screenshots in #{source}") unless Dir.exist?(source)
+
+  FileUtils.rm_rf(IOS_SCREENSHOTS)
+  Dir.glob(File.join(ANDROID_METADATA, '*', 'images')).each { |dir| FileUtils.rm_rf(dir) }
+
+  LOCALES.each do |lang, locales|
+    locales[:ios].each do |locale|
+      target = File.join(IOS_SCREENSHOTS, locale)
+      FileUtils.mkdir_p(target)
+      (1..4).each do |n|
+        FileUtils.cp(File.join(source, 'appstore', 'iphone-6.9', lang, "#{n}.png"), File.join(target, "#{n}_iphone.png"))
+        FileUtils.cp(File.join(source, 'appstore', 'ipad-13', lang, "#{n}.png"), File.join(target, "#{n}_ipad.png"))
+      end
+    end
+    locales[:android].each do |locale|
+      images = File.join(ANDROID_METADATA, locale, 'images')
+      %w[phoneScreenshots sevenInchScreenshots tenInchScreenshots].each { |dir| FileUtils.mkdir_p(File.join(images, dir)) }
+      (1..4).each do |n|
+        FileUtils.cp(File.join(source, 'play', 'phone', lang, "#{n}.png"), File.join(images, 'phoneScreenshots', "#{n}.png"))
+        %w[sevenInchScreenshots tenInchScreenshots].each do |dir|
+          FileUtils.cp(File.join(source, 'play', 'tablet-10', lang, "#{n}.png"), File.join(images, dir, "#{n}.png"))
+        end
+      end
+      FileUtils.cp(File.join(source, 'play', 'feature-graphic', "#{lang}.png"), File.join(images, 'featureGraphic.png'))
+    end
+  end
+  UI.success("Screenshots copied for #{LOCALES.values.sum { |l| l[:ios].size }} App Store and " \
+             "#{LOCALES.values.sum { |l| l[:android].size }} Google Play locales")
+end
+
+platform :ios do
+  def api_key
+    app_store_connect_api_key(
+      key_id: ENV.fetch('ASC_KEY_ID'),
+      issuer_id: ENV.fetch('ASC_ISSUER_ID'),
+      key_filepath: ENV.fetch('ASC_KEY_PATH'),
+    )
+  end
+
+  desc 'Build the IPA for the version in pubspec.yaml and upload it to TestFlight'
+  lane :beta do
+    ipa_dir = File.join(ROOT, 'build', 'ios', 'ipa')
+    FileUtils.rm_rf(ipa_dir)
+    # Signs for distribution with the account signed in to Xcode. When Xcode
+    # cannot sign, Flutter still builds the archive and exits successfully.
+    flutter('build', 'ipa', '--release')
+    ipa = Dir.glob(File.join(ipa_dir, '*.ipa')).first
+    unless ipa
+      UI.user_error!('Xcode could not sign the IPA. Upload the archive from Xcode instead: ' \
+                     'open build/ios/archive/Runner.xcarchive, then Distribute App > App Store Connect')
+    end
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: ipa,
+      skip_waiting_for_build_processing: true,
+    )
+  end
+
+  desc 'Download the live App Store listing into fastlane/metadata/ios'
+  lane :download_metadata do
+    key = api_key
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, 'api_key.json')
+      File.write(path, { key_id: key[:key_id], issuer_id: key[:issuer_id], key: key[:key] }.to_json)
+      sh('fastlane', 'deliver', 'download_metadata',
+         '--api_key_path', path,
+         '--app_identifier', CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
+         '--metadata_path', IOS_METADATA,
+         '--use_live_version', 'true',
+         '--force')
+    end
+  end
+
+  desc 'Upload App Store texts for the version in pubspec.yaml (force:true skips the preview)'
+  lane :metadata do |options|
+    deliver(
+      api_key: api_key,
+      force: options[:force] || false,
+      app_version: app_version,
+      metadata_path: IOS_METADATA,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+    )
+  end
+
+  desc 'Replace App Store screenshots (force:true skips the preview)'
+  lane :screenshots do |options|
+    deliver(
+      api_key: api_key,
+      force: options[:force] || false,
+      app_version: app_version,
+      screenshots_path: IOS_SCREENSHOTS,
+      overwrite_screenshots: true,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+    )
+  end
+end
+
+platform :android do
+  desc 'Build the app bundle and upload it to Internal testing (validate_only:true for a dry run)'
+  lane :internal do |options|
+    flutter('build', 'appbundle', '--flavor', 'lifeCalendar', '--release')
+    supply(
+      track: 'internal',
+      aab: File.join(ROOT, 'build', 'app', 'outputs', 'bundle', 'lifeCalendarRelease', 'app-lifeCalendar-release.aab'),
+      metadata_path: ANDROID_METADATA,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      validate_only: options[:validate_only] || false,
+    )
+  end
+
+  desc 'Download the current Google Play listing into fastlane/metadata/android'
+  lane :download_metadata do
+    sh('fastlane', 'supply', 'init',
+       '--json_key', ENV.fetch('PLAY_JSON_KEY_PATH'),
+       '--package_name', CredentialsManager::AppfileConfig.try_fetch_value(:package_name),
+       '--metadata_path', ANDROID_METADATA)
+  end
+
+  desc 'Upload Google Play texts (validate_only:true checks without publishing)'
+  lane :metadata do |options|
+    supply(
+      metadata_path: ANDROID_METADATA,
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      validate_only: options[:validate_only] || false,
+    )
+  end
+
+  desc 'Replace Google Play screenshots and feature graphic (validate_only:true for a dry run)'
+  lane :screenshots do |options|
+    supply(
+      metadata_path: ANDROID_METADATA,
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      sync_image_upload: true,
+      validate_only: options[:validate_only] || false,
+    )
+  end
+end

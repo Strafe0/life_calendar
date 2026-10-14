@@ -98,7 +98,7 @@ class UserRepositoryImpl implements UserRepository {
 
       await _databaseService.insertWeeks(
         generator.generateWeeks(
-          startWeekIndex: lastWeek.id,
+          startWeekIndex: lastWeek.id + 1,
           startYearIndex: oldLifeSpan + 1,
         ),
       );

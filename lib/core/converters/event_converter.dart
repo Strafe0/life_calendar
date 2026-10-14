@@ -19,7 +19,12 @@ class EventConverter implements JsonConverter<List<Event>, String> {
         return Event.fromJson(event);
       }).toList();
     } on FormatException catch (e, s) {
-      logger.e('Failed to parse events', error: e, stackTrace: s);
+      // FormatException.source holds the stored JSON, i.e. the user's text.
+      logger.e(
+        'Failed to parse events',
+        error: FormatException(e.message),
+        stackTrace: s,
+      );
       return [];
     }
   }

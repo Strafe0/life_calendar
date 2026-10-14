@@ -139,6 +139,7 @@ void main() {
       seed: () => UserSuccess(user: user),
       act: (bloc) => bloc.add(const UserChangeLifeSpanRequested(70)),
       expect: () => [isA<UserLoading>(), UserFailure(error)],
+      verify: (_) => verifyZeroInteractions(analytics),
     );
 
     blocTest<UserBloc, UserState>(

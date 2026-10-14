@@ -36,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     } on Exception catch (e, s) {
       logger.e(
-        'Failed to register user ($DateTime, $lifeSpan)',
+        'Failed to register user (lifespan $lifeSpan)',
         error: e,
         stackTrace: s,
       );

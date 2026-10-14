@@ -104,6 +104,7 @@ void main() {
       isA<RegistrationLoading>(),
       isA<RegistrationCalendarFailure>(),
     ],
+    verify: (_) => verifyZeroInteractions(analytics),
   );
 
   blocTest<RegistrationCubit, RegistrationState>(
@@ -112,6 +113,9 @@ void main() {
     build: build,
     act: register,
     expect: () => [isA<RegistrationLoading>(), isA<RegistrationFailure>()],
-    verify: (_) => verifyNever(() => weekRepository.insertWeeks(any())),
+    verify: (_) {
+      verifyNever(() => weekRepository.insertWeeks(any()));
+      verifyZeroInteractions(analytics);
+    },
   );
 }

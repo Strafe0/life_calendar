@@ -18,7 +18,7 @@ import 'package:life_calendar/ui/onboarding/widgets/onboarding_screen.dart';
 import 'package:life_calendar/ui/splash/widgets/error_splash_screen.dart';
 import 'package:life_calendar/ui/splash/widgets/splash_screen.dart';
 
-final goRouter = GoRouter(
+GoRouter createRouter() => GoRouter(
   observers: [CrashlyticsNavigationObserver()],
   routes: [
     GoRoute(

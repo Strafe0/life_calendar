@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:life_calendar/core/logger/logger.dart';
@@ -140,9 +138,12 @@ class CalendarCubit extends Cubit<CalendarState> {
       return false;
     }
 
+    // Only a reduction deletes weeks: the years after the new lifespan.
+    if (newLifeSpan >= oldLifeSpan) return false;
+
     final result = await _weekRepository.hasChangesInRange(
-      startYearId: math.min(oldLifeSpan, newLifeSpan),
-      endYearId: math.max(oldLifeSpan, newLifeSpan),
+      startYearId: newLifeSpan + 1,
+      endYearId: oldLifeSpan,
     );
 
     return switch (result) {

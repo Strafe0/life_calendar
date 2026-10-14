@@ -260,24 +260,30 @@ void main() {
       ),
     ).thenAnswer((_) async => result);
 
-    test('checks the years between new and old lifespan on reduce', () async {
+    test('checks only the years removed by a reduction', () async {
       stubLifespan(80);
       stubChanges(const Result.ok(true));
 
       expect(await build().hasChangedWeeks(newLifeSpan: 70), isTrue);
       verify(
-        () => weekRepository.hasChangesInRange(startYearId: 70, endYearId: 80),
+        () => weekRepository.hasChangesInRange(startYearId: 71, endYearId: 80),
       ).called(1);
     });
 
-    test('checks the years between old and new lifespan on increase', () async {
+    test('returns false on increase without checking the database', () async {
       stubLifespan(80);
-      stubChanges(const Result.ok(false));
+      stubChanges(const Result.ok(true));
 
       expect(await build().hasChangedWeeks(newLifeSpan: 90), isFalse);
-      verify(
-        () => weekRepository.hasChangesInRange(startYearId: 80, endYearId: 90),
-      ).called(1);
+      verifyZeroInteractions(weekRepository);
+    });
+
+    test('returns false when the lifespan does not change', () async {
+      stubLifespan(80);
+      stubChanges(const Result.ok(true));
+
+      expect(await build().hasChangedWeeks(newLifeSpan: 80), isFalse);
+      verifyZeroInteractions(weekRepository);
     });
 
     test('returns false without a stored lifespan', () async {

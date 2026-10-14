@@ -5,7 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
@@ -95,6 +99,10 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('de'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('pt'),
     Locale('ru'),
   ];
 
@@ -251,7 +259,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingContentWelcome.
   ///
   /// In ru, this message translates to:
-  /// **'Этот календарь дает наглядное представление о количестве прожитых и оставшихся неделей нашей жизни.'**
+  /// **'Этот календарь дает наглядное представление о количестве прожитых и оставшихся недель нашей жизни.'**
   String get onboardingContentWelcome;
 
   /// No description provided for @onboardingTitleGrid.
@@ -386,12 +394,6 @@ abstract class AppLocalizations {
   /// **'Ошибка'**
   String get error;
 
-  /// No description provided for @errorAdLoading.
-  ///
-  /// In ru, this message translates to:
-  /// **'Не получилось загрузить рекламу'**
-  String get errorAdLoading;
-
   /// No description provided for @gotIt.
   ///
   /// In ru, this message translates to:
@@ -509,7 +511,7 @@ abstract class AppLocalizations {
   /// No description provided for @writeFeedbackToMail.
   ///
   /// In ru, this message translates to:
-  /// **'Для предложений и сообщениях об ошибках\n пишите на почту.'**
+  /// **'Для предложений и сообщений об ошибках\n пишите на почту.'**
   String get writeFeedbackToMail;
 
   /// No description provided for @errorWriteFeedback.
@@ -698,6 +700,12 @@ abstract class AppLocalizations {
   /// **'Время для себя'**
   String get notificationWeeklyReviewTitle;
 
+  /// Описание канала уведомлений в настройках Android
+  ///
+  /// In ru, this message translates to:
+  /// **'Напоминания подвести итоги недели'**
+  String get notificationChannelDescription;
+
   /// No description provided for @notificationWeeklyReviewBody.
   ///
   /// In ru, this message translates to:
@@ -725,7 +733,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingContent3v.
   ///
   /// In ru, this message translates to:
-  /// **'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продоложительности жизни, релиз для iOS и никакой рекламы!'**
+  /// **'Виджет на домашний экран, напоминания, обновление основного экрана, изменение продолжительности жизни, релиз для iOS и никакой рекламы!'**
   String get onboardingContent3v;
 }
 
@@ -739,8 +747,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ru'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'pt',
+    'ru',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -749,8 +763,16 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'pt':
+      return AppLocalizationsPt();
     case 'ru':
       return AppLocalizationsRu();
   }

@@ -20,7 +20,12 @@ class GoalConverter implements JsonConverter<List<Goal>, String> {
         return Goal.fromJson(goal);
       }).toList();
     } on FormatException catch (e, s) {
-      logger.e('Failed to parse goals', error: e, stackTrace: s);
+      // FormatException.source holds the stored JSON, i.e. the user's text.
+      logger.e(
+        'Failed to parse goals',
+        error: FormatException(e.message),
+        stackTrace: s,
+      );
       return [];
     }
   }
