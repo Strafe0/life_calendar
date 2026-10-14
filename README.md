@@ -124,12 +124,33 @@ About 290 unit tests, mirroring the `lib/` structure under `test/`.
   on in-memory SQLite through `sqflite_common_ffi`.
 - Every translation is checked against the template: the same messages, the
   same placeholders, and English as the fallback language.
-- CI runs formatting, a generated-code freshness check, static analysis, tests
-  and an Android build on every push and pull request.
 
 ```bash
 fvm flutter test
 ```
+
+Integration tests in `integration_test/` drive the real app on an iPhone, an
+iPad, an Android phone and an Android tablet.
+
+- Main flows: onboarding and registration, editing a week and restarting the
+  app, changing the lifespan, week search and gestures.
+- Every supported language, and the fallback to English for an unsupported
+  one.
+- Backup export and import, and the rollback when an import fails. The system
+  file dialogs are answered from inside the test.
+- A database left by 3.0.0 with shifted week ids is repaired on launch.
+- An upgrade check builds 3.0.0 from its tag, saves data with it, installs the
+  current version over it and checks the data.
+
+```bash
+scripts/integration_tests.sh             # all four devices, one after another
+scripts/integration_tests.sh --parallel  # iOS and Android at the same time
+scripts/upgrade_test.sh ios              # or android
+```
+
+CI runs formatting, a generated-code freshness check, static analysis, unit
+tests and an Android build on every push and pull request. Integration tests
+run in CI on demand, on an Android emulator and an iOS simulator.
 
 ## Tech stack
 
@@ -142,7 +163,7 @@ fvm flutter test
 | Platform features | home_widget, flutter_local_notifications, image_picker, file_picker, flutter_archive |
 | Monitoring | Firebase Crashlytics, Firebase Analytics |
 | Localization | flutter_localizations, intl (ARB files) |
-| Testing | flutter_test, bloc_test, mocktail, sqflite_common_ffi |
+| Testing | flutter_test, integration_test, bloc_test, mocktail, sqflite_common_ffi |
 | Tooling | fvm, build_runner, GitHub Actions |
 
 ## Getting started
