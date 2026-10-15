@@ -81,8 +81,10 @@ platform :ios do
     flutter('build', 'ipa', '--release')
     ipa = Dir.glob(File.join(ipa_dir, '*.ipa')).first
     unless ipa
-      UI.user_error!('Xcode could not sign the IPA. Upload the archive from Xcode instead: ' \
-                     'open build/ios/archive/Runner.xcarchive, then Distribute App > App Store Connect')
+      archive = File.join(ROOT, 'build', 'ios', 'archive', 'Runner.xcarchive')
+      UI.user_error!("Xcode could not sign the IPA. Check that you are signed in under Xcode > Settings > " \
+                     "Accounts, or upload the archive from Xcode: open -a Xcode '#{archive}', " \
+                     'then Distribute App > App Store Connect')
     end
     upload_to_testflight(
       api_key: api_key,
