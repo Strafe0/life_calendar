@@ -106,6 +106,9 @@ platform :ios do
          '--use_live_version', 'true',
          '--force')
     end
+    # The API does not return the review contacts, so they come down as blank
+    # files that would fail the next upload. App Store Connect keeps the real ones.
+    FileUtils.rm_rf(File.join(IOS_METADATA, 'review_information'))
   end
 
   desc 'Upload App Store texts for the version in pubspec.yaml (force:true skips the preview)'
@@ -128,6 +131,7 @@ platform :ios do
       api_key: api_key,
       force: options[:force] || false,
       app_version: app_version,
+      metadata_path: IOS_METADATA,
       screenshots_path: IOS_SCREENSHOTS,
       overwrite_screenshots: true,
       skip_binary_upload: true,
