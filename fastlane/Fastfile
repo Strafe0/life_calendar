@@ -59,6 +59,8 @@ lane :prepare_screenshots do
       FileUtils.cp(File.join(source, 'play', 'feature-graphic', "#{lang}.png"), File.join(images, 'featureGraphic.png'))
     end
   end
+  # The default listing has no icon to fall back on, so it needs its own.
+  FileUtils.cp(File.join(source, 'play', 'icon.png'), File.join(ANDROID_METADATA, 'en-US', 'images', 'icon.png'))
   UI.success("Screenshots copied for #{LOCALES.values.sum { |l| l[:ios].size }} App Store and " \
              "#{LOCALES.values.sum { |l| l[:android].size }} Google Play locales")
 end
