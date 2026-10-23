@@ -9,7 +9,7 @@ birth date and expected lifespan into a grid of weeks: past, current and
 future. Open any week to rate it, plan goals, log events, attach photos and
 write a short summary.
 
-The app is live on Google Play and the App Store (version 3.0.0). There is no
+The app is live on Google Play and the App Store (version 3.1.0). There is no
 account or server: weeks, notes and photos are stored only on the device.
 
 <p>
